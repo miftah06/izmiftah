@@ -12,7 +12,7 @@ def validate_length(judul, skripsi):
     opsional = []
     for i in range(4):
         prompt = f"Opsional berupa keterangan misal: ex: \n 1.Diajukan untuk bla bla,\n 2. Pada program studi xxx, \n 3. untuk xxx \n 4. ujian fakultas xxx...\n dengan jumlah kata yang harus sama ya! \n  {i + 1}: "
-        input_opsional = input(prompt).strip()
+        input_opsional = "isi dengan opsional data"
         opsional.append(input_opsional)
 
     # Menambahkan input judul_karya dan jenis_karyatulis

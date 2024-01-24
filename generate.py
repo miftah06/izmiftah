@@ -8,7 +8,7 @@ def handle_nan(value, default_value=""):
     return default_value if pd.isna(value) else value
     
 def generate_html(data):
-    halaman = handle_nan(data['Logo 1'][0], "Default Halaman")
+    halaman = handle_nan(data['Logo'][0], "Default Halaman")
     
     # Generate timestamp
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
