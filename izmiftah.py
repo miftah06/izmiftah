@@ -14,7 +14,7 @@ from googlesearch import search
 from bs4 import BeautifulSoup
 import time
 
-bot = telebot.TeleBot("6822789783:AAGJ7ZO7ckd5F2MK_vldU9bTtL2ki8SqWFM")  # Ganti dengan token bot Telegram Anda
+bot = telebot.TeleBot("6822789783:AAEmKREs1HzFcO8fhtJLVVqY0CNdl84IcKI")  # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
 keyword = "Tolong ganti tulisan di bagian ini setelah jadi"
