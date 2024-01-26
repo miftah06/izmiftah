@@ -12,8 +12,6 @@ numpy
 beautifulsoup4
 reportlab
 Pypdf2
-cairosvg
 weasyprint
 pdfkit
 wkhtmltopdf
-PyMuPDF
