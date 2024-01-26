@@ -2,10 +2,6 @@ telebot
 telegram
 beautifulsoup4
 requests
-chardet==4.0.0
-fpdf==1.7.2
-reportlab==3.5.67
-nltk==3.6.3
 numpy
 beautifulsoup4
 randomizer
