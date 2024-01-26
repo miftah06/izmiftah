@@ -11,7 +11,5 @@ nltk
 numpy
 beautifulsoup4
 reportlab
-Pypdf2
-weasyprint
 pdfkit
 wkhtmltopdf
