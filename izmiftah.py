@@ -19,6 +19,7 @@ import keyword
 bot = telebot.TeleBot("IDBOT_TELEGRAM_KAMU")  # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
+filename = "skrip.txt"
 
 def generate_keyword_file(filename, num_keywords):
     keyword_list = keyword.kwlist
@@ -26,7 +27,7 @@ def generate_keyword_file(filename, num_keywords):
 
     random_keywords = random.sample(keyword_list, num_keywords)
 
-    with open("skrip.txt", "w") as file:
+    with open(filename, "w") as file:
         file.write("\n".join(random_keywords))
 
 @bot.message_handler(commands=['ai'])
