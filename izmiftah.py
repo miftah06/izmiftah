@@ -291,6 +291,17 @@ def download_keywords(message):
     except Exception as e:
         print(f"Error downloading keywords: {e}")
         bot.reply_to(message, "Gagal mengunduh file pdf. Coba lagi nanti.")
+        
+@bot.message_handler(commands=['download-hasil'])
+def download_keywords(message):
+    global keywords_list
+
+    try:
+        with open('hasil.txt', 'rb') as f:
+            bot.send_document(message.chat.id, f)
+    except Exception as e:
+        print(f"Error downloading keywords: {e}")
+        bot.reply_to(message, "Gagal mengunduh file txt. Coba lagi nanti.")
 
 @bot.message_handler(commands=['download'])
 def download_keywords(message):
@@ -312,16 +323,16 @@ def download_html(message):
         print(f"Error downloading HTML: {e}")
         bot.reply_to(message, "Gagal mengunduh file HTML. Coba lagi nanti.")
 
-@bot.message_handler(commands=['download_html1'])
+@bot.message_handler(commands=['download2'])
 def download_html(message):
     try:
-        with open('materi.html', 'rb') as f:
+        with open('output.txt', 'rb') as f:
             bot.send_document(message.chat.id, f)
     except Exception as e:
-        print(f"Error downloading HTML: {e}")
-        bot.reply_to(message, "Gagal mengunduh file HTML. Coba lagi nanti.")
+        print(f"Error downloading txt output file: {e}")
+        bot.reply_to(message, "Gagal mengunduh file txt. Coba lagi nanti.")
 
-@bot.message_handler(commands=['download_html2'])
+@bot.message_handler(commands=['download_html1'])
 def download_html(message):
     try:
         with open('cover.html', 'rb') as f:
@@ -330,7 +341,7 @@ def download_html(message):
         print(f"Error downloading HTML: {e}")
         bot.reply_to(message, "Gagal mengunduh file HTML. Coba lagi nanti.")
 
-@bot.message_handler(commands=['download_html3'])
+@bot.message_handler(commands=['download_html2'])
 def download_html(message):
     try:
         with open('pdf.html', 'rb') as f:
