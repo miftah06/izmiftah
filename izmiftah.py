@@ -98,9 +98,9 @@ def handle_prompt(message):
         with open(output_file, 'r') as file:
             output_text = file.read()
 
-        bot.send_message(message.chat.id/output_text)
+        bot.send_message(message.chat.id, output_text)
     else:
-        bot.send_message(message.chat.id/"Format prompt tidak valid. Gunakan format /buatlah keyword_file1/keyword_file2/output.txt/kata_perintah/specification_option/prompt_type/additional_input"
+        bot.send_message(message.chat.id/"Format prompt tidak valid. Gunakan format /buatlah keyword_file1/keyword_file2/output.txt/kata_perintah/specification_option/prompt_type/additional_input")
 
 def get_dns_info(hostname):
     try:
@@ -292,17 +292,6 @@ def download_keywords(message):
 
     try:
         with open('final_output.pdf', 'rb') as f:
-            bot.send_document(message.chat.id, f)
-    except Exception as e:
-        print(f"Error downloading keywords: {e}")
-        bot.reply_to(message, "Gagal mengunduh file pdf. Coba lagi nanti.")
-        
-@bot.message_handler(commands=['download-output'])
-def download_keywords(message):
-    global keywords_list
-
-    try:
-        with open('output.txt', 'rb') as f:
             bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading keywords: {e}")
