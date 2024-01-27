@@ -26,7 +26,7 @@ def generate_keyword_file(filename, num_keywords):
 
     random_keywords = random.sample(keyword_list, num_keywords)
 
-    with open(filename, "w") as file:
+    with open("skrip.txt", "w") as file:
         file.write("\n".join(random_keywords))
 
 @bot.message_handler(commands=['ai'])
@@ -376,7 +376,7 @@ def process_uploaded_file(file_path):
 def handle_uploaded_file(message):
     global keywords_list
 
-    if message.document.file_name not in ['katakunci.csv', 'keyword.txt']:
+    if message.document.file_name not in ['katakunci.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'subdomains.txt']:
         bot.reply_to(message, "Mohon kirim file dengan nama 'katakunci.csv' atau 'keyword.txt'.")
         return
 
