@@ -57,7 +57,7 @@ def handle_prompt(message):
 
         bot.send_message(message.chat.id, output_text)
     else:
-        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /buatlah keyword1.txt/keyword2.txt/output.txt/kata_perintah/specification_option/prompt_type/jumlah/")
+        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /ai keyword1.txt/keyword2.txt/output.txt/kata_perintah/specification_option/prompt_type/jumlah/")
 
 def create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input, message):
     with open(keyword1_file, "r") as key1_file:
