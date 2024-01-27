@@ -19,7 +19,6 @@ import keyword
 bot = telebot.TeleBot("IDBOT_TELEGRAM_KAMU")  # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
-keyword = "Tolong ganti tulisan di bagian ini setelah jadi"
 
 def generate_keyword_file(filename, num_keywords):
     keyword_list = keyword.kwlist
@@ -32,17 +31,10 @@ def generate_keyword_file(filename, num_keywords):
 
 @bot.message_handler(commands=['ai'])
 def handle_prompt(message):
-    # Mendapatkan argumen dari prompt
     args = message.text.split('/')[2:]
 
     if len(args) == 7:
-        keyword1_file = args[0]
-        keyword2_file = args[1]
-        output_file = args[2]
-        command_option = args[3]
-        specification_option = args[4]
-        prompt_type = args[5]
-        additional_input = args[6]
+        keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input = args
 
         # Generate keyword files
         generate_keyword_file(keyword1_file, 500)
@@ -60,41 +52,34 @@ def handle_prompt(message):
         bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /ai keyword1.txt/keyword2.txt/output.txt/kata_perintah/specification_option/prompt_type/jumlah/")
 
 def create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input, message):
-    with open(keyword1_file, "r") as key1_file:
+    with open(keyword1_file, "r") as key1_file, open(keyword2_file, "r") as key2_file, open(output_file, "w") as file:
         key1_options = key1_file.readlines()
-
-    with open(keyword2_file, "r") as key2_file:
         key2_options = key2_file.readlines()
+        key1_option = random.choice(key1_options).strip()
+        key2_option = random.choice(key2_options).strip()
 
-    with open(output_file, "w") as file:
-        dan = key1_options
-        jika = key2_options
-        for prompt in processed_data:
-            key1_option = random.choice(key1_options).strip()
-            key2_option = random.choice(key2_options).strip()
-                
-            try:
-                subprocess.run(['bash', 'key.sh'], check=True)
-                bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file} .")
-            except subprocess.CalledProcessError as e:
-                bot.reply_to(message, f"Error: {e}")
-                
-            if prompt_type == "text":
-                output_line = f"\n\n\n HASIL OUTPUTNYA : \n\n\n {command_option} {specification_option} serta {key1_option} \n\n dengan tambahan fungsi {key2_option} \n\n adapun jika isinya berupa {prompt} {key1_option} \n\n\n\n dengan skrip: \n\n {prompt} {specification_option}\n\n\n"
-            elif prompt_type == "image":
-                output_line = f"Generate image with command: \n\n\n {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan warna {key2_option} \n\n\n"
-            elif prompt_type == "script":
-                output_line = f"Execute script: \n\n\n {command_option} {specification_option} dan serta {prompt} jika hal tersebut berupa  \n {prompt} \n dengan {key1_option} \n\n di dalam skrip {prompt} {key1_option} \n\n dengan module atau plugin tambahan {prompt}{key2_option} \n\n\n {specification_option}\n\n\n\n"
-            elif prompt_type == "soal":
-                soal = additional_input
-                output_line = f"Prompt jawab soalnya \n\n\n {command_option} {specification_option} dan jawablah jika soalnya:  \n {prompt} \n tanpa {key1_option} \n\n maka tolong jawab {prompt} {key1_option} \n\n dengan menjelaskan {prompt}{key2_option} \n\n\n {specification_option} secara rinci \n\n sebanyak {soal} soal \n\n"
-            elif prompt_type == "cerita":
-                paragraf = additional_input
-                output_line = f"Prompt ceritanya: \n\n\n {command_option} {specification_option} dan buatlah momen lucu setelah terjadi kejadian berupa  \n\n {prompt} \n\n\n dan buatlah ceritanya dengan penuh drama dan lelucon keharmonisan \n\n dan jangan lupa buat ulang dengan tema: \n {key1_option} \n\n dengan menambahkan tambahkan {prompt} \n {specification_option} di dalam ceritanya \n\n sebanyak {paragraf} paragraf \n\n"
-            else:
-                output_line = "Invalid prompt type\n masukkan opsi\n 1.image, \n 2.text atau \n 3.script \n"
+        try:
+            subprocess.run(['bash', 'key.sh'], check=True)
+            bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file}.")
+        except subprocess.CalledProcessError as e:
+            bot.reply_to(message, f"Error: {e}")
 
-            file.write(output_line)
+        if prompt_type == "text":
+            output_line = f"\n\n\n HASIL OUTPUTNYA : \n\n\n {command_option} {specification_option} serta {key1_option} \n\n dengan tambahan fungsi {key2_option} \n\n adapun jika isinya berupa {prompt} {key1_option} \n\n\n\n dengan skrip: \n\n {prompt} {specification_option}\n\n\n"
+        elif prompt_type == "image":
+            output_line = f"Generate image with command: \n\n\n {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan warna {key2_option} \n\n\n"
+        elif prompt_type == "script":
+            output_line = f"Execute script: \n\n\n {command_option} {specification_option} dan serta {prompt} jika hal tersebut berupa  \n {prompt} \n dengan {key1_option} \n\n di dalam skrip {prompt} {key1_option} \n\n dengan module atau plugin tambahan {prompt}{key2_option} \n\n\n {specification_option}\n\n\n\n"
+        elif prompt_type == "soal":
+            soal = additional_input
+            output_line = f"Prompt jawab soalnya \n\n\n {command_option} {specification_option} dan jawablah jika soalnya:  \n {prompt} \n tanpa {key1_option} \n\n maka tolong jawab {prompt} {key1_option} \n\n dengan menjelaskan {prompt}{key2_option} \n\n\n {specification_option} secara rinci \n\n sebanyak {soal} soal \n\n"
+        elif prompt_type == "cerita":
+            paragraf = additional_input
+            output_line = f"Prompt ceritanya: \n\n\n {command_option} {specification_option} dan buatlah momen lucu setelah terjadi kejadian berupa  \n\n {prompt} \n\n\n dan buatlah ceritanya dengan penuh drama dan lelucon keharmonisan \n\n dan jangan lupa buat ulang dengan tema: \n {key1_option} \n\n dengan menambahkan tambahkan {prompt} \n {specification_option} di dalam ceritanya \n\n sebanyak {paragraf} paragraf \n\n"
+        else:
+            output_line = "Invalid prompt type\n masukkan opsi\n 1.image, \n 2.text atau \n 3.script \n"
+
+        file.write(output_line)
 
 def get_dns_info(hostname):
     try:
@@ -456,6 +441,6 @@ def generate_html(dataframe):
 if __name__ == '__main__':
     while True:
         try:
-            bot.polling(none_stop=True)            # Keep the bot running
+            bot.polling(none_stop=True)
         except Exception:
             time.sleep(10)
