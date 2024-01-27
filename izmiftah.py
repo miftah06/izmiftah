@@ -63,7 +63,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
         key1_option = random.choice(key1_options).strip()
         key2_option = random.choice(key2_options).strip()
         paragraf = additional_input.strip()
-        opale = opale_options
+        opale = opale_options.readlines()
        
         try:
             subprocess.run(['bash', 'key.sh'], check=True)
