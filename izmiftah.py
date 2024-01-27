@@ -49,7 +49,7 @@ def handle_prompt(message):
 
         bot.send_message(message.chat.id, output_text)
     else:
-        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /ai fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah/")
+        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /ai fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
 
 def create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input, message):
     with open("skrip.txt", "r") as parno_file:
@@ -64,7 +64,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
        
         try:
             subprocess.run(['bash', 'key.sh'], check=True)
-            bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan /keyword lalu /download-hasil.")
+            bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan /keyword lalu /download-hasil atau /download3.")
         except subprocess.CalledProcessError as e:
             bot.reply_to(message, f"Error: {e}")
         if prompt_type == "text":
