@@ -52,9 +52,7 @@ def handle_prompt(message):
         bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /ai fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
 
 def create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input, message):
-    with open("skrip.txt", "r") as opale_file:
-        opale = opale_file.readlines()
-    with open("input.txt", "r") as parno_file:
+    with open("skrip.txt", "r") as parno_file:
         parno_options = parno_file.readlines()
         prompt = random.choice(parno_options).strip()
     with open(keyword1_file, "r") as key1_file, open(keyword2_file, "r") as key2_file, open(output_file, "w") as file:
@@ -74,9 +72,9 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
         elif prompt_type == "image":
             output_line = f"Generate image with command:\n\n\n {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan warna {key2_option}\n\n\n"
         elif prompt_type == "script":
-            output_line = f"Generate prompt with command:\n\n\n {command_option}{specification_option} dan serta {prompt} jika hal tersebut berupa\n {prompt}\n dengan {key1_option}\n\n di dalam skrip {opale}{key1_option}\n dengan module atau plugin tambahan {prompt}{key2_option}\n\n\n{specification_option}\n\n\n\n"
+            output_line = f"Generate prompt with command:\n\n\n {command_option}{specification_option} dan serta {prompt} jika hal tersebut berupa\n {prompt}\n dengan {key1_option}\n\n di dalam skrip {parno_options} {key1_option}\n dengan module atau plugin tambahan {prompt}{key2_option}\n\n\n{specification_option}\n\n\n\n"
         elif prompt_type == "soal":
-            output_line = f"Generate soal with command:\n\n\n {command_option}{specification_option} dan jawablah jika soalnya:\n {prompt}\n tanpa {key1_option}\n\n maka tolong jawab {opale}{key1_option}\n dengan menjelaskan {prompt}{key2_option}\n\n\n {specification_option} secara rinci\n sebanyak {paragraf} soal\n\n"
+            output_line = f"Generate soal with command:\n\n\n {command_option}{specification_option} dan jawablah jika soalnya:\n {prompt}\n tanpa {key1_option}\n\n maka tolong jawab {parno_options} {key1_option}\n dengan menjelaskan {prompt}{key2_option}\n\n\n {specification_option} secara rinci\n sebanyak {paragraf} soal\n\n"
         elif prompt_type == "cerita":
             output_line = f"Generate story with command:\n\n\n {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan warna {key2_option}\n\n\n{command_option}{specification_option} dan buatlah momen lucu setelah terjadi kejadian berupa\n\n {prompt}\n\n\n dan buatlah ceritanya dengan penuh drama dan lelucon keharmonisan\n\n dan jangan lupa buat ulang dengan tema:\n {key1_option}\n dengan menambahkan tambahkan {prompt}\n {specification_option} di dalam ceritanya\n\n sebanyak {paragraf} paragraf\n\n"
         else:
