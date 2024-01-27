@@ -447,7 +447,7 @@ if not os.path.isfile('auto.xlsx'):
 def generate_html(dataframe):
     # Your logic for generating HTML based on the dataframe goes here
     # Replace this with your actual implementation
-    generated_html = f"jangan lupa /update terlebih dahulu \n silahkan /download.. dan tolong \n <html><body><h1>{keyword}</h1></body></html>"
+    generated_html = f"jangan lupa /update terlebih dahulu \n silahkan /download.. dan tolong \n <html><body><h1> ganti bagian sini... untuk mengedit file htmlnya </h1></body></html>"
     return generated_html
     
 if __name__ == '__main__':
