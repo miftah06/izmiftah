@@ -24,7 +24,7 @@ def save_to_file(filename, data):
 if __name__ == "__main__":
     try:
         # Opsi kata kunci dari pengguna
-        base_keyword = input("Masukkan kata kunci dasar: ")
+        base_keyword = " —hm,... lepaskan... menelan... kemarahannya.... ""shinonono...... Terima kasih atas perhatiannya. Semoga Anda menikmati cerita ini"
         num_related_keywords = 10000  # Minimal 100 kata kunci terkait
 
         # Hasilkan kata kunci terkait
