@@ -17,7 +17,7 @@ import random
 import keyword
 
 
-bot = telebot.TeleBot("6822789783:AAEBV3Rg798CsjhUxA2_K203rZiz4MskS0c")  # Ganti dengan token bot Telegram Anda
+bot = telebot.TeleBot("YOUR_TEELGRAM_BOT_TOKEN")  # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
 keyword = "Tolong ganti tulisan di bagian ini setelah jadi"
@@ -292,6 +292,17 @@ def download_keywords(message):
 
     try:
         with open('final_output.pdf', 'rb') as f:
+            bot.send_document(message.chat.id, f)
+    except Exception as e:
+        print(f"Error downloading keywords: {e}")
+        bot.reply_to(message, "Gagal mengunduh file pdf. Coba lagi nanti.")
+        
+@bot.message_handler(commands=['download-output'])
+def download_keywords(message):
+    global keywords_list
+
+    try:
+        with open('output.txt', 'rb') as f:
             bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading keywords: {e}")
