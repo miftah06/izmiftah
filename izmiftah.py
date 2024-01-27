@@ -88,7 +88,7 @@ def handle_prompt(message):
 
         bot.send_message(message.chat.id, output_text)
     else:
-        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /buatlah keyword1.txt/keyword2.txt/output.txt/kata_perintah/specification_option/prompt_type/additional_input")
+        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /buatlah keyword1.txt/keyword2.txt/output.txt/kata_perintah/specification_option/prompt_type/jumlah")
 
 def get_dns_info(hostname):
     try:
