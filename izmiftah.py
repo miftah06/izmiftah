@@ -30,7 +30,7 @@ def generate_keyword_file(filename, num_keywords):
     with open(filename, "w") as file:
         file.write("\n".join(random_keywords))
 
-@bot.message_handler(commands=['ai-prompt'])
+@bot.message_handler(commands=['ai'])
 def handle_prompt(message):
     # Mendapatkan argumen dari prompt
     args = message.text.split('/')[2:]
