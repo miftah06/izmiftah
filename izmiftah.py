@@ -52,8 +52,8 @@ def handle_prompt(message):
         bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /ai fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
 
 def create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input, message):
-    with open("skrip.txt", "r") as parno_file:
-        opale_options = opale_file.readlines()
+    with open("skrip.txt", "r") as opale_file:
+        opale = opale_file.readlines()
     with open("input.txt", "r") as parno_file:
         parno_options = parno_file.readlines()
         prompt = random.choice(parno_options).strip()
@@ -63,7 +63,6 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
         key1_option = random.choice(key1_options).strip()
         key2_option = random.choice(key2_options).strip()
         paragraf = additional_input.strip()
-        opale = opale_options.readlines()
        
         try:
             subprocess.run(['bash', 'key.sh'], check=True)
