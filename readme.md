@@ -3,7 +3,7 @@
 Command:
 
 ```bash
-ai - yakni untuk membuat ai prompt dengan format prompt_type yaitu 5 /script/image/text/soal/cerita
+ai-prompt - yakni untuk membuat ai prompt dengan format prompt_type yaitu 5 /script/image/text/soal/cerita
 dnsinfo - untuk mendapatkan info seputar hosting domain tersebut
 dork - untuk menjejahi domain dan url dengan dua katakunci misal: google/.com
 scan - untuk scanning domain dan url 
@@ -11,7 +11,8 @@ write - yakni untuk menulis secara otomatis ke file pdf dan html misal: /write t
 download - yakni untuk mendownload file novel pdfnya
 download-final - yakni untuk mendownload file final karya tulis pdfnya
 download-hasil - gunakan ini untuk mendapatkan ai promptnya
-download2 - yakni untuk mendownload file output.txt nya berupa hasil scan bug atau hasil ai promt
+download2 - yakni untuk mendownload file output.txt nya berupa hasil scan bug atau bisa juga hasil ai promt
+download3 - yakni untuk mendownload file ai.txt nya berupa hasil dari ai promt
 download-cover - yakni untuk mendownload file cover pdfnya
 download_html - yakni untuk mendownload hasil tulisan versi output.html
 download_html1 - yakni untuk mendownload hasil tulisan versi cover.html
