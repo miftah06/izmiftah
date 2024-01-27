@@ -16,10 +16,9 @@ import time
 import random
 import keyword
 
-bot = telebot.TeleBot("IDBOT_TELEGRAM_KAMU")  # Ganti dengan token bot Telegram Anda
+bot = telebot.TeleBot("YOUR_BOT_APITOKEN")  # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
-
 
 def generate_keyword_file(filename, num_keywords):
     keyword_list = keyword.kwlist
@@ -50,36 +49,36 @@ def handle_prompt(message):
 
         bot.send_message(message.chat.id, output_text)
     else:
-        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /ai fitur.txt/objek.txt/output.txt/kata_perintah/specification_option/prompt_type/jumlah/")
+        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /ai fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah/")
 
 def create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input, message):
+    with open("skrip.txt", "r") as parno_file:
+        parno_options = parno_file.readlines()
+        prompt = random.choice(parno_options).strip()
     with open(keyword1_file, "r") as key1_file, open(keyword2_file, "r") as key2_file, open(output_file, "w") as file:
         key1_options = key1_file.readlines()
         key2_options = key2_file.readlines()
         key1_option = random.choice(key1_options).strip()
         key2_option = random.choice(key2_options).strip()
-
+        paragraf = additional_input.strip()
+       
         try:
             subprocess.run(['bash', 'key.sh'], check=True)
-            bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file} \n silahkan jalankan /keyword lalu /download-hasil.")
+            bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan /keyword lalu /download-hasil.")
         except subprocess.CalledProcessError as e:
             bot.reply_to(message, f"Error: {e}")
-
         if prompt_type == "text":
-            output_line = f"\n\n\n HASIL OUTPUTNYA : \n\n\n {command_option} {specification_option} serta {key1_option} \n\n dengan tambahan fungsi {key2_option} \n\n adapun jika isinya berupa {prompt} {key1_option} \n\n\n\n dengan skrip: \n\n {prompt} {specification_option}\n\n\n"
+            output_line = f"Generate text with command:\n\n\n {command_option} {specification_option} serta {key1_option}\n dengan tambahan fungsi {key2_option}\n adapun jika isinya berupa {prompt} {key1_option}\n\n dengan skrip:\n\n{prompt} bersama fungsi atau tema {key2_option}\n\n\n"
         elif prompt_type == "image":
-            output_line = f"Generate image with command: \n\n\n {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan warna {key2_option} \n\n\n"
+            output_line = f"Generate image with command:\n\n\n {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan warna {key2_option}\n\n\n"
         elif prompt_type == "script":
-            output_line = f"Execute script: \n\n\n {command_option} {specification_option} dan serta {prompt} jika hal tersebut berupa  \n {prompt} \n dengan {key1_option} \n\n di dalam skrip {prompt} {key1_option} \n\n dengan module atau plugin tambahan {prompt}{key2_option} \n\n\n {specification_option}\n\n\n\n"
+            output_line = f"Generate prompt with command:\n\n\n {command_option}{specification_option} dan serta {prompt} jika hal tersebut berupa\n {prompt}\n dengan {key1_option}\n\n di dalam skrip {prompt}{key1_option}\n dengan module atau plugin tambahan {prompt}{key2_option}\n\n\n{specification_option}\n\n\n\n"
         elif prompt_type == "soal":
-            soal = additional_input
-            output_line = f"Prompt jawab soalnya \n\n\n {command_option} {specification_option} dan jawablah jika soalnya:  \n {prompt} \n tanpa {key1_option} \n\n maka tolong jawab {prompt} {key1_option} \n\n dengan menjelaskan {prompt}{key2_option} \n\n\n {specification_option} secara rinci \n\n sebanyak {soal} soal \n\n"
+            output_line = f"Generate soal with command:\n\n\n {command_option}{specification_option} dan jawablah jika soalnya:\n {prompt}\n tanpa {key1_option}\n\n maka tolong jawab {prompt}{key1_option}\n dengan menjelaskan {prompt}{key2_option}\n\n\n {specification_option} secara rinci\n sebanyak {paragraf} soal\n\n"
         elif prompt_type == "cerita":
-            paragraf = additional_input
-            output_line = f"Prompt ceritanya: \n\n\n {command_option} {specification_option} dan buatlah momen lucu setelah terjadi kejadian berupa  \n\n {prompt} \n\n\n dan buatlah ceritanya dengan penuh drama dan lelucon keharmonisan \n\n dan jangan lupa buat ulang dengan tema: \n {key1_option} \n\n dengan menambahkan tambahkan {prompt} \n {specification_option} di dalam ceritanya \n\n sebanyak {paragraf} paragraf \n\n"
+            output_line = f"Generate story with command:\n\n\n {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan warna {key2_option}\n\n\n{command_option}{specification_option} dan buatlah momen lucu setelah terjadi kejadian berupa\n\n {prompt}\n\n\n dan buatlah ceritanya dengan penuh drama dan lelucon keharmonisan\n\n dan jangan lupa buat ulang dengan tema:\n {key1_option}\n dengan menambahkan tambahkan {prompt}\n {specification_option} di dalam ceritanya\n\n sebanyak {paragraf} paragraf\n\n"
         else:
-            output_line = "Invalid prompt type\n masukkan opsi\n 1.image, \n 2.text atau \n 3.script \n"
-
+            output_line = "Invalid prompt type\n masukkan opsi\n 1.image,\n 2.text atau\n 3.script\n"
         file.write(output_line)
 
 def get_dns_info(hostname):
@@ -254,6 +253,16 @@ def get_random_text(message):
     # Process the generated_keyword as needed
 
     bot.reply_to(message, f"Intruksi!!: {generated_keyword} \n list file bahan: \n 1. katakunci.csv \n 2. keyword.txt \n 3. cover.xlsx \n 4. auto.xlsx \n DAPATKAN DI https://github.com/miftah06/skripsi/raw/master/bab-generator/ \n")
+
+@bot.message_handler(commands=['download3'])
+def download_html(message):
+    try:
+        with open('ai.txt', 'rb') as f:
+            bot.send_document(message.chat.id, f)
+    except Exception as e:
+        print(f"Error downloading txt output file: {e}")
+        bot.reply_to(message, "Gagal mengunduh file txt. Coba lagi nanti.")
+
 
 @bot.message_handler(commands=['download-cover'])
 def download_keywords(message):
