@@ -2,6 +2,7 @@
 
 Command:
 
+```bash
 ai - yakni untuk membuat ai prompt dengan format prompt_type yaitu 5 /script/image/text/soal/cerita
 dnsinfo - untuk mendapatkan info seputar hosting domain tersebut
 dork - untuk menjejahi domain dan url dengan dua katakunci misal: google/.com
@@ -19,4 +20,4 @@ document - untuk mencatumkan file yang akan di generate di utamakan keyword.txt
 upload - yakni untuk mengupload file tersebut
 update - perintah untuk mengupdate database kata
 keyword - untuk update database untuk generate ai prompt nya
-
+```
