@@ -17,7 +17,7 @@ import random
 import keyword
 
 
-bot = telebot.TeleBot("YOUR_TELEGRAM_BOT_TOKEN")  # Ganti dengan token bot Telegram Anda
+bot = telebot.TeleBot("IDBOT_TELEGRAM_KAMU")  # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
 keyword = "Tolong ganti tulisan di bagian ini setelah jadi"
