@@ -31,7 +31,7 @@ def generate_keyword_file(filename, num_keywords):
 
 @bot.message_handler(commands=['ai'])
 def handle_prompt(message):
-    args = message.text.split('/')[2:]
+    args = message.text.split('/')[1:]
 
     if len(args) == 7:
         keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input = args
@@ -60,7 +60,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
 
         try:
             subprocess.run(['bash', 'key.sh'], check=True)
-            bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file}.")
+            bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file} \n silahkan jalankan /keyword lalu /download-hasil.")
         except subprocess.CalledProcessError as e:
             bot.reply_to(message, f"Error: {e}")
 
