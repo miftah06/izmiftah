@@ -254,7 +254,7 @@ def get_random_text(message):
 
     # Process the generated_keyword as needed
 
-    bot.reply_to(message, f"Intruksi!!: {generated_keyword} \n list file bahan: \n 1. katakunci.csv \n 2. keyword.txt \n 3. cover.xlsx \n 4. auto.xlsx \n DAPATKAN DI https://github.com/miftah06/skripsi/raw/master/bab-generator/ \n")
+    bot.reply_to(message, f"Intruksi!!: {generated_keyword} \n list file bahan: \n 1. katakunci.csv \n 2. keyword.txt \n 3. cover.xlsx \n 4. auto.xlsx \n 5. skrip.txt \n DAPATKAN DI https://github.com/miftah06/izmiftah/ \n")
 
 @bot.message_handler(commands=['download3'])
 def download_html(message):
