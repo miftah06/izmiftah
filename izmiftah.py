@@ -46,7 +46,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
                 
             try:
                 subprocess.run(['bash', 'key.sh'], check=True)
-                bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file} .")
+                bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file} \n silahkan jalankan  /keyword lalu /download-hasil.")
             except subprocess.CalledProcessError as e:
                 bot.reply_to(message, f"Error: {e}")
                 
