@@ -43,7 +43,14 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
         for prompt in processed_data:
             key1_option = random.choice(key1_options).strip()
             key2_option = random.choice(key2_options).strip()
-
+                
+            try:
+                subprocess.run(['bash', 'key.sh'], check=True)
+                bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file} .")
+            except subprocess.CalledProcessError as e:
+                bot.reply_to(message, f"Error: {e}")
+                
+                
             if prompt_type == "text":
                 output_line = f"\n\n\n HASIL OUTPUTNYA : \n\n\n {command_option} {specification_option} serta {key1_option} \n\n dengan tambahan fungsi {key2_option} \n\n adapun jika isinya berupa {prompt} {key1_option} \n\n\n\n dengan skrip: \n\n {prompt} {specification_option}\n\n\n"
             elif prompt_type == "image":
@@ -88,7 +95,7 @@ def handle_prompt(message):
 
         bot.send_message(message.chat.id, output_text)
     else:
-        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /buatlah keyword1.txt/keyword2.txt/output.txt/kata_perintah/specification_option/prompt_type/jumlah")
+        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /buatlah keyword1.txt/keyword2.txt/output.txt/kata_perintah/specification_option/prompt_type/jumlah/")
 
 def get_dns_info(hostname):
     try:
