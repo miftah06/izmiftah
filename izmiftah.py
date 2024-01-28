@@ -78,7 +78,7 @@ def generate_content(message_text, api_key, chat_id=message.Chat.id):
 def send_telegram_message(message):
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     params = {
-        "chat_id": message.Chat.id,
+        "chat_id": message.chat_id,
         "text": message
     }
     response = requests.post(url, params=params)
@@ -126,14 +126,14 @@ def handle_ai2_prompt(update, context):
         if generated_image.startswith('data:image/jpeg;base64,'):
             # If the image is base64 encoded, decode it and send as photo
             image_data = base64.b64decode(generated_image.replace('data:image/jpeg;base64,', ''))
-            context.bot.send_photo(chat_id=update.effective_Chat.id, photo=image_data)
+            context.bot.send_photo(photo=image_data)
         else:
             # Otherwise, send it as a regular message with the image URL
-            context.bot.reply_to(message, chat_id=update.effective_Chat.id, text=generated_image)
+            context.bot.reply_to(message, text=generated_image)
 
     except Exception as e:
-        context.bot.reply_to(message, chat_id=update.effective_Chat.id, text=f"An error occurred: {str(e)}")
-        bot.reply_to(message, chat_id=message.Chat.id, text=f"An error occurred: {str(e)}")
+        context.bot.reply_to(message, text=f"An error occurred: {str(e)}")
+        bot.reply_to(message, text=f"An error occurred: {str(e)}")
     bot.reply_to(message, handle_ai2_prompt.result)
     bot.reply_to(message, generate_image.result)
 
@@ -167,9 +167,9 @@ def handle_prompt(message):
         with open(output_file, 'r') as file:
             output_text = file.read()
 
-        bot.reply_to(message, message.Chat.id, output_text)
+        bot.reply_to(message, output_text)
     else:
-        bot.reply_to(message, message.Chat.id,
+        bot.reply_to(message,
                          "Format prompt tidak valid. Gunakan format /ai-prompt fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
 
 
@@ -258,7 +258,7 @@ def get_dns_info(hostname):
 def handle_dnsinfo(message):
     domain = message.text.split()[1]
     cname_values, ipv4_addresses, ipv6_addresses = get_dns_info(domain)
-    bot.reply_to(message, message.Chat.id, f"CNAME: {cname_values}\nIPv4: {ipv4_addresses}\nIPv6: {ipv6_addresses}")
+    bot.reply_to(message, f"CNAME: {cname_values}\nIPv4: {ipv4_addresses}\nIPv6: {ipv6_addresses}")
     time.sleep(10)  # Add a delay of 10 seconds
 
 
@@ -291,7 +291,7 @@ def handle_dork(message):
     
     if all_results:
         formatted_results = "\n".join([f"{result['Keyword']}: {result['URL']}" for result in all_results])
-        bot.reply_to(message, message.Chat.id, formatted_results)
+        bot.reply_to(message, formatted_results)
     else:
         bot.reply_to(message, "Tidak ada hasil ditemukan.")
 
@@ -301,14 +301,14 @@ def scrape_domain(keyword):
     
     try:
         for url in search(keyword, num=3, stop=3, pause=5):  # Jeda waktu 5 detik antara setiap permintaan
-            print(f"URL ditemukan: {url}")
-            print(f"URL ditemukan: {url}")
+            bot.reply_to(message, f"URL ditemukan: {url}")
+            bot.reply_to(message,f"URL ditemukan: {url}")
             domain = extract_webdomain(url)
             if domain:
                 result = {'Keyword': keyword, 'URL': url, 'Domain': domain}
                 results.append(result)
     except Exception as e:
-        print(f"Error dalam proses scraping: {e}")
+        bot.reply_to(message, f"Error dalam proses scraping: {e}")
     
     return results
 
