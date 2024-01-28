@@ -1,0 +1,15 @@
+telebot
+telegram
+beautifulsoup4
+requests
+numpy
+beautifulsoup4
+randomizer
+chardet
+fpdf
+nltk
+numpy
+beautifulsoup4
+reportlab
+pdfkit
+wkhtmltopdf
