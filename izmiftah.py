@@ -277,7 +277,7 @@ def scrape_domain(keyword):
     try:
         for url in search(keyword, num=3, stop=3, pause=5):  # Jeda waktu 5 detik antara setiap permintaan
             bot.reply_to(message, f"URL ditemukan: {url}")
-            bot.reply_to(message,f"URL ditemukan: {url}")
+            print(f"URL ditemukan: {url}")
             domain = extract_webdomain(url)
             if domain:
                 result = {'Keyword': keyword, 'URL': url, 'Domain': domain}
