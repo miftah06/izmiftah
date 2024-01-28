@@ -27,7 +27,7 @@ api_key = 'your_deepai_apikey'
 
 
 def send_formatted_message(chat_id, formatted_message):
-    bot.send_message(chat_id=chat_id, text=formatted_message)
+    bot.reply_to(message, chat_id=chat_id, text=formatted_message)
 
 
 def generate_prompt(prompt, api_key):
@@ -129,13 +129,13 @@ def handle_ai2_prompt(update, context):
             context.bot.send_photo(chat_id=update.effective_Chat.id, photo=image_data)
         else:
             # Otherwise, send it as a regular message with the image URL
-            context.bot.send_message(chat_id=update.effective_Chat.id, text=generated_image)
+            context.bot.reply_to(message, chat_id=update.effective_Chat.id, text=generated_image)
 
     except Exception as e:
-        context.bot.send_message(chat_id=update.effective_Chat.id, text=f"An error occurred: {str(e)}")
-        bot.send_message(chat_id=message.Chat.id, text=f"An error occurred: {str(e)}")
-    bot.send_message(handle_ai2_prompt.result)
-    bot.send_message(generate_image.result)
+        context.bot.reply_to(message, chat_id=update.effective_Chat.id, text=f"An error occurred: {str(e)}")
+        bot.reply_to(message, chat_id=message.Chat.id, text=f"An error occurred: {str(e)}")
+    bot.reply_to(message, handle_ai2_prompt.result)
+    bot.reply_to(message, generate_image.result)
 
 
 def generate_keyword_file(filename, num_keywords):
@@ -167,14 +167,15 @@ def handle_prompt(message):
         with open(output_file, 'r') as file:
             output_text = file.read()
 
-        bot.send_message(message.Chat.id, output_text)
+        bot.reply_to(message, message.Chat.id, output_text)
     else:
-        bot.send_message(message.Chat.id,
+        bot.reply_to(message, message.Chat.id,
                          "Format prompt tidak valid. Gunakan format /ai-prompt fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
 
 
 @bot.message_handler(commands=['ai'])
-def handle_ai_prompt(update, context):
+def handle_ai_prompt(update, context, chat_id=message.Chat.id):
+    global e
     try:
         message_text = update.message.text.split(' ', 1)[1] if len(
             update.message.text.split()) > 1 else "No prompt provided."
@@ -183,13 +184,13 @@ def handle_ai_prompt(update, context):
         generated_content = generate_content(message_text, api_key)
 
         # Send generated content as a reply
-        context.bot.send_message(chat_id=update.effective_Chat.id, text=generated_content)
+        context.bot.reply_to(message, chat_id)
         
     except Exception as e:
-        context.bot.send_message(chat_id=update.effective_Chat.id, text=f"An error occurred: {str(e)}")
-        bot.send_message(chat_id=message.Chat.id, text=f"An error occurred: {str(e)}")
-    bot.send_message(handle_ai_prompt.result)
-    bot.send_message(generate_prompt.result)
+        context.bot.reply_to(message, text=f"An error occurred: {str(e)}")
+        bot.reply_to(message, text=f"An error occurred: {str(e)}")
+    bot.reply_to(message, handle_ai_prompt.result)
+    bot.reply_to(message, generate_prompt.result)
 
 
 def create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type,
@@ -257,7 +258,7 @@ def get_dns_info(hostname):
 def handle_dnsinfo(message):
     domain = message.text.split()[1]
     cname_values, ipv4_addresses, ipv6_addresses = get_dns_info(domain)
-    bot.send_message(message.Chat.id, f"CNAME: {cname_values}\nIPv4: {ipv4_addresses}\nIPv6: {ipv6_addresses}")
+    bot.reply_to(message, message.Chat.id, f"CNAME: {cname_values}\nIPv4: {ipv4_addresses}\nIPv6: {ipv6_addresses}")
     time.sleep(10)  # Add a delay of 10 seconds
 
 
@@ -290,7 +291,7 @@ def handle_dork(message):
     
     if all_results:
         formatted_results = "\n".join([f"{result['Keyword']}: {result['URL']}" for result in all_results])
-        bot.send_message(message.Chat.id, formatted_results)
+        bot.reply_to(message, message.Chat.id, formatted_results)
     else:
         bot.reply_to(message, "Tidak ada hasil ditemukan.")
 
