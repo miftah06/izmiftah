@@ -19,11 +19,11 @@ from autopdf import generate_html
 # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
-TOKEN = 'your_bot_token'
+TOKEN = 'your-token-bot-id'
 bot = telebot.TeleBot(TOKEN)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-api_key = 'your_deepai_apikey'
+api_key = 'your-deepai-api-key'
 
 
 def send_formatted_message(chat_id, formatted_message):
@@ -170,7 +170,7 @@ def handle_prompt(message):
         bot.reply_to(message, output_text)
     else:
         bot.reply_to(message,
-                         "Format prompt tidak valid. Gunakan format /ai-prompt fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
+                     "Format prompt tidak valid. Gunakan format /ai-prompt fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
 
 
 @bot.message_handler(commands=['ai'])
@@ -185,7 +185,7 @@ def handle_ai_prompt(update, context, chat_id=message.Chat.id):
 
         # Send generated content as a reply
         context.bot.reply_to(message, chat_id)
-        
+
     except Exception as e:
         context.bot.reply_to(message, text=f"An error occurred: {str(e)}")
         bot.reply_to(message, text=f"An error occurred: {str(e)}")
@@ -270,35 +270,10 @@ def extract_domain(url):
         return None
     return domain
 
-
-@bot.message_handler(commands=['dork'])
-def handle_dork(message):
-    try:
-        _, keywords_line, domain_extensions_line = message.text.split('/')
-    except ValueError:
-        bot.reply_to(message, "Format tidak valid. Gunakan /dork <keywords>/<domain_extensions>")
-        return
-    
-    keywords = keywords_line.split(',')
-    domain_extensions = domain_extensions_line.split(',')
-    all_results = []
-    
-    for keyword in keywords:
-        for domain_extension in domain_extensions:
-            formatted_keyword = f"{keyword} site:{domain_extension}"
-            results = scrape_domain(formatted_keyword)
-            all_results.extend(results)
-    
-    if all_results:
-        formatted_results = "\n".join([f"{result['Keyword']}: {result['URL']}" for result in all_results])
-        bot.reply_to(message, formatted_results)
-    else:
-        bot.reply_to(message, "Tidak ada hasil ditemukan.")
-
 def scrape_domain(keyword):
     print(f"Mencari: {keyword}")
     results = []
-    
+
     try:
         for url in search(keyword, num=3, stop=3, pause=5):  # Jeda waktu 5 detik antara setiap permintaan
             bot.reply_to(message, f"URL ditemukan: {url}")
@@ -309,7 +284,7 @@ def scrape_domain(keyword):
                 results.append(result)
     except Exception as e:
         bot.reply_to(message, f"Error dalam proses scraping: {e}")
-    
+
     return results
 
 def extract_webdomain(url):
@@ -319,6 +294,30 @@ def extract_webdomain(url):
         print(f"Error mengekstrak domain dari URL: {url}")
         return None
     return domain
+
+@bot.message_handler(commands=['dork'])
+def handle_dork(message):
+    try:
+        _, keywords_line, domain_extensions_line = message.text.split('/')
+    except ValueError:
+        bot.reply_to(message, "Format tidak valid. Gunakan /dork <keywords>/<domain_extensions>")
+        return
+
+    keywords = keywords_line.split(',')
+    domain_extensions = domain_extensions_line.split(',')
+    all_results = []
+
+    for keyword in keywords:
+        for domain_extension in domain_extensions:
+            formatted_keyword = f"{keyword} site:{domain_extension}"
+            results = scrape_domain(formatted_keyword)
+            all_results.extend(results)
+
+    if all_results:
+        formatted_results = "\n".join([f"{result['Keyword']}: {result['URL']}" for result in all_results])
+        bot.reply_to(message, scrape_domain.url)
+    else:
+        bot.reply_to(message, "Tidak ada hasil ditemukan.")
 
 def scan_subdomain(domain):
     subdomains = []
