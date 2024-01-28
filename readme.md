@@ -3,7 +3,9 @@
 Command:
 
 ```bash
-ai - yakni untuk membuat ai prompt dengan format prompt_type yaitu 5 /script/image/text/soal/cerita
+ai2 - untuk membuat gambar dengan deepai
+ai - untuk menulis dengan deepai
+ai-prompt - yakni untuk membuat ai prompt dengan format prompt_type yaitu 5 /script/image/text/soal/cerita
 dnsinfo - untuk mendapatkan info seputar hosting domain tersebut
 dork - untuk menjejahi domain dan url dengan dua katakunci misal: google/.com
 scan - untuk scanning domain dan url 
