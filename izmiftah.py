@@ -18,11 +18,11 @@ from autopdf import generate_html
 # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
-TOKEN = '6936247460:AAF2dKuhd-v_hji4sbZ8PjNPosTuFlo0230'
+TOKEN = 'your-bot-token'
 bot = telebot.TeleBot(TOKEN)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-api_key = '991d8f8c-033c-455e-946c-289757907a29'
+api_key = 'your-deepai-apikey'
 
 def generate_content(message_text, api_key):
     try:
