@@ -387,7 +387,7 @@ def handle_uploaded_file(message):
     global keywords_list
 
     if message.document.file_name not in ['katakunci.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'subdomains.txt']:
-        bot.reply_to(message, "Mohon kirim file dengan nama 'katakunci.csv' atau 'keyword.txt'.")
+        bot.reply_to(message, "Mohon kirim file dengan nama 'katakunci.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'subdomains.txt'.")
         return
 
     file_info = bot.get_file(message.document.file_id)
