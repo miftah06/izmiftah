@@ -23,7 +23,7 @@ TOKEN = 'your_bot_token'
 bot = telebot.TeleBot(TOKEN)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-api_key = '991d8f8c-033c-455e-946c-289757907a29'
+api_key = 'your_deepai_apikey'
 
 
 def send_formatted_message(chat_id, formatted_message):
