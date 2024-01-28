@@ -64,7 +64,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
        
         try:
             subprocess.run(['bash', 'key.sh'], check=True)
-            bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan /keyword lalu /download2 untuk output.txt atau ai.txt untuk /download3.")
+            bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan /keyword lalu /ai fitur.txt/objek.txt/output.txt/ \n lalu /download2 untuk output.txt atau ai.txt untuk /download3.")
         except subprocess.CalledProcessError as e:
             bot.reply_to(message, f"Error: {e}")
         if prompt_type == "text":
