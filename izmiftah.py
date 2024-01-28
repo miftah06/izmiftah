@@ -16,7 +16,7 @@ import time
 import random
 import keyword
 
-bot = telebot.TeleBot("YOUR_BOT_APITOKEN")  # Ganti dengan token bot Telegram Anda
+bot = telebot.TeleBot("6822789783:AAEFzD2YMuf0CfnpjYxacP3irlXPJPIi5Z4")  # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
 
@@ -64,7 +64,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
        
         try:
             subprocess.run(['bash', 'key.sh'], check=True)
-            bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan /keyword lalu /ai fitur.txt/objek.txt/output.txt/ \n lalu /download2 untuk output.txt atau ai.txt untuk /download3.")
+            bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan /keyword lalu /download-hasil \n lalu /download2 untuk output.txt sebagai /ai /command/command/output.txt atau ai.txt untuk /download3.")
         except subprocess.CalledProcessError as e:
             bot.reply_to(message, f"Error: {e}")
         if prompt_type == "text":

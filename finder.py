@@ -28,7 +28,7 @@ sorted_result = sort_elements(input_list)
 print("Sorted Result:", sorted_result)
 
 # Contoh penggunaan fungsi create_prompt
-input_file = "output.txt"
+input_file = "ai.txt"
 output_file = "hasil.txt"
 create_prompt(input_file, output_file)
 print(f"Prompt telah dibuat dan disimpan dalam file {output_file}.")
