@@ -12,23 +12,37 @@ import pandas as pd
 import requests
 import telebot
 from googlesearch import search
-from telegram import message
 import urllib.parse
 from autopdf import generate_html
 
 # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
-TOKEN = 'your-token-bot-id'
+TOKEN = '6936247460:AAF2dKuhd-v_hji4sbZ8PjNPosTuFlo0230'
 bot = telebot.TeleBot(TOKEN)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-api_key = 'your-deepai-api-key'
+api_key = '991d8f8c-033c-455e-946c-289757907a29'
 
+def generate_content(message_text, api_key):
+    try:
+        prompt = f"Generate content: {message_text}"
+
+        # Your code to generate content goes here!
+        generated_content = generate_prompt(prompt, api_key)
+
+        # Send the generated content as a message to the Telegram bot
+        send_formatted_message(generated_content)
+
+        # Return a success message
+        return "Message sent successfully!"
+
+    except Exception as e:
+        # Handle any exceptions that may occur
+        return f"Error: {str(e)}"
 
 def send_formatted_message(chat_id, formatted_message):
-    bot.reply_to(message, chat_id=chat_id, text=formatted_message)
-
+    bot.reply_to(chat_id=chat_id, text=formatted_message)
 
 def generate_prompt(prompt, api_key):
     try:
@@ -41,7 +55,6 @@ def generate_prompt(prompt, api_key):
             "text": prompt
         }
         response = requests.post(url, json=data, headers=headers)
-
         if response.status_code == 200:
             result = response.json()
             if 'output' in result:
@@ -49,31 +62,10 @@ def generate_prompt(prompt, api_key):
             else:
                 return f"Error in DeepAI response: {result}"
         else:
-            error_message = response.json().get('details', {}).get('input', {}).get('failedConstraints',
-                                                                                    'Unknown error')
+            error_message = response.json().get('details', {}).get('input', {}).get('failedConstraints', 'Unknown error')
             return f"Error in DeepAI request. Status code: {response.status_code}. Details: {error_message}"
-
     except Exception as e:
         return f"Error in DeepAI request. Exception: {str(e)}"
-
-
-def generate_content(message_text, api_key, chat_id=message.Chat.id):
-    try:
-        prompt = f"Generate content: {message_text}"
-
-        # Your code to generate content goes here!
-        generated_content = generate_prompt(prompt, api_key)
-
-        # Send the generated content as a message to the Telegram bot
-        send_formatted_message(chat_id, generated_content)
-
-        # Return a success message
-        return "Message sent successfully!"
-
-    except Exception as e:
-        # Handle any exceptions that may occur
-        return f"Error: {str(e)}"
-
 
 def send_telegram_message(message):
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
@@ -84,7 +76,6 @@ def send_telegram_message(message):
     response = requests.post(url, params=params)
     if response.status_code != 200:
         raise Exception(f"Failed to send message to Telegram bot: {response.text}")
-
 
 def generate_image(prompt, api_key):
     try:
@@ -97,7 +88,6 @@ def generate_image(prompt, api_key):
             "text": prompt
         }
         response = requests.post(url, json=data, headers=headers)
-
         if response.status_code == 200:
             result = response.json()
             if 'output_url' in result:
@@ -105,93 +95,74 @@ def generate_image(prompt, api_key):
             else:
                 return f"Error in DeepAI response: {result}"
         else:
-            error_message = response.json().get('details', {}).get('input', {}).get('failedConstraints',
-                                                                                    'Unknown error')
+            error_message = response.json().get('details', {}).get('input', {}).get('failedConstraints', 'Unknown error')
             return f"Error in DeepAI request. Status code: {response.status_code}. Details: {error_message}"
-
     except Exception as e:
         return f"Error in DeepAI request. Exception: {str(e)}"
-
 
 @bot.message_handler(commands=['ai2'])
 def handle_ai2_prompt(update, context):
     try:
-        message_text = update.message.text.split(' ', 1)[1] if len(
-            update.message.text.split()) > 1 else "No prompt provided."
-
-        # Generate image based on the provided prompt
+        message_text = update.message.text.split(' ', 1)[1] if len(update.message.text.split()) > 1 else "No prompt provided."
         generated_image = generate_image(message_text, api_key)
-
-        # Send the generated image as a message to the Telegram bot
         if generated_image.startswith('data:image/jpeg;base64,'):
-            # If the image is base64 encoded, decode it and send as photo
             image_data = base64.b64decode(generated_image.replace('data:image/jpeg;base64,', ''))
-            context.bot.send_photo(photo=image_data)
+            context.bot.send_photo(chat_id=update.message.chat_id, photo=image_data)
         else:
-            # Otherwise, send it as a regular message with the image URL
-            context.bot.reply_to(message, text=generated_image)
-
+            context.bot.send_message(chat_id=update.message.chat_id, text=generated_image)
     except Exception as e:
-        context.bot.reply_to(message, text=f"An error occurred: {str(e)}")
-        bot.reply_to(message, text=f"An error occurred: {str(e)}")
-    bot.reply_to(message, handle_ai2_prompt.result)
-    bot.reply_to(message, generate_image.result)
-
-
-def generate_keyword_file(filename, num_keywords):
-    keyword_list = keyword.kwlist
-    num_keywords = min(num_keywords, len(keyword_list))
-
-    random_keywords = random.sample(keyword_list, num_keywords)
-
-    with open(filename, "w") as file:
-        file.write("\n".join(random_keywords))
-
-
-@bot.message_handler(commands=['ai-prompt'])
-def handle_prompt(message):
-    args = message.text.split('/')[1:]
-
-    if len(args) == 7:
-        keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input = args
-
-        # Generate keywoard files
-        generate_keyword_file(keyword1_file, 500)
-        generate_keyword_file(keyword2_file, 500)
-
-        # Create prompt
-        create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type,
-                      additional_input, message)
-
-        # Send the output file to the user
-        with open(output_file, 'r') as file:
-            output_text = file.read()
-
-        bot.reply_to(message, output_text)
-    else:
-        bot.reply_to(message,
-                     "Format prompt tidak valid. Gunakan format /ai-prompt fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
-
-
+        context.bot.send_message(chat_id=update.message.chat_id)
+        
 @bot.message_handler(commands=['ai'])
-def handle_ai_prompt(update, context, chat_id=message.Chat.id):
+def handle_ai_prompt(update, context):
     global e
     try:
-        message_text = update.message.text.split(' ', 1)[1] if len(
-            update.message.text.split()) > 1 else "No prompt provided."
+        message_text = update.message.text.split(' ', 1)[1] if len(update.message.text.split()) > 1 else "No prompt provided."
 
         # Generate content based on the provided prompt
         generated_content = generate_content(message_text, api_key)
 
         # Send generated content as a reply
-        context.bot.reply_to(message, chat_id)
-
+        context.bot.send_message(chat_id=update.message.chat_id, text=generated_content)
+        
     except Exception as e:
-        context.bot.reply_to(message, text=f"An error occurred: {str(e)}")
-        bot.reply_to(message, text=f"An error occurred: {str(e)}")
-    bot.reply_to(message, handle_ai_prompt.result)
-    bot.reply_to(message, generate_prompt.result)
+        context.bot.send_message(chat_id=update.message.chat_id)
 
+
+
+def generate_keyword_file(filename, num_keywords):
+    keyword_list = keyword.kwlist
+    num_keywords = min(num_keywords, len(keyword_list))
+    random_keywords = random.sample(keyword_list, num_keywords)
+
+    with open(filename, "w") as file:
+        file.write("\n".join(random_keywords))
+
+@bot.message_handler(commands=['ai-prompt'])
+def handle_prompt(message):
+    args = message.text.split('/')[1:]
+    if len(args) == 7:
+        (
+            keyword1_file, keyword2_file, output_file, command_option,
+            specification_option, prompt_type, additional_input
+        ) = args
+
+        # Generate keyword files
+        generate_keyword_file(keyword1_file, 500)
+        generate_keyword_file(keyword2_file, 500)
+
+        # Create prompt
+        create_prompt(
+            keyword1_file, keyword2_file, output_file, command_option,
+            specification_option, prompt_type, additional_input, message
+        )
+
+        # Send the output file to the user
+        with open(output_file, 'r') as file:
+            output_text = file.read()
+            bot.reply_to(output_text)
+    else:
+        bot.reply_to(message, text="Format prompt tidak valid. Gunakan format /ai-prompt fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
 
 def create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type,
                   additional_input, message):
@@ -210,7 +181,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
             bot.reply_to(message,
                          f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan /keyword lalu /download-hasil \n lalu /download2 untuk output.txt sebagai /ai /command/command/output.txt atau ai.txt untuk /download3.")
         except subprocess.CalledProcessError as e:
-            bot.reply_to(message, f"Error: {e}")
+            bot.reply_to(f"Error: {e}")
         if prompt_type == "text":
             output_line = f"Generate text with command:\n\n\n {command_option} {specification_option} serta {key1_option}\n dengan tambahan fungsi {key2_option}\n adapun jika isinya berupa {prompt} {key1_option}\n\n dengan skrip:\n\n{prompt} bersama fungsi atau pembahasan mengenai {key2_option} serta berikan saya detail lengkapnya \n\n\n"
         elif prompt_type == "image":
@@ -258,8 +229,9 @@ def get_dns_info(hostname):
 def handle_dnsinfo(message):
     domain = message.text.split()[1]
     cname_values, ipv4_addresses, ipv6_addresses = get_dns_info(domain)
-    bot.reply_to(message, f"CNAME: {cname_values}\nIPv4: {ipv4_addresses}\nIPv6: {ipv6_addresses}")
+    bot.reply_to(f"CNAME: {cname_values}\nIPv4: {ipv4_addresses}\nIPv6: {ipv6_addresses}")
     time.sleep(10)  # Add a delay of 10 seconds
+
 
 
 def extract_domain(url):
@@ -273,18 +245,15 @@ def extract_domain(url):
 def scrape_domain(keyword):
     print(f"Mencari: {keyword}")
     results = []
-
     try:
-        for url in search(keyword, num=3, stop=3, pause=5):  # Jeda waktu 5 detik antara setiap permintaan
-            bot.reply_to(message, f"URL ditemukan: {url}")
+        for url in search(keyword, num=3, stop=3, pause=5): # Jeda waktu 5 detik antara setiap permintaan
             print(f"URL ditemukan: {url}")
-            domain = extract_webdomain(url)
+            domain = extract_domain(url)
             if domain:
                 result = {'Keyword': keyword, 'URL': url, 'Domain': domain}
                 results.append(result)
     except Exception as e:
-        bot.reply_to(message, f"Error dalam proses scraping: {e}")
-
+        print(f"Error dalam proses scraping: {e}")
     return results
 
 def extract_webdomain(url):
@@ -305,6 +274,7 @@ def handle_dork(message):
 
     keywords = keywords_line.split(',')
     domain_extensions = domain_extensions_line.split(',')
+
     all_results = []
 
     for keyword in keywords:
@@ -315,9 +285,9 @@ def handle_dork(message):
 
     if all_results:
         formatted_results = "\n".join([f"{result['Keyword']}: {result['URL']}" for result in all_results])
-        bot.reply_to(message, scrape_domain.url)
+        bot.reply_to(formatted_results)
     else:
-        bot.reply_to(message, "Tidak ada hasil ditemukan.")
+        bot.reply_to("Tidak ada hasil ditemukan.")
 
 def scan_subdomain(domain):
     subdomains = []
@@ -342,14 +312,14 @@ def scan_subdomain(domain):
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-    bot.reply_to(message, f"Hello, welcome to my Bot! Please format your message as follows: /write or /ai [Keyword] then /update or /keyword\n /dork for seraching and /scan for scanning subdomains")
+    bot.reply_to(f"Hello, welcome to my Bot! Please format your message as follows: /write or /ai [Keyword] then /update or /keyword\n /dork for seraching and /scan for scanning subdomains")
 
 
 @bot.message_handler(commands=['scan'])
 def handle_subdomain_query(message):
     domain = message.text.split()[-1]  # assuming the domain is the last text after the command
     results = scan_subdomain(domain)
-    bot.reply_to(message, f"Subdomain scan results: {results}")
+    bot.reply_to(f"Subdomain scan results: {results}")
 
 
 def check_cover_png():
@@ -419,10 +389,10 @@ def get_random_text(message):
 def download_html(message):
     try:
         with open('ai.txt', 'rb') as f:
-            bot.send_document(message.Chat.id, f)
+            bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading txt output file: {e}")
-        bot.reply_to(message, "Gagal mengunduh file txt. Coba lagi nanti.")
+        bot.reply_to("Gagal mengunduh file txt. Coba lagi nanti.")
 
 
 @bot.message_handler(commands=['download-cover'])
@@ -431,10 +401,10 @@ def download_keywords(message):
 
     try:
         with open('beauty-cover.pdf', 'rb') as f:
-            bot.send_document(message.Chat.id, f)
+            bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading keywords: {e}")
-        bot.reply_to(message, "Gagal mengunduh file pdf. Coba lagi nanti.")
+        bot.reply_to("Gagal mengunduh file pdf. Coba lagi nanti.")
 
 
 @bot.message_handler(commands=['download-final'])
@@ -443,10 +413,10 @@ def download_keywords(message):
 
     try:
         with open('final_output.pdf', 'rb') as f:
-            bot.send_document(message.Chat.id, f)
+            bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading keywords: {e}")
-        bot.reply_to(message, "Gagal mengunduh file pdf. Coba lagi nanti.")
+        bot.reply_to("Gagal mengunduh file pdf. Coba lagi nanti.")
 
 
 @bot.message_handler(commands=['download-hasil'])
@@ -455,10 +425,10 @@ def download_keywords(message):
 
     try:
         with open('hasil.txt', 'rb') as f:
-            bot.send_document(message.Chat.id, f)
+            bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading keywords: {e}")
-        bot.reply_to(message, "Gagal mengunduh file txt. Coba lagi nanti.")
+        bot.reply_to("Gagal mengunduh file txt. Coba lagi nanti.")
 
 
 @bot.message_handler(commands=['download'])
@@ -467,50 +437,50 @@ def download_keywords(message):
 
     try:
         with open('output_novel.pdf', 'rb') as f:
-            bot.send_document(message.Chat.id, f)
+            bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading keywords: {e}")
-        bot.reply_to(message, "Gagal mengunduh file pdf. Coba lagi nanti.")
+        bot.reply_to("Gagal mengunduh file pdf. Coba lagi nanti.")
 
 
 @bot.message_handler(commands=['download_html'])
 def download_html(message):
     try:
         with open('output.html', 'rb') as f:
-            bot.send_document(message.Chat.id, f)
+            bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading HTML: {e}")
-        bot.reply_to(message, "Gagal mengunduh file HTML. Coba lagi nanti.")
+        bot.reply_to("Gagal mengunduh file HTML. Coba lagi nanti.")
 
 
 @bot.message_handler(commands=['download2'])
 def download_html(message):
     try:
         with open('output.txt', 'rb') as f:
-            bot.send_document(message.Chat.id, f)
+            bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading txt output file: {e}")
-        bot.reply_to(message, "Gagal mengunduh file txt. Coba lagi nanti.")
+        bot.reply_to("Gagal mengunduh file txt. Coba lagi nanti.")
 
 
 @bot.message_handler(commands=['download_html1'])
 def download_html(message):
     try:
         with open('cover.html', 'rb') as f:
-            bot.send_document(message.Chat.id, f)
+            bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading HTML: {e}")
-        bot.reply_to(message, "Gagal mengunduh file HTML. Coba lagi nanti.")
+        bot.reply_to("Gagal mengunduh file HTML. Coba lagi nanti.")
 
 
 @bot.message_handler(commands=['download_html2'])
 def download_html(message):
     try:
         with open('pdf.html', 'rb') as f:
-            bot.send_document(message.Chat.id, f)
+            bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading HTML: {e}")
-        bot.reply_to(message, "Gagal mengunduh file HTML. Coba lagi nanti.")
+        bot.reply_to("Gagal mengunduh file HTML. Coba lagi nanti.")
 
 
 @bot.message_handler(commands=['upload'])
@@ -519,7 +489,7 @@ def update_keywords(message):
     if check_cover_png():
         bot.reply_to(message,"cover.png kosong. Silahkan upload cover.png sebagai logo atau cover karya tulis atau novel Anda.")
     else:
-        bot.reply_to(message, "Terima kasih! File cover.png sudah diunggah.")
+        bot.reply_to("Terima kasih! File cover.png sudah diunggah.")
 
 
     try:
@@ -570,27 +540,27 @@ def handle_uploaded_file(message):
         new_file.write(downloaded_file)
 
     if update_keywordnya():
-        bot.reply_to(message, f"File {message.document.file_name} berhasil diunggah dan database diperbarui.")
+        bot.reply_to(f"File {message.document.file_name} berhasil diunggah dan database diperbarui.")
     else:
-        bot.reply_to(message, "Gagal memperbarui database. Coba lagi nanti.")
+        bot.reply_to("Gagal memperbarui database. Coba lagi nanti.")
 
 
 @bot.message_handler(commands=['update'])
 def update_scripts(message):
     try:
         subprocess.run(['bash', 'run.sh'], check=True)
-        bot.reply_to(message, "Skrip berhasil diperbarui.")
+        bot.reply_to("Skrip berhasil diperbarui.")
     except subprocess.CalledProcessError as e:
-        bot.reply_to(message, f"Error: {e}")
+        bot.reply_to(f"Error: {e}")
 
 
 @bot.message_handler(commands=['keyword'])
 def update_scripts(message):
     try:
         subprocess.run(['bash', 'key.sh'], check=True)
-        bot.reply_to(message, "Skrip berhasil diperbarui.")
+        bot.reply_to("Skrip berhasil diperbarui.")
     except subprocess.CalledProcessError as e:
-        bot.reply_to(message, f"Error: {e}")
+        bot.reply_to(f"Error: {e}")
 
 
 def update_keywordnya():
