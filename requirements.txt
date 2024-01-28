@@ -1,5 +1,4 @@
 telebot
-telegram
 beautifulsoup4
 requests
 numpy
@@ -13,3 +12,6 @@ beautifulsoup4
 reportlab
 pdfkit
 wkhtmltopdf
+python-telegram-bot==13.7
+telegram
+pandas
