@@ -275,7 +275,7 @@ def handle_dork(message):
     try:
         _, keywords_line, domain_extensions_line = message.text.split('/')
     except ValueError:
-        bot.reply_to(message, "Format tidak valid. Gunakan /dork <keywords>;<domain_extensions>")
+        bot.reply_to(message, "Format tidak valid. Gunakan /dork <keywords>/<domain_extensions>")
         return
     
     keywords = keywords_line.split(',')
