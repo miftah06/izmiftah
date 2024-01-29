@@ -1,52 +1,29 @@
 import base64
 import csv
+import itertools
+import keyword as acak
 import logging
 import os
 import random
 import subprocess
 import time
 from datetime import datetime
-import keyword as acak
 
 import pandas as pd
 import requests
 import telebot
 from googlesearch import search
-from telegram import update
 
 from autopdf import generate_html
 
 # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
-TOKEN = 'your-bot-token-id'
+TOKEN = 'your-telegram-api-key'
 bot = telebot.TeleBot(TOKEN)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 api_key = 'your-deepai-api-key'
-
-
-def generate_content(message_text, api_key):
-    try:
-        prompt = f"Generate content: {message_text}"
-
-        # Your code to generate content goes here!
-        generated_content = generate_prompt(prompt, api_key)
-
-        # Send the generated content as a message to the Telegram bot
-        send_formatted_message(chat_id=update.message.chat_id, formatted_message=generated_content)
-
-        # Return a success message
-        return "Message sent successfully!"
-
-    except Exception as e:
-        # Handle any exceptions that may occur
-        return f"Error: {str(e)}"
-
-
-def send_formatted_message(chat_id, formatted_message):
-    bot.reply_to(chat_id=chat_id, text=formatted_message)
-
 
 def generate_prompt(prompt, api_key):
     try:
@@ -71,18 +48,6 @@ def generate_prompt(prompt, api_key):
     except Exception as e:
         return f"Error in DeepAI request. Exception: {str(e)}"
 
-
-def send_telegram_message(message):
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-    params = {
-        "chat_id": message.chat_id,
-        "text": message
-    }
-    response = requests.post(url, params=params)
-    if response.status_code != 200:
-        raise Exception(f"Failed to send message to Telegram bot: {response.text}")
-
-
 def generate_image(prompt, api_key):
     try:
         url = "https://api.deepai.org/api/text2img"
@@ -106,34 +71,37 @@ def generate_image(prompt, api_key):
     except Exception as e:
         return f"Error in DeepAI request. Exception: {str(e)}"
 
-
-@bot.message_handler(commands=['ai2'])
-def handle_ai2_prompt(update, context):
-    try:
-        message_text = update.message.text.split(' ', 1)[1] if len(update.message.text.split()) > 1 else "No prompt provided."
-        generated_image = generate_image(message_text, api_key)
-        if generated_image.startswith('data:image/jpeg;base64,'):
-            image_data = base64.b64decode(generated_image.replace('data:image/jpeg;base64,', ''))
-            context.bot.send_photo(chat_id=update.message.chat_id, photo=image_data)
-        else:
-            context.bot.send_message(chat_id=update.message.chat_id, text=generated_image)
-    except Exception as e:
-        context.bot.send_message(chat_id=update.message.chat_id)
-
+def send_formatted_message(message, formatted_message):
+    bot.send_message(message.chat.id, formatted_message)
 
 @bot.message_handler(commands=['ai'])
-def handle_ai_prompt(update, context):
+def handle_ai_prompt(message):
     try:
-        message_text = update.message.text.split(' ', 1)[1] if len(update.message.text.split()) > 1 else "No prompt provided."
+        message_text = message.text.split(' ', 1)[1] if len(message.text.split()) > 1 else "No prompt provided."
 
         # Generate content based on the provided prompt
-        generated_content = generate_content(message_text, api_key)
+        generated_content = generate_prompt(message_text, api_key)
 
         # Send generated content as a reply
-        context.bot.send_message(chat_id=update.message.chat_id, text=generated_content)
+        send_formatted_message(message, generated_content)
 
     except Exception as e:
-        context.bot.send_message(chat_id=update.message.chat_id)
+        bot.send_message(message.chat.id, str(e))
+
+@bot.message_handler(commands=['ai2'])
+def handle_ai2_prompt(message):
+    try:
+        message_text = message.text.split(' ', 1)[1] if len(message.text.split()) > 1 else "No prompt provided."
+        generated_image = generate_image(message_text, api_key)
+
+        if generated_image.startswith('data:image/jpeg;base64,'):
+            image_data = base64.b64decode(generated_image.replace('data:image/jpeg;base64,', ''))
+            bot.send_photo(message.chat.id, image_data)
+        else:
+            bot.send_message(message.chat.id, generated_image)
+
+    except Exception as e:
+        bot.send_message(message.chat.id, str(e))
 
 def generate_keyword_file(filename, num_keywords):
     keyword_list = acak.kwlist
@@ -235,11 +203,16 @@ def extract_domain(url):
         return None
     return domain
 
-def scrape_domain(keyword):
+def scrape_domain(keyword, num_results=3):
     print(f"Searching for: {keyword}")
     results = []
-    count = 0
-    for url in search(keyword, num_results=3):
+
+    # Menyimpan hasil pencarian dalam list
+    search_results = list(itertools.islice(search(keyword), num_results))
+
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+
+    for url in search_results:
         print(f"Found URL: {url}")
         domain = extract_domain(url)
         result = None
@@ -251,32 +224,43 @@ def scrape_domain(keyword):
             }
         if result:
             results.append(result)
-            count += 1
-        if count >= 3:
-            break
-        time.sleep(2)
-    return results
+
+        time.sleep(10)  # Penundaan 2 detik
+
 
 
 @bot.message_handler(commands=['dork'])
-def handle_message(message):
+def handle_dork(message):
     try:
+        # Memisahkan argumen menggunakan "/" sebagai pemisah
         _, keywords_line, domain_extensions_line = message.text.split('/')
+
+        # Mendapatkan daftar kata kunci dan ekstensi domain
+        keywords = keywords_line.split(',')
+        domain_extensions = domain_extensions_line.split(',')
+
+        # Menyimpan hasil pencarian dari setiap kombinasi kata kunci dan ekstensi domain
+        all_results = []
+
+        for keyword in keywords:
+            for domain_extension in domain_extensions:
+                keyword_with_extension = f"{keyword}{domain_extension}"
+                results = scrape_domain(keyword_with_extension)
+                all_results.extend(results)
+
+        if all_results:
+            # Mengirim hasil pencarian ke pengguna
+            bot.send_message(message.chat.id, f"Results: {str(all_results)}")
+        else:
+            # Memberikan pesan jika tidak ada hasil yang ditemukan
+            bot.reply_to(message, "No results found.")
+
     except ValueError:
+        # Menangani kesalahan jika format perintah tidak sesuai
         bot.reply_to(message, "Invalid format. Use /dork <keywords>;<domain_extensions>")
-        return
-    keywords = keywords_line.split(',')
-    domain_extensions = domain_extensions_line.split(',')
-    all_results = []
-    for keyword in keywords:
-        for domain_extension in domain_extensions:
-            keyword_with_extension = f"{keyword}{domain_extension}"
-            results = scrape_domain(keyword_with_extension)
-            all_results.extend(results)
-    if all_results:
-        bot.send_message(message.chat.id, str(all_results))
-    else:
-        bot.reply_to(message, "No results found.")
+    except Exception as e:
+        # Menangani kesalahan umum
+        bot.reply_to(message, f"Error: {str(e)}")
 
 
 def scan_subdomain(domain):
