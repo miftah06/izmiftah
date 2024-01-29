@@ -1,25 +1,26 @@
 import base64
 import csv
-import itertools
-import keyword as acak
 import logging
 import os
 import random
 import subprocess
 import time
 from datetime import datetime
+import keyword as acak
 
 import pandas as pd
 import requests
 import telebot
 from googlesearch import search
+from telegram import update
+import itertools
 
 from autopdf import generate_html
 
 # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
-TOKEN = 'your-telegram-api-key'
+TOKEN = 'your-bot-telegram-token'
 bot = telebot.TeleBot(TOKEN)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -102,7 +103,7 @@ def handle_ai2_prompt(message):
 
     except Exception as e:
         bot.send_message(message.chat.id, str(e))
-
+        
 def generate_keyword_file(filename, num_keywords):
     keyword_list = acak.kwlist
     num_keywords = min(num_keywords, len(keyword_list))
@@ -204,30 +205,34 @@ def extract_domain(url):
     return domain
 
 def scrape_domain(keyword, num_results=3):
-    print(f"Searching for: {keyword}")
-    results = []
+    try:
+        print(f"Searching for: {keyword}")
+        results = []
+        
+        # Menyimpan hasil pencarian dalam list
+        search_results = list(itertools.islice(search(keyword), num_results))
+        
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
 
-    # Menyimpan hasil pencarian dalam list
-    search_results = list(itertools.islice(search(keyword), num_results))
+        for url in search_results:
+            print(f"Found URL: {url}")
+            domain = extract_domain(url)
+            result = None
+            if domain:
+                result = {
+                    'keyword': keyword,
+                    'URL': url,
+                    'Domain': domain,
+                }
+            if result:
+                results.append(result)
 
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
-
-    for url in search_results:
-        print(f"Found URL: {url}")
-        domain = extract_domain(url)
-        result = None
-        if domain:
-            result = {
-                'keyword': keyword,
-                'URL': url,
-                'Domain': domain,
-            }
-        if result:
-            results.append(result)
-
-        time.sleep(10)  # Penundaan 2 detik
-
-
+            time.sleep(10)  # Penundaan 10 detik
+            
+        return results
+    except Exception as e:
+        print(f"Error in scrape_domain: {str(e)}")
+        return []  # Return an empty list to handle the error
 
 @bot.message_handler(commands=['dork'])
 def handle_dork(message):
@@ -254,7 +259,7 @@ def handle_dork(message):
         else:
             # Memberikan pesan jika tidak ada hasil yang ditemukan
             bot.reply_to(message, "No results found.")
-
+    
     except ValueError:
         # Menangani kesalahan jika format perintah tidak sesuai
         bot.reply_to(message, "Invalid format. Use /dork <keywords>;<domain_extensions>")
