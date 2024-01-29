@@ -15,4 +15,4 @@ wkhtmltopdf
 python-telegram-bot==13.7
 telegram
 pandas
-openai
+openai==0.27.8
