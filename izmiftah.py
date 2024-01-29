@@ -1,26 +1,25 @@
 import base64
 import csv
+import itertools
+import keyword as acak
 import logging
 import os
 import random
 import subprocess
 import time
 from datetime import datetime
-import keyword as acak
 
 import pandas as pd
 import requests
 import telebot
 from googlesearch import search
-from telegram import update
-import itertools
 
 from autopdf import generate_html
 
 # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
-TOKEN = 'your-bot-telegram-token'
+TOKEN = 'your-telegram-bot-token'
 bot = telebot.TeleBot(TOKEN)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -103,7 +102,7 @@ def handle_ai2_prompt(message):
 
     except Exception as e:
         bot.send_message(message.chat.id, str(e))
-        
+
 def generate_keyword_file(filename, num_keywords):
     keyword_list = acak.kwlist
     num_keywords = min(num_keywords, len(keyword_list))
@@ -208,10 +207,10 @@ def scrape_domain(keyword, num_results=3):
     try:
         print(f"Searching for: {keyword}")
         results = []
-        
+
         # Menyimpan hasil pencarian dalam list
         search_results = list(itertools.islice(search(keyword), num_results))
-        
+
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
 
         for url in search_results:
@@ -228,7 +227,7 @@ def scrape_domain(keyword, num_results=3):
                 results.append(result)
 
             time.sleep(10)  # Penundaan 10 detik
-            
+
         return results
     except Exception as e:
         print(f"Error in scrape_domain: {str(e)}")
@@ -259,7 +258,7 @@ def handle_dork(message):
         else:
             # Memberikan pesan jika tidak ada hasil yang ditemukan
             bot.reply_to(message, "No results found.")
-    
+
     except ValueError:
         # Menangani kesalahan jika format perintah tidak sesuai
         bot.reply_to(message, "Invalid format. Use /dork <keywords>;<domain_extensions>")
@@ -455,7 +454,7 @@ def update_keywords(message):
 
     try:
         # Set a larger field size limit
-        max_field_size = 80000
+        max_field_size = int(1e6)
         csv.field_size_limit(max_field_size)
 
         # Read the entire CSV file with Pandas
@@ -464,15 +463,31 @@ def update_keywords(message):
         # Convert the first column to lowercase and extend the keywords list
         keywords_list.extend(df.iloc[:, 0].str.lower().tolist())
 
+        # Check cover.png after updating keywords
+        if check_cover_png():
+            bot.reply_to(message, "cover.png kosong. Silahkan upload cover.png sebagai logo atau cover karya tulis atau novel Anda.")
+        else:
+            bot.reply_to(message, "Terima kasih! File cover.png sudah diunggah.")
+
         return True
     except Exception as e:
         print(f"Error updating keywords: {e}")
         return False
 
-    if check_cover_png():
-        bot.reply_to(message, "cover.png kosong. Silahkan upload cover.png sebagai logo atau cover karya tulis atau novel Anda.")
-    else:
-        bot.reply_to(message, "Terima kasih! File cover.png sudah diunggah.")
+# Function to check if cover.png is empty
+def check_cover_png():
+    # Implement your logic to check if cover.png is empty
+    # For example, you can check the file size or content
+    cover_path = 'cover.png'
+    try:
+        file_size = os.path.getsize(cover_path)
+        if file_size == 0:
+            return True  # Cover.png is empty
+        else:
+            return False  # Cover.png is not empty
+    except Exception as e:
+        print(f"Error checking cover.png: {e}")
+        return True  # Assume cover.png is empty in case of an error
 
 def process_uploaded_file(file_path):
     # Implement your logic to process the uploaded file
@@ -522,11 +537,11 @@ def update_scripts(message):
     except subprocess.CalledProcessError as e:
         bot.reply_to(message, f"Error: {e}")
 
-def update_keyword():
+def update_keywords():
     global keywords_list
 
     try:
-        with open('katakunci.txt', newline='', encoding='utf-8') as csvfile:
+        with open('katakunci.csv', newline='', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
             keywords_list = [row[0] for row in reader]
         return True
