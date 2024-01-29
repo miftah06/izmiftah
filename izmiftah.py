@@ -526,7 +526,7 @@ def update_keywords():
     global keywords_list
 
     try:
-        with open('keyword.csv', newline='', encoding='utf-8') as csvfile:
+        with open('keyword.txt', newline='', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
             keywords_list = [row[0] for row in reader]
         return True
