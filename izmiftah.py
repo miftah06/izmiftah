@@ -455,7 +455,7 @@ def update_keywords(message):
 
     try:
         # Set a larger field size limit
-        max_field_size = int(1e6)
+        max_field_size = 80000
         csv.field_size_limit(max_field_size)
 
         # Read the entire CSV file with Pandas
@@ -522,11 +522,11 @@ def update_scripts(message):
     except subprocess.CalledProcessError as e:
         bot.reply_to(message, f"Error: {e}")
 
-def update_keywords():
+def update_keyword():
     global keywords_list
 
     try:
-        with open('keyword.txt', newline='', encoding='utf-8') as csvfile:
+        with open('katakunci.txt', newline='', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
             keywords_list = [row[0] for row in reader]
         return True
