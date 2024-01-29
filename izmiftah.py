@@ -1,12 +1,12 @@
 import base64
 import csv
-import keyword
 import logging
 import os
 import random
 import subprocess
 import time
 from datetime import datetime
+import keyword as acak
 
 import pandas as pd
 import requests
@@ -136,7 +136,7 @@ def handle_ai_prompt(update, context):
         context.bot.send_message(chat_id=update.message.chat_id)
 
 def generate_keyword_file(filename, num_keywords):
-    keyword_list = keyword.kwlist
+    keyword_list = acak.kwlist
     num_keywords = min(num_keywords, len(keyword_list))
 
     random_keywords = random.sample(keyword_list, num_keywords)
@@ -235,17 +235,17 @@ def extract_domain(url):
         return None
     return domain
 
-def scrape_domain(katakunci):
-    print(f"Searching for: {katakunci}")
+def scrape_domain(keyword):
+    print(f"Searching for: {keyword}")
     results = []
     count = 0
-    for url in search(katakunci, num_results=3):
+    for url in search(keyword, num_results=3):
         print(f"Found URL: {url}")
         domain = extract_domain(url)
         result = None
         if domain:
             result = {
-                'katakunci': katakunci,
+                'keyword': keyword,
                 'URL': url,
                 'Domain': domain,
             }
@@ -261,17 +261,17 @@ def scrape_domain(katakunci):
 @bot.message_handler(commands=['dork'])
 def handle_message(message):
     try:
-        _, katakuncis_line, domain_extensions_line = message.text.split('/')
+        _, keywords_line, domain_extensions_line = message.text.split('/')
     except ValueError:
-        bot.reply_to(message, "Invalid format. Use /dork <katakuncis>;<domain_extensions>")
+        bot.reply_to(message, "Invalid format. Use /dork <keywords>;<domain_extensions>")
         return
-    katakuncis = katakuncis_line.split(',')
+    keywords = keywords_line.split(',')
     domain_extensions = domain_extensions_line.split(',')
     all_results = []
-    for katakunci in katakuncis:
+    for keyword in keywords:
         for domain_extension in domain_extensions:
-            katakunci_with_extension = f"{katakunci}{domain_extension}"
-            results = scrape_domain(katakunci_with_extension)
+            keyword_with_extension = f"{keyword}{domain_extension}"
+            results = scrape_domain(keyword_with_extension)
             all_results.extend(results)
     if all_results:
         bot.send_message(message.chat.id, str(all_results))
@@ -321,7 +321,7 @@ def check_cover_png():
 def get_random_text(message):
     global last_update_time, keywords_list
 
-    # Periksa apakah file katakunci.csv perlu diperbarui
+    # Periksa apakah file keyword.csv perlu diperbarui
     current_time = datetime.now()
     if last_update_time is None or (current_time - last_update_time).days >= 1:
         if update_keywords():
@@ -368,7 +368,7 @@ def get_random_text(message):
 
     # Process the generated_keyword as needed
 
-    bot.reply_to(message, f"Intruksi!!: {generated_keyword} \n list file bahan: \n 1. katakunci.csv \n 2. keyword.txt \n 3. cover.xlsx \n 4. auto.xlsx \n 5. skrip.txt \n DAPATKAN DI https://github.com/miftah06/izmiftah/ \n")
+    bot.reply_to(message, f"Intruksi!!: {generated_keyword} \n list file bahan: \n 1. keyword.csv \n 2. keyword.txt \n 3. cover.xlsx \n 4. auto.xlsx \n 5. skrip.txt \n DAPATKAN DI https://github.com/miftah06/izmiftah/ \n")
 
 @bot.message_handler(commands=['download3'])
 def download_html(message):
@@ -502,8 +502,8 @@ def process_uploaded_file(file_path):
 def handle_uploaded_file(message):
     global keywords_list
 
-    if message.document.file_name not in ['katakunci.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'subdomains.txt', 'cover.png']:
-        bot.reply_to(message, "Mohon kirim file dengan nama 'katakunci.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'cover.png', 'subdomains.txt'. ")
+    if message.document.file_name not in ['keyword.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'subdomains.txt', 'cover.png']:
+        bot.reply_to(message, "Mohon kirim file dengan nama 'keyword.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'cover.png', 'subdomains.txt'. ")
         return
 
     file_info = bot.get_file(message.document.file_id)
@@ -537,7 +537,7 @@ def update_keywords():
     global keywords_list
 
     try:
-        with open('katakunci.csv', newline='', encoding='utf-8') as csvfile:
+        with open('keyword.csv', newline='', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
             keywords_list = [row[0] for row in reader]
         return True
