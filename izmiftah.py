@@ -40,11 +40,11 @@ def send_telegram_message(message):
     if response.status_code != 200:
         raise Exception(f"Failed to send message to Telegram bot: {response.text}")
 
-@bot.message_handler(commands=['ai'])
+@bot.message_handler(commands=['chat'])
 def write_document(message):
-    inputs = message.text[len('/ai '):].split(';')
+    inputs = message.text[len('/chat '):].split(';')
     if len(inputs) != 3:
-        bot.reply_to(message, "Format salah, silakan ikuti format ini: /ai perintah;opsional1,opsional2;Kata kunci1,Kata kunci2")
+        bot.reply_to(message, "Format salah, silakan ikuti format ini: /chat pesan1;pesan2;pesan3")
         return
 
     judul = inputs[0].strip()
@@ -514,6 +514,30 @@ def generate_html(dataframe):
     # Replace this with your actual implementation
     generated_html = f"jangan lupa /update terlebih dahulu \n silahkan /download.. dan tolong \n <html><body><h1> ganti bagian sini... untuk mengedit file htmlnya </h1></body></html>"
     return generated_html
+
+@bot.message_handler(commands=['ai'])  # Command untuk chat dengan AI
+def handle_chat(message):
+    try:
+        message_text = message.text.split(' ', 1)[1] if len(message.text.split()) > 1 else "No input provided."
+
+        # Membuat permintaan ke OpenAI Chat API
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # Pilih model yang sesuai
+            messages=[
+                {"role": "system", "content": "You are a researcher working on a thesis about teacher-parent synergy to DEVELOP ELEMENTARY SCHOOL STUDENTS' DISCIPLINE CHARACTER."},
+                {"role": "user", "content": message_text}
+            ]
+        )
+
+        # Mengambil pesan dari respons
+        ai_reply = response['choices'][0]['message']['content']
+
+        # Mengirimkan balasan AI sebagai reply
+        bot.send_message(message.chat.id, ai_reply)
+
+    except Exception as e:
+        bot.send_message(message.chat.id, str(e))
+
 
 if __name__ == '__main__':
     while True:
