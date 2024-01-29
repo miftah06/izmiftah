@@ -1,4 +1,3 @@
-import base64
 import csv
 import itertools
 import keyword as acak
@@ -9,6 +8,7 @@ import subprocess
 import time
 from datetime import datetime
 
+import openai
 import pandas as pd
 import requests
 import telebot
@@ -19,89 +19,52 @@ from autopdf import generate_html
 # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
-TOKEN = 'your-telegram-bot-token'
+TOKEN = 'your-telegram-token-bot'
 bot = telebot.TeleBot(TOKEN)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-api_key = 'your-deepai-api-key'
+api_key = 'your-openai-api-key'
+openai.api_key = api_key
 
-def generate_prompt(prompt, api_key):
-    try:
-        url = "https://api.deepai.org/api/text-generator"
-        headers = {
-            "Content-Type": "application/json",
-            "api-key": api_key
-        }
-        data = {
-            "text": prompt
-        }
-        response = requests.post(url, json=data, headers=headers)
-        if response.status_code == 200:
-            result = response.json()
-            if 'output' in result:
-                return result['output']
-            else:
-                return f"Error in DeepAI response: {result}"
-        else:
-            error_message = response.json().get('details', {}).get('input', {}).get('failedConstraints', 'Unknown error')
-            return f"Error in DeepAI request. Status code: {response.status_code}. Details: {error_message}"
-    except Exception as e:
-        return f"Error in DeepAI request. Exception: {str(e)}"
 
-def generate_image(prompt, api_key):
-    try:
-        url = "https://api.deepai.org/api/text2img"
-        headers = {
-            "Content-Type": "application/json",
-            "api-key": api_key
-        }
-        data = {
-            "text": prompt
-        }
-        response = requests.post(url, json=data, headers=headers)
-        if response.status_code == 200:
-            result = response.json()
-            if 'output_url' in result:
-                return result['output_url']
-            else:
-                return f"Error in DeepAI response: {result}"
-        else:
-            error_message = response.json().get('details', {}).get('input', {}).get('failedConstraints', 'Unknown error')
-            return f"Error in DeepAI request. Status code: {response.status_code}. Details: {error_message}"
-    except Exception as e:
-        return f"Error in DeepAI request. Exception: {str(e)}"
+def send_formatted_message(chat_id, formatted_message):
+    bot.send_message(chat_id=chat_id, text=formatted_message)
 
-def send_formatted_message(message, formatted_message):
-    bot.send_message(message.chat.id, formatted_message)
+def send_telegram_message(message):
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    params = {
+        "chat_id": message.Chat.id,
+        "text": message
+    }
+    response = requests.post(url, params=params)
+    if response.status_code != 200:
+        raise Exception(f"Failed to send message to Telegram bot: {response.text}")
 
 @bot.message_handler(commands=['ai'])
-def handle_ai_prompt(message):
-    try:
-        message_text = message.text.split(' ', 1)[1] if len(message.text.split()) > 1 else "No prompt provided."
+def write_document(message):
+    inputs = message.text[len('/ai '):].split(';')
+    if len(inputs) != 3:
+        bot.reply_to(message, "Format salah, silakan ikuti format ini: /ai perintah;opsional1,opsional2;Kata kunci1,Kata kunci2")
+        return
 
-        # Generate content based on the provided prompt
-        generated_content = generate_prompt(message_text, api_key)
+    judul = inputs[0].strip()
+    subjudul_list = inputs[1].strip().split(',')
+    keywords_list = inputs[2].strip().split(',')
 
-        # Send generated content as a reply
-        send_formatted_message(message, generated_content)
+    # membuat prompt
+    prompt = f"Judul: {judul}\n\n"
 
-    except Exception as e:
-        bot.send_message(message.chat.id, str(e))
+    for idx, sub_judul in enumerate(subjudul_list, start=1):
+        prompt += f"Sub_{idx}: {sub_judul}\n"
+    prompt += "Keywords: " + ', '.join(keywords_list) + "\n\n"
 
-@bot.message_handler(commands=['ai2'])
-def handle_ai2_prompt(message):
-    try:
-        message_text = message.text.split(' ', 1)[1] if len(message.text.split()) > 1 else "No prompt provided."
-        generated_image = generate_image(message_text, api_key)
+    response = openai.Completion.create(
+        model="gpt-3.5-turbo-instruct",
+        prompt="Hello, world!",
+        max_tokens=10
+    )
 
-        if generated_image.startswith('data:image/jpeg;base64,'):
-            image_data = base64.b64decode(generated_image.replace('data:image/jpeg;base64,', ''))
-            bot.send_photo(message.chat.id, image_data)
-        else:
-            bot.send_message(message.chat.id, generated_image)
-
-    except Exception as e:
-        bot.send_message(message.chat.id, str(e))
+    bot.reply_to(message, response.choices[0].text.strip())
 
 def generate_keyword_file(filename, num_keywords):
     keyword_list = acak.kwlist
@@ -151,15 +114,15 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
         except subprocess.CalledProcessError as e:
             bot.reply_to(message, f"Error: {e}")
         if prompt_type == "text":
-            output_line = f"Generate text with command:\n\n\n {command_option} {specification_option} serta {key1_option}\n dengan tambahan fungsi {key2_option}\n adapun jika isinya berupa {prompt} {key1_option}\n\n dengan skrip:\n\n{prompt} bersama fungsi atau pembahasan mengenai {key2_option} serta berikan saya detail lengkapnya \n\n\n"
+            output_line = f"Generate text with command:\n\n\n; {command_option} {specification_option} serta {key1_option}\n dengan tambahan fungsi {key2_option}\n adapun jika isinya berupa {prompt} {key1_option}\n\n;  dengan skrip:\n\n{prompt} bersama fungsi atau pembahasan mengenai {key2_option} serta berikan saya detail lengkapnya \n\n\n"
         elif prompt_type == "image":
-            output_line = f"Generate image with command:\n\n\n {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan warna {key2_option}\n\n\n"
+            output_line = f"Generate image with command:\n\n\n; {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan warna {key2_option}\n\n\n"
         elif prompt_type == "script":
-            output_line = f"Generate script with command:\n\n\n {command_option}{specification_option} dan serta {prompt} jika hal tersebut berupa\n {prompt}\n dengan {key1_option}\n\n di dalam skrip {parno_options} {key1_option}\n dengan module atau plugin tambahan {prompt}{key2_option}\n\n\npada untuk {specification_option} dan berikan saya skrip lengkapnya\n\n\n\n"
+            output_line = f"Generate script with command:\n\n\n; {command_option}{specification_option} dan serta {prompt} jika hal tersebut berupa\n {prompt}\n dengan {key1_option}\n\n;  di dalam skrip {parno_options} {key1_option}\n dengan module atau plugin tambahan {prompt}{key2_option}\n\n\npada untuk {specification_option} dan berikan saya skrip lengkapnya\n\n\n\n"
         elif prompt_type == "soal":
-            output_line = f"Generate answer with command:\n\n\n {command_option}{specification_option} dan jawablah jika soalnya:\n {prompt}\n tanpa {key1_option}\n\n maka tolong jawab {parno_options} {key1_option}\n dengan menjelaskan {prompt}{key2_option}\n\n\n {specification_option} secara rinci\n sebanyak {paragraf} soal serta berikan saya jawaban lengkapnya\n\n"
+            output_line = f"Generate answer with command:\n\n\n; {command_option}{specification_option} dan jawablah jika soalnya:\n {prompt}\n tanpa {key1_option}\n\n;  maka tolong jawab {parno_options} {key1_option}\n dengan menjelaskan {prompt}{key2_option}\n\n\n; {specification_option} secara rinci\n sebanyak {paragraf} soal serta berikan saya jawaban lengkapnya\n\n"
         elif prompt_type == "cerita":
-            output_line = f"Generate story with command:\n\n\n {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan warna {key2_option}\n\n\n{command_option}{specification_option} dan buatlah momen lucu setelah terjadi kejadian berupa\n\n {prompt}\n\n\n dan buatlah ceritanya dengan penuh drama dan lelucon keharmonisan\n\n dan jangan lupa buat ulang dengan tema:\n {key1_option}\n dengan menambahkan tambahkan {prompt}\n {specification_option} di dalam ceritanya\n\n sebanyak {paragraf} paragraf\n\n"
+            output_line = f"Generate story with command:\n\n\n; {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan warna {key2_option}\n\n\n{command_option}{specification_option} dan buatlah momen lucu setelah terjadi kejadian berupa\n\n;  {prompt}\n\n\n; dan buatlah ceritanya dengan penuh drama dan lelucon keharmonisan\n\n;  dan jangan lupa buat ulang dengan tema:\n {key1_option}\n dengan menambahkan tambahkan {prompt}\n {specification_option} di dalam ceritanya\n\n;  sebanyak {paragraf} paragraf\n\n"
         else:
             output_line = "Invalid prompt type\n masukkan opsi\n 1.image,\n 2.text atau\n 3.script\n"
         file.write(output_line)
@@ -463,31 +426,15 @@ def update_keywords(message):
         # Convert the first column to lowercase and extend the keywords list
         keywords_list.extend(df.iloc[:, 0].str.lower().tolist())
 
-        # Check cover.png after updating keywords
-        if check_cover_png():
-            bot.reply_to(message, "cover.png kosong. Silahkan upload cover.png sebagai logo atau cover karya tulis atau novel Anda.")
-        else:
-            bot.reply_to(message, "Terima kasih! File cover.png sudah diunggah.")
-
         return True
     except Exception as e:
         print(f"Error updating keywords: {e}")
         return False
 
-# Function to check if cover.png is empty
-def check_cover_png():
-    # Implement your logic to check if cover.png is empty
-    # For example, you can check the file size or content
-    cover_path = 'cover.png'
-    try:
-        file_size = os.path.getsize(cover_path)
-        if file_size == 0:
-            return True  # Cover.png is empty
-        else:
-            return False  # Cover.png is not empty
-    except Exception as e:
-        print(f"Error checking cover.png: {e}")
-        return True  # Assume cover.png is empty in case of an error
+    if check_cover_png():
+        bot.reply_to(message, "cover.png kosong. Silahkan upload cover.png sebagai logo atau cover karya tulis atau novel Anda.")
+    else:
+        bot.reply_to(message, "Terima kasih! File cover.png sudah diunggah.")
 
 def process_uploaded_file(file_path):
     # Implement your logic to process the uploaded file
@@ -541,7 +488,7 @@ def update_keywords():
     global keywords_list
 
     try:
-        with open('katakunci.csv', newline='', encoding='utf-8') as csvfile:
+        with open('keyword.txt', newline='', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
             keywords_list = [row[0] for row in reader]
         return True
