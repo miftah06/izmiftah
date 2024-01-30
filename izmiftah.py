@@ -621,7 +621,7 @@ def paymet_with_password(message):
     if len(command_parts) == 2:
         password = command_parts[1]
         # Lakukan verifikasi kata sandi di sini
-        if password == "premium15ksuu":
+        if password == "premiumdulu":
             bot.send_message(message.chat.id, "Top up berhasil.")
         else:
             bot.send_message(message.chat.id, "Kata sandi salah. Coba lagi.")
