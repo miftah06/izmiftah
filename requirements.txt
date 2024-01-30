@@ -16,3 +16,4 @@ python-telegram-bot==13.7
 telegram
 pandas
 openai==0.27.8
+qrcode
