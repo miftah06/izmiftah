@@ -4,6 +4,7 @@ Command:
 
 ```bash
 ai - untuk menulis dengan open ai
+payment - untuk melakukan pembayaran dengan password
 saldo - untuk melihat sisa saldo
 topup - untuk melakukan top-up
 chat - untuk melakukan chatting dengan ai

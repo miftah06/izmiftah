@@ -17,16 +17,16 @@ from googlesearch import search
 # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
-TOKEN = 'token-bot-telegram-kamu'
+TOKEN = 'isi-dengan-token-bot-telegram-anda'
 bot = telebot.TeleBot(TOKEN)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-api_key = 'open-ai-apikey-kamu'
-email_kamu = 'email-kamu' #tolong modifikasi server smtpnya juga ya
+api_key = 'isi-dengan-api-key'
+email_kamu = 'play@qql.icu' #tolong modifikasi server smtpnya juga ya
 openai.api_key = api_key
-admin = 'id-telegram-kamu'
+admin = 'id-telegram-kamu-admin'
 
-saldo = 10
+saldo = 15
 
 # Fungsi untuk membuat prompt dan menjalankan OpenAI
 def generate_ai_prompt(message, keyword1, keyword2, command_option, specification_option, prompt_type, additional_input):
@@ -118,7 +118,7 @@ def process_payment(message):
 
     if payment_successful:
         global saldo
-        saldo += 15
+        saldo += 5
         bot.send_message(message.chat.id, "Pembayaran berhasil. Anda mendapatkan 15 saldo tambahan.")
     else:
         bot.send_message(message.chat.id, "Pembayaran gagal. Silakan coba lagi.")
@@ -609,19 +609,19 @@ def show_saldo(message):
 @bot.message_handler(commands=['topup'])
 def make_payment(message):
     # Membuka tautan dari Telegram
-    payment_link = "https://example.com/payment"
+    payment_link = "isi-link-payment-di-sini"
     bot.send_message(message.chat.id, f"Anda dapat melakukan pembayaran di {payment_link}")
     bot.send_message(message.chat.id, f"Silahkan hubungi {admin} untuk bantuan lebih lanjut.")
 
 # Handler untuk perintah "/topup" dengan kata sandi
-@bot.message_handler(func=lambda message: message.text.startswith('/topup '))
-def topup_with_password(message):
+@bot.message_handler(func=lambda message: message.text.startswith('/payment '))
+def paymet_with_password(message):
     # Memisahkan perintah dan kata sandi
     command_parts = message.text.split(' ')
     if len(command_parts) == 2:
         password = command_parts[1]
         # Lakukan verifikasi kata sandi di sini
-        if password == "YOUR_PASSWORD":
+        if password == "premium15ksuu":
             bot.send_message(message.chat.id, "Top up berhasil.")
         else:
             bot.send_message(message.chat.id, "Kata sandi salah. Coba lagi.")
