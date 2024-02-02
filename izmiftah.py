@@ -224,7 +224,7 @@ def generate_ai_prompt_command(message):
 
 # Command untuk membuat prompt
 @bot.message_handler(commands=['image_prompt'])
-def create_prompt_command(message, skrip_file=skrip_file_option,):
+def create_prompt_command(message, file_skrip='keyword.txt',):
     try:
         keyword1_file = "keyword1.txt"  # Gantilah dengan nama file yang sesuai
         keyword2_file = "keyword2.txt"  # Gantilah dengan nama file yang sesuai
@@ -681,7 +681,7 @@ def download_html(message):
 
 # Handler untuk perintah /upload
 @bot.message_handler(commands=['upload'])
-def update_keywords(message,  keyword_list="keyword.txt", skrip_file=skrip_file_option):
+def update_keywords(message,  keyword_list="keyword.txt", file_skrip='keyword.txt'):
     global keywords_list
 
     try:
@@ -703,7 +703,7 @@ def update_keywords(message,  keyword_list="keyword.txt", skrip_file=skrip_file_
 
 # Handler untuk mengolah file yang diunggah oleh pengguna
 @bot.message_handler(content_types=['document'])
-def handle_uploaded_file(message,  keyword_list="keyword.txt", skrip_file=skrip_file_option):
+def handle_uploaded_file(message,  keyword_list="keyword.txt", file_skrip='keyword.txt'):
     global keywords_list
 
     if message.document.file_name not in ['keyword.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'subdomains.txt', 'cover.png']:
@@ -867,7 +867,7 @@ def generate_keyword_file(filename, num_keywords):
         file.write("\n".join(random_keywords))
 
 @bot.message_handler(commands=['bikin_prompt'])
-def handle_prompt(message,  keyword_list="keyword.txt", skrip_file=skrip_file_option):
+def handle_prompt(message,  keyword_list="keyword.txt", file_skrip='keyword.txt'):
     args = message.text.split('/')[1:]
 
     if len(args) == 7:
