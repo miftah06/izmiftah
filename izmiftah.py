@@ -911,7 +911,7 @@ def check_saldo():
 
 if __name__ == '__main__':
     # Cek isi_saldo dan lakukan sesuatu jika isi_saldo == 10
-    bot.polling(none_stop=True, keyword_list="keyword.txt", keywords_list_file="katakunci.csv", skrip_file="skrip.txt", skrip_list="katakunci.txt")
+    bot.polling(none_stop=True, keywords_list_file="katakunci.csv", skrip_file="skrip.txt", skrip_list="katakunci.txt")
     try:
         jumlah_koin = jumlah_saldo
         jumlah_koin -= +10
