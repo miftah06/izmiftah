@@ -51,6 +51,12 @@ jumlah_saldo = saldo_awal
 passnya = 'premium15ksuu'
 file_skrip = 'skrip.txt'
 
+def file_skrip_options():
+    with open(file_skrip, "r") as keywords_list_file:
+        global skrip_file
+        file_skrip_option = keywords_list_file.readlines()
+        skrip_file = file_skrip_option.random.choice(keywords_list_file).strip()
+
 def blokir_nonaktif():
     global is_blokir_aktif
     is_blokir_aktif = False
@@ -95,7 +101,7 @@ def create_blokir_prompt(message):
     if is_blokir_aktif(message):
         bot.send_message(message.chat.id, text="Saldo mencapai 0.  segera lakukan /payment atau /topup")
         return f"{identitas}\n\pelanggaran saldo terdeteksi,saldo: {saldo} \nAI:"
-        
+
 # Fungsi untuk menjalankan perintah AI
 def generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input):
     try:
@@ -122,7 +128,6 @@ def generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_inpu
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
-# Fungsi untuk membuat prompt
 # Fungsi untuk membuat prompt
 def create_prompt(keyword1_file, keyword2_file, output_file, prompt_type, additional_input, message,
                   command_option=None, specification_option=[], parno_options=[]):
@@ -161,7 +166,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, prompt_type, additi
 def generate_ai_prompt_command(message):
     try:
         keyword1 = "sebuah gambar yang menakjubkan berupa"  # Gantilah dengan kata kunci yang sesuai
-        keyword2 = "skrip.txt"  # Gantilah dengan kata kunci yang sesuai
+        keyword2 = file_skrip # Gantilah dengan kata kunci yang sesuai
         prompt_type = "image"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
         generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
@@ -173,7 +178,7 @@ def generate_ai_prompt_command(message):
 def generate_ai_prompt_command(message):
     try:
         keyword1 = "sebuah skrip yang akurat dan teliti mengenai"  # Gantilah dengan kata kunci yang sesuai
-        keyword2 = "skrip.txt"  # Gantilah dengan kata kunci yang sesuai
+        keyword2 = file_skrip # Gantilah dengan kata kunci yang sesuai
         prompt_type = "script"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
         generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
@@ -185,7 +190,7 @@ def generate_ai_prompt_command(message):
 def generate_ai_prompt_command(message):
     try:
         keyword1 = "jawablah soal berikut, dengan akurat, adapun soalnya yakni :"  # Gantilah dengan kata kunci yang sesuai
-        keyword2 = "skrip.txt"  # Gantilah dengan kata kunci yang sesuai
+        keyword2 = file_skrip # Gantilah dengan kata kunci yang sesuai
         prompt_type = "soal"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
         generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
@@ -197,7 +202,7 @@ def generate_ai_prompt_command(message):
 def generate_ai_prompt_command(message):
     try:
         keyword1 = "sebuah cerita yang menakjubkan berupa dengan latar cerita"  # Gantilah dengan kata kunci yang sesuai
-        keyword2 = "skrip.txt"  # Gantilah dengan kata kunci yang sesuai
+        keyword2 = file_skrip # Gantilah dengan kata kunci yang sesuai
         prompt_type = "story"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
         generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
@@ -209,7 +214,7 @@ def generate_ai_prompt_command(message):
 def generate_ai_prompt_command(message):
     try:
         keyword1 = "sebuah text yang menakjubkan berupa"  # Gantilah dengan kata kunci yang sesuai
-        keyword2 = "skrip.txt"  # Gantilah dengan kata kunci yang sesuai
+        keyword2 = file_skrip # Gantilah dengan kata kunci yang sesuai
         prompt_type = "text"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
         generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
@@ -224,7 +229,7 @@ def create_prompt_command(message, file_skrip='skrip.txt',):
         keyword2_file = "keyword2.txt"  # Gantilah dengan nama file yang sesuai
         output_file = "ai.txt"  # Gantilah dengan nama file output yang sesuai
         prompt_type = "image"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
-        additional_input =  f"buatkanlah saya gambar dengan fitur {file_skrip} dengan se elegant dan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
+        additional_input =  f"buatkanlah saya gambar dengan fitur {skrip_file} dengan se elegant dan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
         create_prompt(keyword1_file, keyword2_file, output_file, prompt_type, additional_input, message)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
@@ -237,7 +242,7 @@ def create_prompt_command(message):
         keyword2_file = "fitur.txt"  # Gantilah dengan nama file yang sesuai
         output_file = "ai.txt"  # Gantilah dengan nama file output yang sesuai
         prompt_type = "script"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
-        additional_input = f"buatkanlah saya dengan fitur {file_skrip} dengan seakurat dan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
+        additional_input = f"buatkanlah saya dengan fitur {skrip_file} dengan seakurat dan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
         create_prompt(keyword1_file, keyword2_file, output_file, prompt_type, additional_input, message)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
@@ -443,7 +448,7 @@ def handle_dork(message):
 
     except ValueError:
         # Menangani kesalahan jika format perintah tidak sesuai
-        bot.reply_to(message, "Invalid format. Use /dork <keywords<;<domain_extensions<")
+        bot.reply_to(message, "Invalid format. Use /dork <keywords>;<domain_extensions>")
     except Exception as e:
         # Menangani kesalahan umum
         bot.reply_to(message, f"Error: {str(e)}")
@@ -627,7 +632,7 @@ def download_html(message):
     except Exception as e:
         print(f"Error downloading HTML: {e}")
         bot.reply_to(message, "Gagal mengunduh file HTML. Coba lagi nanti.")# Handler untuk perintah /download_html
-        
+
 @bot.message_handler(commands=['download_cover'])
 def download_html(message):
     try:
@@ -686,7 +691,7 @@ def update_keywords(message, keyword_list, skrip_list):
         # Read the entire CSV file with Pandas
         df = pd.read_csv('keyword.txt', header=None)
         df2 = pd.read_csv('skrip.txt', header=None)
-        
+
         # Convert the first column to lowercase and extend the keywords list
         keywords_list.extend(df.iloc[:, 0].str.lower().tolist())
         skrip_list.extend(df2.iloc[:, 0].str.lower().tolist())
