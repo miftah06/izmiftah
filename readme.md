@@ -25,6 +25,7 @@ download-hasil - gunakan ini untuk mendapatkan ai promptnya
 download2 - yakni untuk mendownload file output.txt nya berupa hasil scan bug atau bisa juga hasil ai promt
 download3 - yakni untuk mendownload file ai.txt nya berupa hasil dari ai promt
 download-cover - yakni untuk mendownload file cover pdfnya
+download_cover - yakni untuk mendownload file cover.png nya
 download_html - yakni untuk mendownload hasil tulisan versi output.html
 download_html1 - yakni untuk mendownload hasil tulisan versi cover.html
 download_html2 - yakni untuk mendownload hasil tulisan versi pdf.html
