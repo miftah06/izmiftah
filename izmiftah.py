@@ -166,14 +166,18 @@ def create_prompt(keyword1_file, keyword2_file, output_file, prompt_type, additi
 
 
 # Command untuk menghasilkan AI prompt
+# Command untuk menghasilkan AI prompt
 @bot.message_handler(commands=['ai_image'])
-def generate_ai_prompt_command(message):
+def generate_ai_image_prompt_command(message):
     try:
         keyword1 = "sebuah gambar yang menakjubkan berupa"  # Gantilah dengan kata kunci yang sesuai
-        keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
+        keyword2 = skrip_file_options  # Gantilah dengan kata kunci yang sesuai
         prompt_type = "image"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(image, keyword1, keyword2, prompt_type, additional_input)
+        ai_response = generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
+
+        # Kirim jawaban AI sebagai pesan ke bot Telegram
+        bot.send_message(message.chat.id, ai_response)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
