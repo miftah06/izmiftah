@@ -26,12 +26,19 @@ email_kamu = 'email-anda' #tolong modifikasi server smtpnya juga ya
 openai.api_key = api_key
 admin = 'id-tele-kamu'
 ### JANGAN DI UBAH #####
+# Inisialisasi variabel-variabel
 credit = 0
 isi_saldo = 15
-jumlah_credit = -1
-jumlah_saldo = 5
+jumlah_saldo = 10
+saldo = -1
+
+# Menggunakan nilai jumlah_saldo untuk menginisialisasi jumlah_credit
 jumlah_credit = jumlah_saldo
+
+# Mengubah nilai jumlah_credit menjadi -1 (jika itu yang Anda inginkan)
 jumlah_credit = -1
+
+# Variabel saldo_awal seharusnya dideklarasikan tanpa "global" karena ini adalah variabel biasa
 ### JANGAN DI UBAH #####
 global saldo_awal
 saldo_awal = 10
@@ -179,9 +186,10 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
 
 # Fungsi untuk menampilkan jumlah saldo saat ini
 def display_saldo(message):
-    global jumlah_saldo
-    jumlah_saldo = saldo 
-    bot.send_message(message.chat.id, f"Jumlah saldo Anda: {jumlah_saldo}") #cukup ganti ke credit atau jumlah_saldo jika eror
+    global jumlah_saldo  # Deklarasikan jumlah_saldo sebelum menggunakannya  # Mengatur saldo ke -1
+    jumlah_saldo = saldo  # Mengatur jumlah_saldo ke nilai saldo
+    jumlah_saldo += 11  # Menambah jumlah_saldo sebesar 10
+    bot.send_message(message.chat.id, f"Jumlah saldo Anda: {jumlah_saldo}")
 
 # Fungsi untuk melakukan pembayaran
 def process_payment(message):
