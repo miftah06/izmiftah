@@ -691,7 +691,7 @@ def update_keywords(message, keyword_list, skrip_list):
 
 # Handler untuk mengolah file yang diunggah oleh pengguna
 @bot.message_handler(content_types=['document'])
-def handle_uploaded_file(message, keyword_list):
+def handle_uploaded_file(message):
     global keywords_list
 
     if message.document.file_name not in ['keyword.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'subdomains.txt', 'cover.png']:
