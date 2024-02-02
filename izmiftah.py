@@ -130,7 +130,7 @@ def generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_inpu
 
 # Fungsi untuk membuat prompt
 def create_prompt(keyword1_file, keyword2_file, output_file, prompt_type, additional_input, message,
-                  command_option=None, specification_option="sebuah gambar yang sempurna mengenai", parno_options=skrip_file):
+                  command_option=None, specification_option="sebuah gambar yang sempurna mengenai", parno_options="dengan secara akurat dan sempurna"):
     if command_option is None:
         command_option = "dengan penuh estetika dan fitur yang estetik"
     try:
