@@ -13,7 +13,7 @@ ai_soal - yakni untuk membuat prompt dengan berupa soal
 ai_cerita - yakni untuk membuat prompt dengan berupa cerita
 ai_script - yakni untuk membuat prompt dengan berupa skrip
 ai_text - yakni untuk membuat prompt dengan berupa text
-image_prompt - yakni untuk membuat gambar dengan ai
+image_prompt - yakni untuk membuat prompt gambar dengan ai
 ai_prompt - yakni untuk membuat skrip dengan ai
 dnsinfo - untuk mendapatkan info seputar hosting domain tersebut
 dork - untuk menjejahi domain dan url dengan dua katakunci misal: google/.com
