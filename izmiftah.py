@@ -28,6 +28,7 @@ admin = 'id-tele-kamu'
 ### JANGAN DI UBAH #####
 saldo = -1
 credit = 0
+global saldo_awal
 isi_saldo = 15
 ### JANGAN DI UBAH #####
 ########### UBAH DISPLAY SALDO UNTUK NGATUR
@@ -83,6 +84,7 @@ def create_blokir_prompt(message):
 def handle_ai_prompt(message):
     try:
         if is_blokir_active(message):
+            global minus_saldo
             bot.send_message(message.chat.id, f"saldo: {minus_saldo} lakukan /payment atau /topup terlebih dahulu .")
             return
         # Mendapatkan argumen dari perintah
@@ -799,7 +801,7 @@ def kurangi_saldo(jumlah):
     global minus_saldo
     minus_saldo -= jumlah
     if isi_saldo == 0:
-        bot.send_message(message.chat.id, f"saldo telah mencapai atau lebih dari: {minus_saldo} lakukan /payment atau /topup terlebih dahulu .")
+        bot.send_message(text=f"saldo telah mencapai atau lebih dari: {minus_saldo} lakukan /payment atau /topup terlebih dahulu .")
         is_blokir_aktif
 
     
@@ -816,7 +818,8 @@ def check_saldo():
 if __name__ == '__main__':
     # Cek isi_saldo dan lakukan sesuatu jika isi_saldo == 10
     try:
-        saldo_awal += 10
+        global saldo_awal
+        saldo += 10
         if saldo_awal <= -1:
             print("Saldo telah habis. bot di blokir aksesnya ")
         # Misalnya, jalankan peg_parser()
@@ -848,4 +851,5 @@ if __name__ == '__main__':
 
         except Exception as e:
             print(f"Terjadi kesalahan: {str(e)}")
+
 
