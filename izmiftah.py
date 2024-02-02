@@ -129,7 +129,6 @@ def generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_inpu
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
 # Fungsi untuk membuat prompt
-# Fungsi untuk membuat prompt
 def create_prompt(keyword1_file, keyword2_file, output_file, prompt_type, additional_input, message,
                   command_option=None, specification_option="sebuah gambar yang sempurna mengenai", parno_options=skrip_file):
     if command_option is None:
@@ -161,6 +160,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, prompt_type, additi
                 bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan download dengan opsi yang ada.")
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
+
 
 # Command untuk menghasilkan AI prompt
 @bot.message_handler(commands=['ai_image'])
@@ -224,7 +224,7 @@ def generate_ai_prompt_command(message):
 
 # Command untuk membuat prompt
 @bot.message_handler(commands=['image_prompt'])
-def create_prompt_command(message, skrip_file='skrip.txt',):
+def create_prompt_command(message, skrip_file=skrip_file_option,):
     try:
         keyword1_file = "keyword1.txt"  # Gantilah dengan nama file yang sesuai
         keyword2_file = "keyword2.txt"  # Gantilah dengan nama file yang sesuai
@@ -681,7 +681,7 @@ def download_html(message):
 
 # Handler untuk perintah /upload
 @bot.message_handler(commands=['upload'])
-def update_keywords(message,  keyword_list="keyword.txt", skrip_file="skrip.txt"):
+def update_keywords(message,  keyword_list="keyword.txt", skrip_file=skrip_file_option):
     global keywords_list
 
     try:
@@ -703,7 +703,7 @@ def update_keywords(message,  keyword_list="keyword.txt", skrip_file="skrip.txt"
 
 # Handler untuk mengolah file yang diunggah oleh pengguna
 @bot.message_handler(content_types=['document'])
-def handle_uploaded_file(message,  keyword_list="keyword.txt", skrip_file="skrip.txt"):
+def handle_uploaded_file(message,  keyword_list="keyword.txt", skrip_file=skrip_file_option):
     global keywords_list
 
     if message.document.file_name not in ['keyword.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'subdomains.txt', 'cover.png']:
@@ -867,7 +867,7 @@ def generate_keyword_file(filename, num_keywords):
         file.write("\n".join(random_keywords))
 
 @bot.message_handler(commands=['bikin_prompt'])
-def handle_prompt(message,  keyword_list="keyword.txt", skrip_file="skrip.txt"):
+def handle_prompt(message,  keyword_list="keyword.txt", skrip_file=skrip_file_option):
     args = message.text.split('/')[1:]
 
     if len(args) == 7:
