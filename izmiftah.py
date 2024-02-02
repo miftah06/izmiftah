@@ -26,15 +26,18 @@ email_kamu = 'email-anda' #tolong modifikasi server smtpnya juga ya
 openai.api_key = api_key
 admin = 'id-tele-kamu'
 ### JANGAN DI UBAH #####
-saldo = -1
 credit = 0
-global saldo_awal
 isi_saldo = 15
+jumlah_credit = -1
+jumlah_saldo = 5
+jumlah_credit = jumlah_saldo
+jumlah_credit = -1
 ### JANGAN DI UBAH #####
-########### UBAH DISPLAY SALDO UNTUK NGATUR
-## atau cari baris Jumlah saldo Anda:
-passnya = 'passwordnya'
-
+global saldo_awal
+saldo_awal = 10
+########### UBAH DISPLAY saldo UNTUK NGATUR
+## atau cari baris saldo = -1 di skrip ini:
+passnya = 'premium15ksuu'
 
 def blokir_nonaktif():
     global is_blokir_aktif
@@ -813,13 +816,15 @@ def peg_parser():
 
 # Contoh penggunaan assert
 def check_saldo():
+    global saldo
+    saldo += 10
     assert saldo >= -1, "Saldo tidak boleh negatif."    
 
 if __name__ == '__main__':
     # Cek isi_saldo dan lakukan sesuatu jika isi_saldo == 10
     try:
-        global saldo_awal
-        saldo += 10
+        jumlah_koin = jumlah_saldo
+        jumlah_koin += 10
         if saldo_awal <= -1:
             print("Saldo telah habis. bot di blokir aksesnya ")
         # Misalnya, jalankan peg_parser()
