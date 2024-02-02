@@ -14,36 +14,39 @@ import requests
 import telebot
 from googlesearch import search
 
+
 # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
-TOKEN = 'your-telegram-api-token'
+TOKEN = 'bot-token-telegram-kamu'
 bot = telebot.TeleBot(TOKEN)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-api_key = 'open-api-api-key'
+api_key = 'openai-api-key'
 email_kamu = 'email-anda' #tolong modifikasi server smtpnya juga ya
 openai.api_key = api_key
-admin = 'id-tele-kamu'
+admin = 'kontak-anda'
+link_jualan = 'isi-dengan-link-jualan-anda'
 ### JANGAN DI UBAH #####
+saldo_awal = 10
 # Inisialisasi variabel-variabel
 credit = 0
 isi_saldo = 15
-jumlah_saldo = 10
-saldo = -1
-
+jumlah_saldo = -1
+global saldo 
+saldo = saldo_awal
+saldo_awal += 10
 # Menggunakan nilai jumlah_saldo untuk menginisialisasi jumlah_credit
-jumlah_credit = jumlah_saldo
-
 # Mengubah nilai jumlah_credit menjadi -1 (jika itu yang Anda inginkan)
-jumlah_credit = -1
-
+jumlah_credit = -10
+jumlah_credit = jumlah_saldo
+saldo = jumlah_saldo
+jumlah_koin = jumlah_saldo
+jumlah_saldo = saldo_awal
 # Variabel saldo_awal seharusnya dideklarasikan tanpa "global" karena ini adalah variabel biasa
 ### JANGAN DI UBAH #####
-global saldo_awal
-saldo_awal = 10
-########### UBAH DISPLAY saldo UNTUK NGATUR
-## atau cari baris saldo = -1 di skrip ini:
+########### UBAH di bagian passnya UNTUK NGATUR
+## dan jangan sekali kali ubah baris "Jumlah saldo Anda: " di skrip ini:
 passnya = 'premium15ksuu'
 
 def blokir_nonaktif():
@@ -75,6 +78,7 @@ def handle_blokir(message):
 
 # Fungsi untuk memeriksa apakah fitur blokir aktif
 def is_blokir_active(message):
+    global saldo ## atur sesuai kondisi utama
     if saldo <= 0:
         bot.send_message(message.chat.id, text="pelanggaran saldo terdeteksi. segera lakukan /topup atau /payment")
         bot.send_message(message.chat.id, text=f"syarat saldo yaitu {isi_saldo} saldo\n")
@@ -108,7 +112,9 @@ def handle_ai_prompt(message):
         else:
             isi_saldo = credit
             minus_saldo = credit
-            minus_saldo += -2
+            saldo_awal  += -2
+            global saldo
+            saldo += -2
             bot.send_message(message.chat.id, "Format perintah tidak valid. Gunakan format /ai_prompt/keyword1/keyword2/command_option/specification_option/prompt_type/additional_input")
 
     except Exception as e:
@@ -188,7 +194,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
 def display_saldo(message):
     global jumlah_saldo  # Deklarasikan jumlah_saldo sebelum menggunakannya  # Mengatur saldo ke -1
     jumlah_saldo = saldo  # Mengatur jumlah_saldo ke nilai saldo
-    jumlah_saldo += 11  # Menambah jumlah_saldo sebesar 10
+    # Menambah jumlah_saldo sebesar 10
     bot.send_message(message.chat.id, f"Jumlah saldo Anda: {jumlah_saldo}")
 
 # Fungsi untuk melakukan pembayaran
@@ -262,8 +268,10 @@ def write_document(message):
     )
 
     bot.reply_to(message, response.choices[0].text.strip())
-    global minus_saldo
-    minus_saldo += -1
+    global saldo_awal
+    saldo_awal  += -1
+    global saldo
+    saldo += -1
     bot.send_message(message.chat.id, " saldo berkurang 1")
 
 # Fungsi untuk mendapatkan informasi DNS
@@ -372,9 +380,11 @@ def handle_dork(message):
             bot.send_message(message.chat.id, f"Results: {str(all_results)}")
         else:
             isi_saldo = credit
-            global minus_saldo
-            minus_saldo = credit
-            minus_saldo += -1
+            global saldo_awal
+            saldo_awal = credit
+            saldo_awal  += -1
+            global saldo
+            saldo += -1
             bot.send_message(message.chat.id, " saldo berkurang 1")
             # Memberikan pesan jika tidak ada hasil yang ditemukan
             bot.reply_to(message, "No results found.")
@@ -550,8 +560,10 @@ def download_keywords(message):
         print(f"Error downloading keywords: {e}")
         bot.reply_to(message, "Gagal mengunduh file pdf. Coba lagi nanti.")
 
-        global minus_saldo
-        minus_saldo += -1
+        global saldo_awal
+        saldo_awal  += -1
+        global saldo
+        saldo += -1
         bot.send_message(message.chat.id, " saldo berkurang 1")
 
 # Handler untuk perintah /download_html
@@ -574,8 +586,10 @@ def download_html(message):
         print(f"Error downloading txt output file: {e}")
         bot.reply_to(message, "Gagal mengunduh file txt. Coba lagi nanti.")
 
-        global minus_saldo
-        minus_saldo += -2
+        global saldo_awal
+        saldo_awal  += -2
+        global saldo
+        saldo += -2
         bot.send_message(message.chat.id, " saldo berkurang 3")
 
 # Handler untuk perintah /download_html1
@@ -719,9 +733,11 @@ def handle_chat(message):
         )
         
         isi_saldo = credit
-        global minus_saldo
+        global saldo_awal
         minus_saldo = credit
-        minus_saldo += -4
+        saldo_awal  += -4
+        global saldo
+        saldo += -4
 
         # Mengambil pesan dari respons
         ai_reply = response['choices'][0]['text']
@@ -746,7 +762,7 @@ def show_saldo(message):
 @bot.message_handler(commands=['topup'])
 def make_payment(message):
     # Membuka tautan dari Telegram
-    payment_link = "https://m.dana.id/s/catalogue/udjutmth"
+    payment_link = f"{link_jualan}"
     bot.send_message(message.chat.id, f"Anda dapat melakukan pembayaran di {payment_link}")
     bot.send_message(message.chat.id, f"Silahkan hubungi {admin} atau di email: {email_kamu} untuk bantuan lebih lanjut.")
 
@@ -809,8 +825,8 @@ def handle_prompt(message, keyword_list):
         
 # Fungsi untuk mengurangi saldo
 def kurangi_saldo(jumlah):
-    global minus_saldo
-    minus_saldo -= jumlah
+    global saldo
+    saldo -= jumlah
     if isi_saldo == 0:
         bot.send_message(text=f"saldo telah mencapai atau lebih dari: {minus_saldo} lakukan /payment atau /topup terlebih dahulu .")
         is_blokir_aktif
@@ -826,15 +842,15 @@ def peg_parser():
 def check_saldo():
     global jumlah_saldo
     saldo = jumlah_saldo
-    jumlah_saldo = 10
+    jumlah_saldo = -11
     assert saldo >= -1, "Saldo tidak boleh negatif."    
 
 if __name__ == '__main__':
     # Cek isi_saldo dan lakukan sesuatu jika isi_saldo == 10
     try:
         jumlah_koin = jumlah_saldo
-        jumlah_koin += 10
-        if saldo_awal <= -1:
+        jumlah_koin -= +10
+        if saldo_awal <= 0:
             print("Saldo telah habis. bot di blokir aksesnya ")
         # Misalnya, jalankan peg_parser()
     except Exception as e:
@@ -865,4 +881,3 @@ if __name__ == '__main__':
 
         except Exception as e:
             print(f"Terjadi kesalahan: {str(e)}")
-
