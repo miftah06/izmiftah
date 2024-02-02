@@ -899,6 +899,7 @@ def check_saldo():
 
 if __name__ == '__main__':
     # Cek isi_saldo dan lakukan sesuatu jika isi_saldo == 10
+    bot.polling(none_stop=True)
     try:
         jumlah_koin = jumlah_saldo
         jumlah_koin -= +10
@@ -910,7 +911,6 @@ if __name__ == '__main__':
 
     check_saldo()
     print(f"Harga per {isi_saldo} saldo adalah 5 ribu per bulan")
-    bot.polling(none_stop=True)
 
     # Loop utama
     while True:
