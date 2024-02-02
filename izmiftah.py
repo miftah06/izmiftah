@@ -13,6 +13,7 @@ import pandas as pd
 import requests
 import telebot
 from googlesearch import search
+from openai.api_resources import image
 
 from hasilkan1 import prompt
 
@@ -172,7 +173,7 @@ def generate_ai_prompt_command(message):
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "image"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(image, keyword1, keyword2, prompt_type, additional_input)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -184,7 +185,7 @@ def generate_ai_prompt_command(message):
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "script"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -196,7 +197,7 @@ def generate_ai_prompt_command(message):
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "soal"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -208,7 +209,7 @@ def generate_ai_prompt_command(message):
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "story"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -220,7 +221,7 @@ def generate_ai_prompt_command(message):
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "text"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -508,11 +509,11 @@ def get_random_text(message):
     # Periksa apakah file keyword.csv perlu diperbarui
     current_time = datetime.now()
     #if last_update_time is None or (current_time - last_update_time).days <= 1:
-    #  if update_keywordt():
-    #      last_update_time = current_time
-    #  else:
-    #      bot.reply_to(message, f"Maaf kamu lupa mengupdate database untuk penulisan. \n Silahkan upload keyword.txt berupa bahan tulisan \n dan Coba lagi nanti.")
-    #      return
+      #  if update_keywordt():
+      #      last_update_time = current_time
+      #  else:
+      #      bot.reply_to(message, f"Maaf kamu lupa mengupdate database untuk penulisan. \n Silahkan upload keyword.txt berupa bahan tulisan \n dan Coba lagi nanti.")
+      #      return
 
     if is_blokir_active(message):
         bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
