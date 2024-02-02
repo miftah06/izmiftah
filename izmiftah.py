@@ -123,31 +123,38 @@ def generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_inpu
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
 # Fungsi untuk membuat prompt
+# Fungsi untuk membuat prompt
 def create_prompt(keyword1_file, keyword2_file, output_file, prompt_type, additional_input, message,
-                  command_option='', parno_options='', specification_option='', ):
-    with open(keyword1_file, "r") as key1_file, open(keyword2_file, "r") as key2_file, open(output_file, "w") as file:
-        key1_options = key1_file.readlines()
-        key2_options = key2_file.readlines()
-        key1_option = random.choice(key1_options).strip()
-        key2_option = random.choice(key2_options).strip()
-        paragraf = additional_input.strip()
+                  command_option=None, specification_option=[], parno_options=[]):
+    if command_option is None:
+        command_option = []
+    try:
+        with open(keyword1_file, "r") as key1_file, open(keyword2_file, "r") as key2_file:
+            key1_options = key1_file.readlines()
+            key2_options = key2_file.readlines()
+            key1_option = random.choice(key1_options).strip()
+            key2_option = random.choice(key2_options).strip()
+            paragraf = additional_input.strip()
 
-        # Anda bisa menambahkan logika tambahan di sini jika diperlukan.
+            with open(output_file, "w") as file:
+                # Anda bisa menambahkan logika tambahan di sini jika diperlukan.
 
-        if prompt_type == "text":
-            output_line = f"Generate text with command:\n\n; {command_option} {specification_option} serta {key1_option}\n dengan tambahan fungsi {key2_option}\n adapun jika isinya berupa {prompt} {key1_option}\n\n;  dengan text berupa:\n\n{prompt} bersama fungsi atau pembahasan mengenai {key2_option} serta berikan saya detail lengkapnya \n\n\n"
-        elif prompt_type == "image":
-            output_line = f"Generate image with command:\n\n\n; {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan warna {key2_option}\n\n\n"
-        elif prompt_type == "script":
-            output_line = f"Generate script with command:\n\n\n; {command_option}{specification_option} dan serta {prompt} jika hal tersebut berupa\n {prompt}\n dengan {key1_option}\n\n;  di dalam skrip {parno_options} {key1_option}\n dengan module atau plugin tambahan {prompt}{key2_option}\n\n\npada untuk {specification_option} dan berikan saya skrip lengkapnya\n\n\n\n"
-        elif prompt_type == "soal":
-            output_line = f"Generate answer with command:\n\n\n; {command_option}{specification_option} dan jawablah jika soalnya:\n {prompt}\n tanpa {key1_option}\n\n;  maka tolong jawab {parno_options} {key1_option}\n dengan menjelaskan {prompt}{key2_option}\n\n\n; {specification_option} secara rinci\n sebanyak {paragraf} paragraf serta berikan saya jawaban lengkapnya\n\n"
-        elif prompt_type == "cerita":
-            output_line = f"Generate story with command:\n\n\n; {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan keharmonisan {key2_option}\n\n\n{command_option}{specification_option} dan buatlah momen lucu setelah terjadi kejadian berupa\n\n;  {prompt}\n\n\n; dan buatlah ceritanya dengan penuh drama dan lelucon keharmonisan\n\n;  dan jangan lupa buat ulang dengan tema:\n {key1_option}\n dengan menambahkan tambahkan {prompt}\n {specification_option} di dalam ceritanya\n\n;  sebanyak {paragraf} paragraf\n\n"
-        else:
-            output_line = "Invalid prompt type\n masukkan opsi\n 1.image,\n 2.text atau\n 3.script\n 4.soal\n 5.cerita"
-    file.write(output_line)
-    bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan /keyword lalu /download-hasil \n lalu /download2 untuk output.txt sebagai /ai_prompt /command/command/output.txt atau ai.txt untuk /download3.")
+                if prompt_type == "text":
+                    output_line = f"Generate text with command:\n\n; {command_option} {specification_option} serta {key1_option}\n dengan tambahan fungsi {key2_option}\n adapun jika isinya berupa {prompt} {key1_option}\n\n;  dengan text berupa:\n\n{prompt} bersama fungsi atau pembahasan mengenai {key2_option} serta berikan saya detail lengkapnya \n\n\n"
+                elif prompt_type == "image":
+                    output_line = f"Generate image with command:\n\n\n; {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan warna {key2_option}\n\n\n"
+                elif prompt_type == "script":
+                    output_line = f"Generate script with command:\n\n\n; {command_option}{specification_option} dan serta {prompt} jika hal tersebut berupa\n {prompt}\n dengan {key1_option}\n\n;  di dalam skrip {parno_options} {key1_option}\n dengan module atau plugin tambahan {prompt}{key2_option}\n\n\npada untuk {specification_option} dan berikan saya skrip lengkapnya\n\n\n\n"
+                elif prompt_type == "soal":
+                    output_line = f"Generate answer with command:\n\n\n; {command_option}{specification_option} dan jawablah jika soalnya:\n {prompt}\n tanpa {key1_option}\n\n;  maka tolong jawab {parno_options} {key1_option}\n dengan menjelaskan {prompt}{key2_option}\n\n\n; {specification_option} secara rinci\n sebanyak {paragraf} soal serta berikan saya jawaban lengkapnya\n\n"
+                elif prompt_type == "cerita":
+                    output_line = f"Generate story with command:\n\n\n; {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan keharmonisan {key2_option}\n\n\n{command_option}{specification_option} dan buatlah momen lucu setelah terjadi kejadian berupa\n\n;  {prompt}\n\n\n; dan buatlah ceritanya dengan penuh drama dan lelucon keharmonisan\n\n;  dan jangan lupa buat ulang dengan tema:\n {key1_option}\n dengan menambahkan tambahkan {prompt}\n {specification_option} di dalam ceritanya\n\n;  sebanyak {paragraf} paragraf\n\n"
+                else:
+                    output_line = "Invalid prompt type\n masukkan opsi\n 1.image,\n 2.text atau\n 3.script\n 4.soal\n 5.cerita"
+                file.write(output_line)
+                bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan /keyword lalu /download-hasil \n lalu /download2 untuk output.txt sebagai /ai_prompt /command/command/output.txt atau ai.txt untuk /download3.")
+    except Exception as e:
+        bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
 # Command untuk menghasilkan AI prompt
 @bot.message_handler(commands=['ai_image'])
