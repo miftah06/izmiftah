@@ -107,7 +107,7 @@ def generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_inpu
         # Jalankan permintaan ke OpenAI Chat API jika fitur blokir tidak aktif
         if not is_blokir_active(message):
             response = openai.Completion.create(
-                model="gpt-4-turbo",  # Ganti model sesuai dengan yang Anda inginkan
+                model="gpt-3.5-turbo",  # Ganti model sesuai dengan yang Anda inginkan
                 messages=[
                     {"role": "system", "content": "You are a researcher working on a thesis about teacher-parent synergy to DEVELOP ELEMENTARY SCHOOL STUDENTS' DISCIPLINE CHARACTER."},
                     {"role": "user", "content": prompt}
