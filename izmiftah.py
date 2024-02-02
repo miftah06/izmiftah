@@ -17,14 +17,14 @@ from googlesearch import search
 # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
-TOKEN = 'your-bot-telegram-token'
+TOKEN = 'your-telegram-api-token'
 bot = telebot.TeleBot(TOKEN)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-api_key = 'your-open-ai-apikey'
+api_key = 'open-api-api-key'
 email_kamu = 'email-anda' #tolong modifikasi server smtpnya juga ya
 openai.api_key = api_key
-admin = 'id-telegram-anda'
+admin = 'id-tele-kamu'
 ### JANGAN DI UBAH #####
 saldo = -1
 credit = 0
@@ -32,6 +32,8 @@ global saldo_awal
 saldo_awal = 10
 isi_saldo = 15
 ### JANGAN DI UBAH #####
+########### UBAH DISPLAY SALDO UNTUK NGATUR
+## atau cari baris Jumlah saldo Anda:
 passnya = 'passwordnya'
 
 
@@ -43,12 +45,12 @@ def saldo_nol(saldo, bot, message):
     if minus_saldo <= 0:
         bot.send_message(message.chat.id, "Saldo telah habis.")
         return False
-    else:
+    else: 
         # Tindakan yang sesuai saat saldo mencapai 0
         bot.send_message(text="Saldo telah di reset kembali. ")
         blokir_nonaktif()
         return True
-
+         
 def toggle_blokir(message):
     global blokir_command_ai
     blokir_command_ai = not blokir_command_ai
@@ -69,7 +71,7 @@ def is_blokir_active(message):
         bot.send_message(message.chat.id, text=f"syarat saldo yaitu {isi_saldo} saldo\n")
         return f"pelanggaran saldo terdeteksi. segera lakukan /topup atau /payment"
         is_blokir_aktif
-    else:
+    else: 
         blokir_nonaktif()
 
 # Fungsi untuk membuat prompt AI
@@ -175,8 +177,8 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
 # Fungsi untuk menampilkan jumlah saldo saat ini
 def display_saldo(message):
     global jumlah_saldo
-    jumlah_saldo = saldo
-    bot.send_message(message.chat.id, f"Jumlah saldo Anda: {jumlah_saldo}")
+    jumlah_saldo = saldo 
+    bot.send_message(message.chat.id, f"Jumlah saldo Anda: {saldo_awal}") #cukup ganti ke credit atau jumlah_saldo jika eror
 
 # Fungsi untuk melakukan pembayaran
 def process_payment(message):
@@ -207,8 +209,8 @@ def send_formatted_message(chat_id, formatted_message):
 # Fungsi untuk mengirim pesan ke Telegram
 def send_telegram_message(message):
     if is_blokir_active(message):
-        bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
-        return
+            bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
+            return
 
     params = {
         "chat_id": message.Chat.id,
@@ -224,8 +226,8 @@ def send_telegram_message(message):
 @bot.message_handler(commands=['chat'])
 def write_document(message):
     if is_blokir_active(message):
-        bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
-        return
+            bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
+            return
     inputs = message.text[len('/chat '):].split(';')
     if len(inputs) == 3:
         bot.reply_to(message, "Format salah, silakan ikuti format ini: /chat pesan1;pesan2;pesan3")
@@ -282,8 +284,8 @@ def get_dns_info(hostname):
 @bot.message_handler(commands=['dnsinfo'])
 def handle_dnsinfo(message):
     if is_blokir_active(message):
-        bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
-        return
+            bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
+            return
 
     domain = message.text.split()[1]
     cname_values, ipv4_addresses, ipv6_addresses = get_dns_info(domain)
@@ -432,8 +434,8 @@ def get_random_text(message):
             return
 
     if is_blokir_active(message):
-        bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
-        return
+            bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
+            return
 
     # Example data
     data = {
@@ -704,7 +706,7 @@ def handle_chat(message):
             max_tokens=50,
             n=1
         )
-
+        
         isi_saldo = credit
         global minus_saldo
         minus_saldo = credit
@@ -793,7 +795,7 @@ def handle_prompt(message, keyword_list):
         bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /ai_prompt fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
         global minus_saldo
         minus_saldo = 0
-
+        
 # Fungsi untuk mengurangi saldo
 def kurangi_saldo(jumlah):
     global minus_saldo
@@ -802,7 +804,7 @@ def kurangi_saldo(jumlah):
         bot.send_message(message.chat.id, f"saldo telah mencapai atau lebih dari: {minus_saldo} lakukan /payment atau /topup terlebih dahulu .")
         is_blokir_aktif
 
-
+    
 
 # Fungsi peg_parser
 def peg_parser():
@@ -811,7 +813,7 @@ def peg_parser():
 
 # Contoh penggunaan assert
 def check_saldo():
-    assert saldo >= -1, "Saldo tidak boleh negatif."
+    assert saldo >= -1, "Saldo tidak boleh negatif."    
 
 # Fitur utama
 if __name__ == '__main__':
@@ -826,7 +828,7 @@ if __name__ == '__main__':
     check_saldo()
     print(f"Harga per {isi_saldo} saldo adalah 5 ribu per bulan")
     bot.polling(none_stop=True)
-
+    
     # Loop utama
     while True:
         try:
