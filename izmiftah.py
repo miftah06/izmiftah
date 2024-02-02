@@ -504,12 +504,12 @@ def get_random_text(message):
 
     # Periksa apakah file keyword.csv perlu diperbarui
     current_time = datetime.now()
-    if last_update_time is None or (current_time - last_update_time).days <= 1:
-        if update_keywordt():
-            last_update_time = current_time
-        else:
-            bot.reply_to(message, f"Maaf kamu lupa mengupdate database untuk penulisan. \n Silahkan upload keyword.txt berupa bahan tulisan \n dan Coba lagi nanti.")
-            return
+    #if last_update_time is None or (current_time - last_update_time).days <= 1:
+    #  if update_keywordt():
+    #      last_update_time = current_time
+    #  else:
+    #      bot.reply_to(message, f"Maaf kamu lupa mengupdate database untuk penulisan. \n Silahkan upload keyword.txt berupa bahan tulisan \n dan Coba lagi nanti.")
+    #      return
 
     if is_blokir_active(message):
         bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
