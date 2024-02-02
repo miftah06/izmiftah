@@ -816,8 +816,9 @@ def peg_parser():
 
 # Contoh penggunaan assert
 def check_saldo():
-    global saldo
-    saldo += 10
+    global jumlah_saldo
+    saldo = jumlah_saldo
+    jumlah_saldo = 10
     assert saldo >= -1, "Saldo tidak boleh negatif."    
 
 if __name__ == '__main__':
@@ -856,5 +857,4 @@ if __name__ == '__main__':
 
         except Exception as e:
             print(f"Terjadi kesalahan: {str(e)}")
-
 
