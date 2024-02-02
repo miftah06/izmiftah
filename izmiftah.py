@@ -172,19 +172,19 @@ def generate_ai_prompt_command(message):
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "image"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
 # Command untuk menghasilkan AI prompt
-@bot.message_handler(commands=['ai_scrip'])
+@bot.message_handler(commands=['ai_script'])
 def generate_ai_prompt_command(message):
     try:
         keyword1 = "sebuah skrip yang akurat dan teliti mengenai"  # Gantilah dengan kata kunci yang sesuai
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "script"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -196,7 +196,7 @@ def generate_ai_prompt_command(message):
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "soal"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -208,7 +208,7 @@ def generate_ai_prompt_command(message):
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "story"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -220,7 +220,7 @@ def generate_ai_prompt_command(message):
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "text"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
