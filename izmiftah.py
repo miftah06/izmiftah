@@ -222,7 +222,7 @@ def create_prompt_command(message, file_skrip='skrip.txt',):
     try:
         keyword1_file = "keyword1.txt"  # Gantilah dengan nama file yang sesuai
         keyword2_file = "keyword2.txt"  # Gantilah dengan nama file yang sesuai
-        output_file = "cover.png"  # Gantilah dengan nama file output yang sesuai
+        output_file = "ai.txt"  # Gantilah dengan nama file output yang sesuai
         prompt_type = "image"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input =  f"buatkanlah saya gambar dengan fitur {file_skrip} dengan se elegant dan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
         create_prompt(keyword1_file, keyword2_file, output_file, prompt_type, additional_input, message)
