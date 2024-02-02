@@ -14,6 +14,7 @@ import requests
 import telebot
 from googlesearch import search
 
+from hasilkan1 import prompt
 
 # Ganti dengan token bot Telegram Anda
 last_update_time = None
@@ -48,7 +49,7 @@ jumlah_saldo = saldo_awal
 ########### UBAH di bagian passnya UNTUK NGATUR
 ## dan jangan sekali kali ubah baris "Jumlah saldo Anda: " di skrip ini:
 passnya = 'premium15ksuu'
-
+file_skrip = 'skrip.txt'
 
 def blokir_nonaktif():
     global is_blokir_aktif
@@ -210,7 +211,7 @@ def generate_ai_prompt_command(message):
 
 # Command untuk membuat prompt
 @bot.message_handler(commands=['image_prompt'])
-def create_prompt_command(message):
+def create_prompt_command(message, file_skrip='skrip.txt',):
     try:
         keyword1_file = "keyword1.txt"  # Gantilah dengan nama file yang sesuai
         keyword2_file = "keyword2.txt"  # Gantilah dengan nama file yang sesuai
@@ -667,7 +668,7 @@ def download_html(message):
 
 # Handler untuk perintah /upload
 @bot.message_handler(commands=['upload'])
-def update_keywords(message, keyword_list):
+def update_keywords(message, keyword_list, skrip_list):
     global keywords_list
 
     try:
@@ -677,9 +678,11 @@ def update_keywords(message, keyword_list):
 
         # Read the entire CSV file with Pandas
         df = pd.read_csv('keyword.txt', header=None)
-
+        df2 = pd.read_csv('skrip.txt', header=None)
+        
         # Convert the first column to lowercase and extend the keywords list
         keywords_list.extend(df.iloc[:, 0].str.lower().tolist())
+        skrip_list.extend(df2.iloc[:, 0].str.lower().tolist())
 
         return True
     except Exception as e:
