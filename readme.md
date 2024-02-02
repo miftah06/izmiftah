@@ -8,8 +8,13 @@ payment - untuk melakukan pembayaran dengan password
 saldo - untuk melihat sisa saldo
 topup - untuk melakukan top-up
 chat - untuk melakukan chatting dengan ai
-ai_prompt - yakni untuk membuat prompt dengan ai
-bikin_prompt - yakni untuk membuat ai prompt dengan format prompt_type yaitu 5 /script/image/text/soal/cerita
+ai_image - yakni untuk membuat prompt dengan berupa gambar
+ai_soal - yakni untuk membuat prompt dengan berupa soal
+ai_cerita - yakni untuk membuat prompt dengan berupa cerita
+ai_script - yakni untuk membuat prompt dengan berupa skrip
+ai_text - yakni untuk membuat prompt dengan berupa text
+image_prompt - yakni untuk membuat gambar dengan ai
+ai_prompt - yakni untuk membuat skrip dengan ai
 dnsinfo - untuk mendapatkan info seputar hosting domain tersebut
 dork - untuk menjejahi domain dan url dengan dua katakunci misal: google/.com
 scan - untuk scanning domain dan url 
