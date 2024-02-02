@@ -178,7 +178,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
 def display_saldo(message):
     global jumlah_saldo
     jumlah_saldo = saldo 
-    bot.send_message(message.chat.id, f"Jumlah saldo Anda: {saldo_awal}") #cukup ganti ke credit atau jumlah_saldo jika eror
+    bot.send_message(message.chat.id, f"Jumlah saldo Anda: {jumlah_saldo}") #cukup ganti ke credit atau jumlah_saldo jika eror
 
 # Fungsi untuk melakukan pembayaran
 def process_payment(message):
@@ -815,10 +815,10 @@ def peg_parser():
 def check_saldo():
     assert saldo >= -1, "Saldo tidak boleh negatif."    
 
-# Fitur utama
 if __name__ == '__main__':
     # Cek isi_saldo dan lakukan sesuatu jika isi_saldo == 10
     try:
+        saldo += 10
         if saldo_awal <= -1:
             print("Saldo telah habis. bot di blokir aksesnya ")
         # Misalnya, jalankan peg_parser()
@@ -850,3 +850,4 @@ if __name__ == '__main__':
 
         except Exception as e:
             print(f"Terjadi kesalahan: {str(e)}")
+
