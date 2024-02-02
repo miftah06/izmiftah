@@ -32,7 +32,7 @@ saldo_awal = 10
 # Inisialisasi variabel-variabel
 credit = 0
 isi_saldo = 15
-jumlah_saldo = -1
+jumlah_saldo = 10 # tolong sesuaikan
 global saldo 
 saldo = saldo_awal
 saldo_awal += 10
