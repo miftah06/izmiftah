@@ -28,8 +28,6 @@ admin = 'id-tele-kamu'
 ### JANGAN DI UBAH #####
 saldo = -1
 credit = 0
-global saldo_awal
-saldo_awal = 10
 isi_saldo = 15
 ### JANGAN DI UBAH #####
 ########### UBAH DISPLAY SALDO UNTUK NGATUR
@@ -818,7 +816,7 @@ def check_saldo():
 if __name__ == '__main__':
     # Cek isi_saldo dan lakukan sesuatu jika isi_saldo == 10
     try:
-        saldo += 10
+        saldo_awal += 10
         if saldo_awal <= -1:
             print("Saldo telah habis. bot di blokir aksesnya ")
         # Misalnya, jalankan peg_parser()
