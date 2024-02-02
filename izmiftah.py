@@ -727,7 +727,7 @@ def update_scripts(message):
     try:
         if is_blokir_active(message):
             bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
-            return        subprocess.run(['bash', 'run.sh'], check=True)
+        subprocess.run(['bash', 'run.sh'], check=True)
         bot.reply_to(message, "Skrip berhasil diperbarui.")
     except subprocess.CalledProcessError as e:
         bot.reply_to(message, f"Error: {e}")
