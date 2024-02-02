@@ -680,7 +680,7 @@ def download_html(message):
 
 # Handler untuk perintah /upload
 @bot.message_handler(commands=['upload'])
-def update_keywords(message, keyword_list, skrip_list):
+def update_keywords(message,  keyword_list="keyword.txt", skrip_file="skrip.txt"):
     global keywords_list
 
     try:
@@ -694,7 +694,6 @@ def update_keywords(message, keyword_list, skrip_list):
 
         # Convert the first column to lowercase and extend the keywords list
         keywords_list.extend(df.iloc[:, 0].str.lower().tolist())
-        skrip_list.extend(df2.iloc[:, 0].str.lower().tolist())
 
         return True
     except Exception as e:
@@ -703,7 +702,8 @@ def update_keywords(message, keyword_list, skrip_list):
 
 # Handler untuk mengolah file yang diunggah oleh pengguna
 @bot.message_handler(content_types=['document'])
-def handle_uploaded_file(message):
+
+def handle_uploaded_file(message,  keyword_list="keyword.txt", skrip_file="skrip.txt"):
     global keywords_list
 
     if message.document.file_name not in ['keyword.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'subdomains.txt', 'cover.png']:
@@ -866,7 +866,7 @@ def generate_keyword_file(filename, num_keywords):
         file.write("\n".join(random_keywords))
 
 @bot.message_handler(commands=['bikin_prompt'])
-def handle_prompt(message, keyword_list):
+def handle_prompt(message,  keyword_list="keyword.txt", skrip_file="skrip.txt"):
     args = message.text.split('/')[1:]
 
     if len(args) == 7:
@@ -911,7 +911,7 @@ def check_saldo():
 
 if __name__ == '__main__':
     # Cek isi_saldo dan lakukan sesuatu jika isi_saldo == 10
-    bot.polling(none_stop=True, keywords_list_file="katakunci.csv", skrip_file="skrip.txt", skrip_list="katakunci.txt")
+    bot.polling(none_stop=True)
     try:
         jumlah_koin = jumlah_saldo
         jumlah_koin -= +10
