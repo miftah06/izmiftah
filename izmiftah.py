@@ -106,7 +106,7 @@ def create_blokir_prompt(message):
         return f"{identitas}\n\pelanggaran saldo terdeteksi,saldo: {saldo} \nAI:"
 
 # Fungsi untuk menjalankan perintah AI
-def generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input):
+def generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input):
     try:
         # Buat prompt berdasarkan input dari pengguna
         prompt = f"buatkanlah saya sebuah {skrip_file}\n\n"
@@ -114,7 +114,7 @@ def generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_inpu
         prompt += f"dan dalam fitur Konteks: {additional_input}\n\n"
 
         # Jalankan permintaan ke OpenAI Chat API jika fitur blokir tidak aktif
-        if not is_blokir_active(message):
+        if not is_blokir_active():
             response = openai.Completion.create(
                 model="gpt-3.5-turbo",  # Ganti model sesuai dengan yang Anda inginkan
                 messages=[
@@ -127,9 +127,35 @@ def generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_inpu
             ai_reply = response['choices'][0]['message']['content']
 
             # Kirim jawaban AI sebagai balasan
-            bot.send_message(message.chat.id, ai_reply)
+            bot.send_message(ai_reply)
     except Exception as e:
-        bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
+        bot.send_message(text=f"Terjadi kesalahan: {str(e)}")
+
+def generate_image_prompt(keyword1, keyword2, prompt_type, additional_input):
+    try:
+        # Buat prompt berdasarkan input dari pengguna
+        prompt = f"buatkanlah saya sebuah {skrip_file}\n\n"
+        prompt += f"dengan Kata Kunci: {keyword1}, {keyword2}\n\n"
+        prompt += f"dan dalam fitur Konteks: {additional_input}\n\n"
+
+        # Jalankan permintaan ke OpenAI Chat API jika fitur blokir tidak aktif
+        if not is_blokir_active():
+            response = openai.Completion.create(
+                model="gpt-3.5-turbo",  # Ganti model sesuai dengan yang Anda inginkan
+                messages=[
+                    {"role": "system", "content": "You are a researcher working on a thesis about teacher-parent synergy to DEVELOP ELEMENTARY SCHOOL STUDENTS' DISCIPLINE CHARACTER."},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+
+            # Ambil jawaban dari respons
+            ai_reply = response['choices'][0]['message']['content']
+
+            # Kirim jawaban AI sebagai balasan
+            bot.send_message(image, ai_reply)
+    except Exception as e:
+        bot.send_message(image, f"Terjadi kesalahan: {str(e)}")
+
 
 # Fungsi untuk membuat prompt
 def create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input):
@@ -165,7 +191,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
 
 
 # Fungsi untuk menjalankan perintah AI
-def generate_bikin_prompt(message, keyword1, keyword2, keyword2_file, command_option, specification_option, prompt_type, additional_input):
+def generate_bikin_prompt(keyword1, keyword2, keyword2_file, command_option, specification_option, prompt_type, additional_input):
     try:
         # Buat prompt berdasarkan input dari pengguna
         prompt = f"buatkanlah saya sebuah {prompt_type}\n\n"
@@ -173,7 +199,7 @@ def generate_bikin_prompt(message, keyword1, keyword2, keyword2_file, command_op
         prompt += f"dan dalam fitur Konteks: {additional_input}\n\n"
 
         # Jalankan permintaan ke OpenAI Chat API jika fitur blokir tidak aktif
-        if not is_blokir_active(message):
+        if not is_blokir_active():
             response = openai.Completion.create(
                 model="gpt-3.5-turbo",  # Ganti model sesuai dengan yang Anda inginkan
                 messages=[
@@ -186,9 +212,9 @@ def generate_bikin_prompt(message, keyword1, keyword2, keyword2_file, command_op
             ai_reply = response['choices'][0]['message']['content']
 
             # Kirim jawaban AI sebagai balasan
-            bot.send_message(message.chat.id, ai_reply)
+            bot.send_message(ai_reply)
     except Exception as e:
-        bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
+        bot.send_message(text=f"Terjadi kesalahan: {str(e)}")
 
 # Handler untuk perintah "/bikin_prompt"
 @bot.message_handler(commands=['bikin_prompt'])
@@ -204,7 +230,7 @@ def handle_ai_prompt(message):
             keyword1, keyword2, keyword2_file, command_option, specification_option, prompt_type, additional_input = args
 
             # Membuat prompt dan menjalankan OpenAI
-            generate_bikin_prompt(message.chat.id, keyword1, keyword2, keyword2_file, command_option, specification_option, prompt_type, additional_input)
+            generate_bikin_prompt(keyword1, keyword2, keyword2_file, command_option, specification_option, prompt_type, additional_input)
         else:
             bot.send_message(message.chat.id, "Format perintah tidak valid. Gunakan format\n /bikin_prompt /keyword1/keyword2/keyword2_file/command_option/specification_option/prompt_type/additional_input\n\n contoh:\n/bikin_prompt /Pendidikan/Siswa/keyword.txt/Generate_text/Buatlah_sebuah_paragraf_text/mengenai_kelas_10A")
 
@@ -239,7 +265,7 @@ def generate_ai_image_prompt_command(message):
         keyword2 = skrip_file_options  # Gantilah dengan kata kunci yang sesuai
         prompt_type = "image"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
+        generate_image_prompt(image, keyword1, keyword2, prompt_type, additional_input)
 
         # Kirim pesan konfirmasi ke bot Telegram
         bot.send_message(message.chat.id, "AI prompt telah berhasil dibuat.")
@@ -280,7 +306,7 @@ def generate_ai_prompt_command(message):
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "script"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -292,7 +318,7 @@ def generate_ai_prompt_command(message):
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "soal"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -304,7 +330,7 @@ def generate_ai_prompt_command(message):
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "story"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -316,7 +342,7 @@ def generate_ai_prompt_command(message):
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "text"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -330,8 +356,9 @@ def create_prompt_command(message, file_skrip='keyword.txt',):
         prompt_type = "image"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input =  f"buatkanlah saya gambar dengan fitur {skrip_file} dengan se elegant dan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
         create_prompt(keyword1_file, keyword2_file, output_file, prompt_type, additional_input, message)
+        bot.send_message(image)
     except Exception as e:
-        bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
+        bot.send_message(f"Terjadi kesalahan: {str(e)}")
 
 # Command untuk membuat prompt
 @bot.message_handler(commands=['ai_nulis'])
@@ -376,9 +403,6 @@ def automatic_payment(message):
     pass
 
 # Fungsi untuk mengirim pesan dengan format tertentu
-def send_formatted_message(chat_id, formatted_message):
-    bot.send_message(chat_id=chat_id, text=formatted_message)
-
 # Fungsi untuk mengirim pesan ke Telegram
 def send_telegram_message(message):
     if is_blokir_active(message):
@@ -386,7 +410,7 @@ def send_telegram_message(message):
         return
 
     params = {
-        "chat_id": message.Chat.id,
+        "chat_id": message.chat.id,
         "text": message
     }
 
@@ -429,6 +453,9 @@ def write_document(message):
     global saldo
     saldo += -1
     bot.send_message(message.chat.id, " saldo berkurang 1")
+
+def send_formatted_message(chat_id, formatted_message):
+    bot.send_message(chat_id=chat_id, text=formatted_message)
 
 # Fungsi untuk mendapatkan informasi DNS
 def get_dns_info(hostname):
