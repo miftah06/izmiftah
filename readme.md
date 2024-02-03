@@ -1,4 +1,6 @@
 ## tempel ke edit bot lalu edit commend di https://t.me/BotFather
+## Command karena ada yang gak work karena premium jadi masih beta dulu
+
 
 Command:
 
@@ -13,8 +15,8 @@ ai_soal - yakni untuk membuat prompt dengan berupa soal
 ai_cerita - yakni untuk membuat prompt dengan berupa cerita
 ai_script - yakni untuk membuat prompt dengan berupa skrip
 ai_text - yakni untuk membuat prompt dengan berupa text
-image_prompt - yakni untuk membuat prompt gambar dengan ai
-ai_prompt - yakni untuk membuat skrip dengan ai
+image_prompt - yakni untuk membuat gambar dengan ai
+ai_nulis - yakni untuk membuat script dengan menggunakan ai
 dnsinfo - untuk mendapatkan info seputar hosting domain tersebut
 dork - untuk menjejahi domain dan url dengan dua katakunci misal: google/.com
 scan - untuk scanning domain dan url 
