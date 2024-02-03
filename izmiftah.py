@@ -881,7 +881,7 @@ def generate_html(dataframe):
     return generated_html
 
 # Inisialisasi identitas
-identitas = "miftah Izharuddin , seorang mentor introvert amatir yang pandai dalam semua hal"
+identitas = "mif , seorang anak sekolah kharismatik yang jenius dan pandai dalam berbagai hal"
 
 # Handler untuk perintah /ai
 @bot.message_handler(commands=['ai'])
