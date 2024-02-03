@@ -50,9 +50,17 @@ jumlah_saldo = saldo_awal
 ### JANGAN DI UBAH #####
 ########### UBAH di bagian passnya UNTUK NGATUR
 ## dan jangan sekali kali ubah baris "Jumlah saldo Anda: " di skrip ini:
-passnya = 'password-kamu'
+passnya = 'premium15ksuu'
 file_skrip = 'skrip.txt'
 
+def get_chat_id(message):
+    return message.chat.id
+    
+@bot.message_handler(func=lambda message: True)
+def handle_message(message):
+    chat_id = get_chat_id(message)
+    # Now you can use chat_id or perform other actions with the message
+   
 def skrip_file_options():
     with open(file_skrip, "r") as keywords_list_file:
         global skrip_file
@@ -217,8 +225,26 @@ def generate_bikin_prompt(keyword1, keyword2, keyword2_file, command_option, spe
     except Exception as e:
         bot.send_message(text=f"Terjadi kesalahan: {str(e)}")
 
-# Handler untuk perintah "/bikin_prompt"
 @bot.message_handler(commands=['bikin_prompt'])
+def handle_bikin_prompt(message):
+    try:
+        if is_blokir_active(message):
+            bot.send_message(message.chat.id, f"Saldo kurang, lakukan /payment atau /topup terlebih dahulu.")
+            return
+        # Mendapatkan argumen dari perintah
+        args = message.text.split('/')[1:]
+
+        if len(args) == 5:
+            keyword1, keyword2, command_option, prompt_type, jumlah = args
+
+            # Membuat prompt dan menjalankan OpenAI
+            create_prompt(message, keyword1, keyword2, 'skrip.txt', command_option, 'dengan akurat dan sempurna', prompt_type, jumlah)
+        else:
+            bot.send_message(chat_id, "Format perintah tidak valid. Gunakan format /bikin_prompt katakunci1/katakunci2/command_option/text/jumlah\n contoh:\n\n /bikin_prompt Manajemen/mengenai_kelas_10A/ buatkanlah saya soal mengenai Manajemen kelas10A/text/10")
+    except Exception as e:
+            bot.send_message(chat_id, f"Terjadi kesalahan: {str(e)}")
+            
+@bot.message_handler(commands=['ai_prompt'])
 def handle_ai_prompt(message):
     try:
         if is_blokir_active(message):
@@ -227,37 +253,18 @@ def handle_ai_prompt(message):
         # Mendapatkan argumen dari perintah
         args = message.text.split('/')[1:]
 
-        if len(args) == 7:
-            chat_id, keyword1, keyword2, keyword2_file, command_option, specification_option, prompt_type, additional_input = args
+        if len(args) == 5:
+            output_file, command_option, specification_option, prompt_type, jumlah = args
 
             # Membuat prompt dan menjalankan OpenAI
-            generate_bikin_prompt(chat_id, keyword1, keyword2, keyword2_file, command_option, specification_option, prompt_type, additional_input)
+            create_prompt(message, 'keyword.txt', 'skrip.txt', output_file, command_option, specification_option, prompt_type, jumlah)
         else:
-            bot.send_message(message.chat.id, "Format perintah tidak valid. Gunakan format\n /bikin_prompt /keyword1/keyword2/keyword2_file/command_option/specification_option/prompt_type/additional_input\n\n contoh:\n/bikin_prompt /Pendidikan/Siswa/keyword.txt/Generate_text/Buatlah_sebuah_paragraf_text/mengenai_kelas_10A")
+            bot.send_message(chat_id, "Format perintah tidak valid. Gunakan format /ai_prompt ai.txt/command_option/specification_option/text/jumlah\n contoh:\n\n /ai_prompt keyword.txt/Manajemen/mengenai_kelas_10A/text/10")
 
     except Exception as e:
-        bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
-
-@bot.message_handler(commands=['ai_prompt'])
-def handle_ai_prompt(message):
-    try:
-        if is_blokir_active(message):
-            bot.send_message(message.chat.id, f"saldo kurang, lakukan /payment atau /topup terlebih dahulu .")
-            return
-        # Mendapatkan argumen dari perintah
-        args = message.text.split('/')[1:]
-
-        if len(args) == 7:
-            chat_id, keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input = args
-
-            # Membuat prompt dan menjalankan OpenAI
-            create_prompt(chat_id, keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input)
-        else:
-            bot.send_message(message.chat.id, "Format perintah tidak valid. Gunakan format /ai_prompt /keyword1_file/keyword2_file/output_file/command_option/specification_option/prompt_type/additional_input")
-
-    except Exception as e:
-        bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
-
+        bot.send_message(chat_id, f"Terjadi kesalahan: {str(e)}")
+        
+        
 # Command untuk menghasilkan AI prompt
 @bot.message_handler(commands=['ai_image'])
 def generate_ai_image_prompt_command(message):
