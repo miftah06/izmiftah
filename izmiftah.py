@@ -50,7 +50,7 @@ jumlah_saldo = saldo_awal
 ########### UBAH di bagian passnya UNTUK NGATUR
 ## dan jangan sekali kali ubah baris "Jumlah saldo Anda: " di skrip ini:
 passnya = 'password-kamu'
-file_skrip = 'keyword.txt'
+file_skrip = 'skrip.txt'
 
 def skrip_file_options():
     with open(file_skrip, "r") as keywords_list_file:
