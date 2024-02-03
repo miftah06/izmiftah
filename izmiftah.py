@@ -14,6 +14,7 @@ import requests
 import telebot
 from googlesearch import search
 from openai.api_resources import image
+from telegram import message as messages
 
 from hasilkan1 import prompt
 
@@ -184,9 +185,9 @@ def create_prompt(chat_id, keyword1_file, keyword2_file, output_file, prompt_typ
                 else:
                     output_line = "Invalid prompt type\n masukkan opsi\n 1.image,\n 2.text atau\n 3.script\n 4.soal\n 5.cerita"
                 file.write(output_line)
-                bot.reply_to(message, chat_id=chat_id, text=f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan download dengan opsi yang ada.")
+                bot.reply_to(messages, chat_id=chat_id, text=f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan download dengan opsi yang ada.")
     except Exception as e:
-        bot.send_message(message.chat.id, text=f"Terjadi kesalahan: {str(e)}")
+        bot.send_message(messages, text=f"Terjadi kesalahan: {str(e)}")
         
 # Command untuk membuat prompt
 @bot.message_handler(commands=['image_prompt'])
