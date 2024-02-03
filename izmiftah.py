@@ -997,9 +997,11 @@ def handle_prompt(message, keyword_list):
         with open(output_file, 'r') as file:
             output_text = file.read()
 
-        bot.send_message(message.chat.id, output_text)
+        bot.send_message(message.chat.id, output_text)        
+        global saldo
+        saldo += -3
     else:
-        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /ai_prompt fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
+        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /bikin_prompt fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
         global minus_saldo
         minus_saldo = 0
 
