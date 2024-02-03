@@ -979,33 +979,6 @@ def payment_with_password(message):
     else:
         bot.send_message(message.chat.id, "Perintah tidak valid. lakukan topup dengan: /payment [password]")
 
-@bot.message_handler(commands=['bikin_prompt'])
-def handle_prompt(message, keyword_list):
-    args = message.text.split('/')[1:]
-
-    if len(args) == 7:
-        keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input = args
-
-        # Generate keyword files
-        generate_keyword_file(keyword1_file, 500)
-        generate_keyword_file(keyword2_file, 500)
-
-        # Create prompt
-        create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input, message)
-
-        # Send the output file to the user
-        with open(output_file, 'r') as file:
-            output_text = file.read()
-
-        bot.send_message(message.chat.id, output_text)        
-        global saldo
-        saldo += -3
-    else:
-        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /bikin_prompt fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
-        global minus_saldo
-        minus_saldo = 0
-
-
 # Handler untuk pesan biasa
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):

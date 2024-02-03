@@ -15,7 +15,6 @@ nulis_prompt - yakni untuk membuat skrip dengan berupa prompt
 soal_prompt - yakni untuk menjawab soal dengan berupa prompt
 story_prompt - yakni untuk membuat prompt dengan berupa cerita
 skrip_prompt - yakni untuk membuat prompt dengan berupa skrip
-bikin_prompt - yakni untuk membuat prompt dengan secara bebas
 ai_image - yakni untuk membuat  dengan berupa ai
 ai_soal - yakni untuk membuat prompt dengan berupa soal
 ai_cerita - yakni untuk membuat prompt dengan berupa cerita
