@@ -13,8 +13,6 @@ import pandas as pd
 import requests
 import telebot
 from googlesearch import search
-from openai.api_resources import image
-from telegram import message as messages
 
 from hasilkan1 import prompt
 
@@ -156,6 +154,8 @@ def generate_image_prompt(keyword1, keyword2, prompt_type, additional_input):
 @bot.message_handler(commands=['ai_image'])
 def generate_ai_image_prompt_command(message):
     try:
+        global saldo
+        saldo += -3
         with open('keyword1.txt', "r") as key1_file, open('keyword2.txt', "r") as key2_file:
             key1_options = key1_file.readlines()
             key2_options = key2_file.readlines()
@@ -208,6 +208,8 @@ def create_prompt(chat_id, keyword1_file, keyword2_file, output_file, prompt_typ
 @bot.message_handler(commands=['image_prompt'])
 def create_image_prompt_command(message, skrip_file='keyword.txt'):
     try:
+        global saldo
+        saldo += -2
         keyword1_file = "keyword1.txt"  # Gantilah dengan nama file yang sesuai
         keyword2_file = "keyword2.txt"  # Gantilah dengan nama file yang sesuai
         output_file = "ai.txt"  # Gantilah dengan nama file output yang sesuai
@@ -220,6 +222,8 @@ def create_image_prompt_command(message, skrip_file='keyword.txt'):
 @bot.message_handler(commands=['nulis_prompt'])
 def create_nulis_prompt_command(message, skrip_file='keyword.txt'):
     try:
+        global saldo
+        saldo += -2
         keyword1_file = "keyword1.txt"  # Gantilah dengan nama file yang sesuai
         keyword2_file = "keyword2.txt"  # Gantilah dengan nama file yang sesuai
         output_file = "ai.txt"  # Gantilah dengan nama file output yang sesuai
@@ -232,6 +236,8 @@ def create_nulis_prompt_command(message, skrip_file='keyword.txt'):
 @bot.message_handler(commands=['skrip_prompt'])
 def create_skrip_prompt_command(message, skrip_file='keyword.txt'):
     try:
+        global saldo
+        saldo += -2
         keyword1_file = "keyword1.txt"  # Gantilah dengan nama file yang sesuai
         keyword2_file = "keyword2.txt"  # Gantilah dengan nama file yang sesuai
         output_file = "ai.txt"  # Gantilah dengan nama file output yang sesuai
@@ -244,6 +250,8 @@ def create_skrip_prompt_command(message, skrip_file='keyword.txt'):
 @bot.message_handler(commands=['jawab_prompt'])
 def create_jawab_prompt_command(message, skrip_file='keyword.txt', jumlah_soal=10):
     try:
+        global saldo
+        saldo += -2
         keyword1_file = "keyword1.txt"  # Gantilah dengan nama file yang sesuai
         keyword2_file = "keyword2.txt"  # Gantilah dengan nama file yang sesuai
         output_file = "ai.txt"  # Gantilah dengan nama file output yang sesuai
@@ -256,6 +264,8 @@ def create_jawab_prompt_command(message, skrip_file='keyword.txt', jumlah_soal=1
 @bot.message_handler(commands=['cerita_prompt'])
 def create_cerita_prompt_command(message, skrip_file='keyword.txt', jumlah_paragraf=5):
     try:
+        global saldo
+        saldo += -2
         keyword1_file = "keyword1.txt"  # Gantilah dengan nama file yang sesuai
         keyword2_file = "keyword2.txt"  # Gantilah dengan nama file yang sesuai
         output_file = "ai.txt"  # Gantilah dengan nama file output yang sesuai
@@ -264,7 +274,7 @@ def create_cerita_prompt_command(message, skrip_file='keyword.txt', jumlah_parag
     except Exception as e:
         bot.send_message(message, f"Terjadi kesalahan: {str(e)}")
 
-        
+
 # Fungsi untuk menjalankan perintah AI (tanpa message dan prompt)
 def generate_ai_prompt(keyword1, keyword2, prompt_type, key1_options, key2_options):
     try:
@@ -289,7 +299,7 @@ def generate_ai_prompt(keyword1, keyword2, prompt_type, key1_options, key2_optio
         ai_reply = response['choices'][0]['message']['content']
 
         return ai_reply
-            
+
     except Exception as e:
         return f"Terjadi kesalahan: {str(e)}"
 
@@ -297,9 +307,11 @@ def generate_ai_prompt(keyword1, keyword2, prompt_type, key1_options, key2_optio
 @bot.message_handler(commands=['ai_script'])
 def generate_ai_script_prompt_command(message):
     try:
+        global saldo
+        saldo += -3
         with open('keyword1.txt', "r") as key1_file, open('keyword2.txt', "r") as key2_file:
             key1_options = key1_file.readlines()
-            key2_options = key2_file.readlines() 
+            key2_options = key2_file.readlines()
         ai_reply = generate_ai_prompt("sebuah skrip yang akurat dan teliti mengenai", skrip_file_options, "script", key1_options, key2_options)
         bot.send_message(message.chat.id, ai_reply)
     except Exception as e:
@@ -309,9 +321,11 @@ def generate_ai_script_prompt_command(message):
 @bot.message_handler(commands=['ai_soal'])
 def generate_ai_soal_prompt_command(message):
     try:
+        global saldo
+        saldo += -3
         with open('keyword1.txt', "r") as key1_file, open('keyword2.txt', "r") as key2_file:
             key1_options = key1_file.readlines()
-            key2_options = key2_file.readlines() 
+            key2_options = key2_file.readlines()
         ai_reply = generate_ai_prompt("jawablah soal berikut, dengan akurat, adapun soalnya yakni :", "skrip_file_options", "soal", key1_options, key2_options)
         bot.send_message(message.chat.id, ai_reply)
     except Exception as e:
@@ -321,6 +335,8 @@ def generate_ai_soal_prompt_command(message):
 @bot.message_handler(commands=['ai_cerita'])
 def generate_ai_cerita_prompt_command(message):
     try:
+        global saldo
+        saldo += -3
         with open('keyword1.txt', "r") as key1_file, open('keyword2.txt', "r") as key2_file:
             key1_options = key1_file.readlines()
             key2_options = key2_file.readlines()
@@ -333,6 +349,8 @@ def generate_ai_cerita_prompt_command(message):
 @bot.message_handler(commands=['ai_text'])
 def generate_ai_text_prompt_command(message):
     try:
+        global saldo
+        saldo += -3
         with open('keyword1.txt', "r") as key1_file, open('keyword2.txt', "r") as key2_file:
             key1_options = key1_file.readlines()
             key2_options = key2_file.readlines()
@@ -346,7 +364,7 @@ def generate_ai_text_prompt_command(message):
 def create_ai_nulis_prompt_command(message):
     try:
         global saldo
-        saldo += -10
+        saldo += -3
         with open('keyword1.txt', "r") as key1_file, open('keyword2.txt', "r") as key2_file:
             key1_options = key1_file.readlines()
             key2_options = key2_file.readlines()
@@ -355,7 +373,7 @@ def create_ai_nulis_prompt_command(message):
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
-        
+
 # Fungsi untuk melakukan pembayaran
 def process_payment(message):
     # Implementasikan logika pembayaran melalui e-wallet Indonesia di sini
@@ -465,6 +483,9 @@ def handle_dnsinfo(message):
         bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
         return
 
+
+        global saldo
+        saldo += -1
     domain = message.text.split()[1]
     cname_values, ipv4_addresses, ipv6_addresses = get_dns_info(domain)
     bot.send_message(message.chat.id, f"CNAME: {cname_values}\nIPv4: {ipv4_addresses}\nIPv6: {ipv6_addresses}")
@@ -585,6 +606,10 @@ def handle_subdomain_query(message):
     domain = message.text.split()[-1]  # Mengasumsikan domain adalah teks terakhir setelah perintah
     results = scan_subdomain(domain)
     bot.reply_to(message, text=f"Subdomain scan results: {results}")
+
+
+    global saldo
+    saldo += -1
 
 # Fungsi untuk memeriksa apakah file cover.png kosong
 def check_cover_png():
