@@ -29,7 +29,7 @@ email_kamu = 'email-anda' #tolong modifikasi server smtpnya juga ya
 openai.api_key = api_key
 admin = 'kontak-anda'
 link_jualan = 'isi-dengan-link-jualan-anda'
-chat_id = 'isi-dengan-id-bot-kamu' # dapatkan di https://t.me/username_to_id_bot
+# dapatkan di https://t.me/username_to_id_bot
 ### JANGAN DI UBAH #####
 saldo_awal = 10
 # Inisialisasi variabel-variabel
@@ -50,17 +50,9 @@ jumlah_saldo = saldo_awal
 ### JANGAN DI UBAH #####
 ########### UBAH di bagian passnya UNTUK NGATUR
 ## dan jangan sekali kali ubah baris "Jumlah saldo Anda: " di skrip ini:
-passnya = 'premium15ksuu'
+passnya = 'password-anda'
 file_skrip = 'skrip.txt'
 
-def get_chat_id(message):
-    return message.chat.id
-    
-@bot.message_handler(func=lambda message: True)
-def handle_message(message):
-    chat_id = get_chat_id(message)
-    # Now you can use chat_id or perform other actions with the message
-   
 def skrip_file_options():
     with open(file_skrip, "r") as keywords_list_file:
         global skrip_file
@@ -164,106 +156,6 @@ def generate_image_prompt(keyword1, keyword2, prompt_type, additional_input):
             bot.send_message(image, ai_reply)
     except Exception as e:
         bot.send_message(image, f"Terjadi kesalahan: {str(e)}")
-
-
-# Fungsi untuk membuat prompt
-def create_prompt(chat_id, keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input):
-    if command_option is None:
-        command_option = "dengan penuh estetika dan fitur yang estetik"
-    try:
-        with open(keyword1_file, "r") as key1_file, open(keyword2_file, "r") as key2_file:
-            key1_options = key1_file.readlines()
-            key2_options = key2_file.readlines()
-            key1_option = random.choice(key1_options).strip()
-            key2_option = random.choice(key2_options).strip()
-            paragraf = additional_input.strip()
-
-            with open(output_file, "w") as file:
-                # Anda bisa menambahkan logika tambahan di sini jika diperlukan.
-
-                if prompt_type == "text":
-                    output_line = f"Generate text with command:\n\n; {command_option} {specification_option} serta {key1_option}\n dengan tambahan fungsi {key2_option}\n adapun jika isinya berupa {prompt} {key1_option}\n\n;  dengan text berupa:\n\n{prompt} bersama fungsi atau pembahasan mengenai {key2_option} serta berikan saya detail lengkapnya \n\n\n"
-                elif prompt_type == "image":
-                    output_line = f"Generate image with command:\n\n\n; {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan warna {key2_option}\n\n\n"
-                elif prompt_type == "script":
-                    output_line = f"Generate script with command:\n\n\n; {command_option}{specification_option} dan serta {prompt} jika hal tersebut berupa\n {prompt}\n dengan {key1_option}\n\n;  di dalam skrip {key1_option}\n dengan module atau plugin tambahan {prompt}{key2_option}\n\n\npada untuk {specification_option} dan berikan saya skrip lengkapnya\n\n\n\n"
-                elif prompt_type == "soal":
-                    output_line = f"Generate answer with command:\n\n\n; {command_option}{specification_option} dan jawablah jika soalnya:\n {prompt}\n tanpa {key1_option}\n\n;  maka tolong jawab  {key1_option}\n dengan menjelaskan {prompt}{key2_option}\n\n\n; {specification_option} secara rinci\n sebanyak {paragraf} soal serta berikan saya jawaban lengkapnya\n\n"
-                elif prompt_type == "cerita":
-                    output_line = f"Generate story with command:\n\n\n; {command_option}, dengan latar elegant dengan penuh estetika nuansa {specification_option} bertemakan {key1_option} dengan keharmonisan {key2_option}\n\n\n{command_option}{specification_option} dan buatlah momen lucu setelah terjadi kejadian berupa\n\n;  {prompt}\n\n\n; dan buatlah ceritanya dengan penuh drama dan lelucon keharmonisan\n\n;  dan jangan lupa buat ulang dengan tema:\n {key1_option}\n dengan menambahkan tambahkan {prompt}\n {specification_option} di dalam ceritanya\n\n;  sebanyak {paragraf} paragraf\n\n"
-                else:
-                    output_line = "Invalid prompt type\n masukkan opsi\n 1.image,\n 2.text atau\n 3.script\n 4.soal\n 5.cerita"
-                file.write(output_line)
-                bot.reply_to(text=f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan download dengan opsi yang ada.")
-    except Exception as e:
-        bot.send_message(text=f"Terjadi kesalahan: {str(e)}")
-
-
-# Fungsi untuk menjalankan perintah AI
-def generate_bikin_prompt(keyword1, keyword2, keyword2_file, command_option, specification_option, prompt_type, additional_input):
-    try:
-        # Buat prompt berdasarkan input dari pengguna
-        prompt = f"buatkanlah saya sebuah {prompt_type}\n\n"
-        prompt += f"dengan Kata Kunci: {keyword1}, {keyword2}\n\n"
-        prompt += f"dan dalam fitur Konteks: {additional_input}\n\n"
-
-        # Jalankan permintaan ke OpenAI Chat API jika fitur blokir tidak aktif
-        if not is_blokir_active():
-            response = openai.Completion.create(
-                model="gpt-3.5-turbo",  # Ganti model sesuai dengan yang Anda inginkan
-                messages=[
-                    {"role": "system", "content": "You are a researcher working on a thesis about teacher-parent synergy to DEVELOP ELEMENTARY SCHOOL STUDENTS' DISCIPLINE CHARACTER."},
-                    {"role": "user", "content": prompt}
-                ]
-            )
-
-            # Ambil jawaban dari respons
-            ai_reply = response['choices'][0]['message']['content']
-
-            # Kirim jawaban AI sebagai balasan
-            bot.send_message(ai_reply)
-    except Exception as e:
-        bot.send_message(text=f"Terjadi kesalahan: {str(e)}")
-
-@bot.message_handler(commands=['bikin_prompt'])
-def handle_bikin_prompt(message):
-    try:
-        if is_blokir_active(message):
-            bot.send_message(message.chat.id, f"Saldo kurang, lakukan /payment atau /topup terlebih dahulu.")
-            return
-        # Mendapatkan argumen dari perintah
-        args = message.text.split('/')[1:]
-
-        if len(args) == 5:
-            keyword1, keyword2, command_option, prompt_type, jumlah = args
-
-            # Membuat prompt dan menjalankan OpenAI
-            create_prompt(message, keyword1, keyword2, 'skrip.txt', command_option, 'dengan akurat dan sempurna', prompt_type, jumlah)
-        else:
-            bot.send_message(chat_id, "Format perintah tidak valid. Gunakan format /bikin_prompt katakunci1/katakunci2/command_option/text/jumlah\n contoh:\n\n /bikin_prompt Manajemen/mengenai_kelas_10A/ buatkanlah saya soal mengenai Manajemen kelas10A/text/10")
-    except Exception as e:
-            bot.send_message(chat_id, f"Terjadi kesalahan: {str(e)}")
-            
-@bot.message_handler(commands=['ai_prompt'])
-def handle_ai_prompt(message):
-    try:
-        if is_blokir_active(message):
-            bot.send_message(message.chat.id, f"Saldo kurang, lakukan /payment atau /topup terlebih dahulu.")
-            return
-        # Mendapatkan argumen dari perintah
-        args = message.text.split('/')[1:]
-
-        if len(args) == 5:
-            output_file, command_option, specification_option, prompt_type, jumlah = args
-
-            # Membuat prompt dan menjalankan OpenAI
-            create_prompt(message, 'keyword.txt', 'skrip.txt', output_file, command_option, specification_option, prompt_type, jumlah)
-        else:
-            bot.send_message(chat_id, "Format perintah tidak valid. Gunakan format /ai_prompt ai.txt/command_option/specification_option/text/jumlah\n contoh:\n\n /ai_prompt keyword.txt/Manajemen/mengenai_kelas_10A/text/10")
-
-    except Exception as e:
-        bot.send_message(chat_id, f"Terjadi kesalahan: {str(e)}")
-        
         
 # Command untuk menghasilkan AI prompt
 @bot.message_handler(commands=['ai_image'])
@@ -364,7 +256,7 @@ def create_prompt_command(message, file_skrip='keyword.txt',):
         output_file = "ai.txt"  # Gantilah dengan nama file output yang sesuai
         prompt_type = "image"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input =  f"buatkanlah saya gambar dengan fitur {skrip_file} dengan se elegant dan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        create_prompt(chat_id, keyword1_file, keyword2_file, output_file, prompt_type, additional_input, message)
+        create_prompt(message.chat.id, keyword1_file, keyword2_file, output_file, prompt_type, additional_input, message)
     except Exception as e:
         bot.send_message(f"Terjadi kesalahan: {str(e)}")
 
@@ -377,7 +269,7 @@ def create_prompt_command(message):
         output_file = "ai.txt"  # Gantilah dengan nama file output yang sesuai
         prompt_type = "script"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = f"buatkanlah saya dengan fitur {skrip_file} dengan seakurat dan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        create_prompt(chat_id, keyword1_file, keyword2_file, output_file, prompt_type, additional_input, message)
+        create_prompt(message.chat.id, keyword1_file, keyword2_file, output_file, prompt_type, additional_input, message)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
