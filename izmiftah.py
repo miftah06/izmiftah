@@ -158,7 +158,8 @@ def generate_image_prompt(keyword1, keyword2, prompt_type, additional_input):
         bot.send_message(image, f"Terjadi kesalahan: {str(e)}")
 
 
-def create_prompt(chat_id, keyword1_file, keyword2_file, output_file, prompt_type, additional_input, prompt, key1_options, key2_options):
+def create_prompt(chat_id, keyword1_file, keyword2_file, output_file, prompt_type, additional_input, prompt, key1_options, key2_options, 
+                  command_option='buatkanlah saya sebuah', specification_option='dengan seakurat dan se sempurna mungkin,' ):
     try:
         with open(keyword1_file, "r") as key1_file, open(keyword2_file, "r") as key2_file:
             key1_options = key1_file.readlines()
@@ -183,20 +184,23 @@ def create_prompt(chat_id, keyword1_file, keyword2_file, output_file, prompt_typ
                 else:
                     output_line = "Invalid prompt type\n masukkan opsi\n 1.image,\n 2.text atau\n 3.script\n 4.soal\n 5.cerita"
                 file.write(output_line)
-                bot.reply_to(chat_id=chat_id, text=f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan download dengan opsi yang ada.")
+                bot.reply_to(message, chat_id=chat_id, text=f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan download dengan opsi yang ada.")
     except Exception as e:
-        bot.send_message(chat_id=chat_id, text=f"Terjadi kesalahan: {str(e)}")
-
+        bot.send_message(message.chat.id, text=f"Terjadi kesalahan: {str(e)}")
+        
 # Command untuk membuat prompt
 @bot.message_handler(commands=['image_prompt'])
 def create_image_prompt_command(message, skrip_file='keyword.txt'):
     try:
+        with open('keyword1.txt', "r") as key1_file, open('keyword2.txt', "r") as key2_file:
+            key1_options = key1_file.readlines()
+            key2_options = key2_file.readlines()
         keyword1_file = "keyword1.txt"  # Gantilah dengan nama file yang sesuai
         keyword2_file = "keyword2.txt"  # Gantilah dengan nama file yang sesuai
         output_file = "ai.txt"  # Gantilah dengan nama file output yang sesuai
         prompt_type = "image"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = f"buatkanlah saya gambar dengan fitur {skrip_file} dengan se elegant dan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        create_prompt(message.chat.id, keyword1_file, keyword2_file, output_file, prompt_type, additional_input, skrip_file, key1_options, key2_options)
+        create_prompt(message.chat.id, keyword1_file, keyword2_file, output_file, prompt_type, additional_input, prompt, key1_options, key2_options, skrip_file, key1_options, key2_options)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -204,6 +208,9 @@ def create_image_prompt_command(message, skrip_file='keyword.txt'):
 @bot.message_handler(commands=['ai_image'])
 def generate_ai_image_prompt_command(message):
     try:
+        with open('keyword1.txt', "r") as key1_file, open('keyword2.txt', "r") as key2_file:
+            key1_options = key1_file.readlines()
+            key2_options = key2_file.readlines()
         keyword1 = "sebuah gambar yang menakjubkan berupa"  # Gantilah dengan kata kunci yang sesuai
         keyword2 = skrip_file_options  # Gantilah dengan kata kunci yang sesuai
         prompt_type = "image"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
@@ -219,6 +226,9 @@ def generate_ai_image_prompt_command(message):
 # Fungsi untuk menjalankan perintah AI
 def generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input):
     try:
+        with open('keyword1.txt', "r") as key1_file, open('keyword2.txt', "r") as key2_file:
+            key1_options = key1_file.readlines()
+            key2_options = key2_file.readlines()
         # Buat prompt berdasarkan input yang diberikan
         prompt = f"Judul Tesis: Sinergitas guru dan orangtua untuk mengembangkan karakter disiplin siswa sekolah dasar\n\n"
         prompt += f"Kata Kunci: {keyword1}, {keyword2}\n\n"
@@ -246,11 +256,14 @@ def generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input):
 @bot.message_handler(commands=['ai_script'])
 def generate_ai_prompt_command(message):
     try:
+        with open('keyword1.txt', "r") as key1_file, open('keyword2.txt', "r") as key2_file:
+            key1_options = key1_file.readlines()
+            key2_options = key2_file.readlines()
         keyword1 = "sebuah skrip yang akurat dan teliti mengenai"  # Gantilah dengan kata kunci yang sesuai
         keyword2 = skrip_file_options# Gantilah dengan kata kunci yang sesuai
         prompt_type = "script"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input,  prompt, key1_options, key2_options)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -258,11 +271,14 @@ def generate_ai_prompt_command(message):
 @bot.message_handler(commands=['ai_soal'])
 def generate_ai_soal_prompt_command(message):
     try:
+        with open('keyword1.txt', "r") as key1_file, open('keyword2.txt', "r") as key2_file:
+            key1_options = key1_file.readlines()
+            key2_options = key2_file.readlines()
         keyword1 = "jawablah soal berikut, dengan akurat, adapun soalnya yakni :"  # Gantilah dengan kata kunci yang sesuai
         keyword2 = "skrip_file_options"  # Gantilah dengan kata kunci yang sesuai
         prompt_type = "soal"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input,  prompt, key1_options, key2_options)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -270,11 +286,14 @@ def generate_ai_soal_prompt_command(message):
 @bot.message_handler(commands=['ai_cerita'])
 def generate_ai_cerita_prompt_command(message):
     try:
+        with open('keyword1.txt', "r") as key1_file, open('keyword2.txt', "r") as key2_file:
+            key1_options = key1_file.readlines()
+            key2_options = key2_file.readlines()
         keyword1 = "sebuah cerita yang menakjubkan berupa dengan latar cerita"  # Gantilah dengan kata kunci yang sesuai
         keyword2 = "skrip_file_options"  # Gantilah dengan kata kunci yang sesuai
         prompt_type = "cerita"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input,  prompt, key1_options, key2_options)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -282,11 +301,14 @@ def generate_ai_cerita_prompt_command(message):
 @bot.message_handler(commands=['ai_text'])
 def generate_ai_text_prompt_command(message):
     try:
+        with open('keyword1.txt', "r") as key1_file, open('keyword2.txt', "r") as key2_file:
+            key1_options = key1_file.readlines()
+            key2_options = key2_file.readlines()
         keyword1 = "sebuah text yang menakjubkan berupa"  # Gantilah dengan kata kunci yang sesuai
         keyword2 = "skrip_file_options"  # Gantilah dengan kata kunci yang sesuai
         prompt_type = "text"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
+        generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input,  prompt, key1_options, key2_options)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -294,12 +316,15 @@ def generate_ai_text_prompt_command(message):
 @bot.message_handler(commands=['ai_nulis'])
 def create_ai_nulis_prompt_command(message):
     try:
+        with open('keyword1.txt', "r") as key1_file, open('keyword2.txt', "r") as key2_file:
+            key1_options = key1_file.readlines()
+            key2_options = key2_file.readlines()
         keyword1_file = "objek.txt"  # Gantilah dengan nama file yang sesuai
         keyword2_file = "fitur.txt"  # Gantilah dengan nama file yang sesuai
         output_file = "ai.txt"  # Gantilah dengan nama file output yang sesuai
         prompt_type = "script"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = f"buatkanlah saya dengan fitur skrip_file_options dengan seakurat dan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        create_prompt(message.chat.id, keyword1_file, keyword2_file, output_file, prompt_type, additional_input)
+        create_prompt(message.chat.id, keyword1_file, keyword2_file, output_file, prompt_type, additional_input, prompt, key1_options, key2_options)
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
@@ -868,7 +893,14 @@ def handle_chat(message):
 def create_ai_prompt(user_input):
     return f"{identitas}\n\nUser: {user_input}\nAI:"
 
-# Handler untuk perintah "/saldo"
+# Handler untuk perintah "/saldo"i
+def display_saldo(message):
+    global jumlah_saldo  # Deklarasikan jumlah_saldo sebelum menggunakannya  # Mengatur saldo ke -1
+    jumlah_saldo = saldo  # Mengatur jumlah_saldo ke nilai saldo
+    # Menambah jumlah_saldo sebesar 10
+    bot.send_message(message.chat.id, f"Jumlah saldo Anda: {jumlah_saldo}")
+
+
 @bot.message_handler(commands=['saldo'])
 def show_saldo(message):
     display_saldo(message)
