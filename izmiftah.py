@@ -29,6 +29,7 @@ email_kamu = 'email-anda' #tolong modifikasi server smtpnya juga ya
 openai.api_key = api_key
 admin = 'kontak-anda'
 link_jualan = 'isi-dengan-link-jualan-anda'
+chat_id = 'isi-dengan-id-bot-kamu' # dapatkan di https://t.me/username_to_id_bot
 ### JANGAN DI UBAH #####
 saldo_awal = 10
 # Inisialisasi variabel-variabel
