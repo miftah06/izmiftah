@@ -68,7 +68,7 @@ def keyword1_file_handle():
     with open(keyword1_skrip, "r") as keyword1_skrip_file:
         global keyword1_file
         keyword1_file_option = keyword1_skrip_file.readlines()
-        keyword1_file = keyword1_file_option.random.choice(keyword1_skrip_file).strip()
+        keyword1_file = keyword1_file_option
 
 
 
@@ -76,12 +76,12 @@ def keyword2_file_handle():
     with open(keyword2_skrip, "r") as keyword2_skrip_file:
         global keyword2_file
         keyword2_file_option = keyword2_skrip_file.readlines()
-        keyword2_file = keyword2_file_option.random.choice(keyword2_skrip_file).strip()
+        keyword2_file = keyword2_file_option
 
 
 skrip_file = skrip_file_options
-keyword1_file = keyword1_file_handle(keyword1_file)
-keyword2_file = keyword2_file_handle(keyword2_file)
+keyword1_file = keyword1_file_handle()
+keyword2_file = keyword2_file_handle()
 
 def blokir_nonaktif():
     global is_blokir_aktif
