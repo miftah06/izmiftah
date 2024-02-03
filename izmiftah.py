@@ -80,6 +80,8 @@ def keyword2_file_handle():
 
 
 skrip_file = skrip_file_options
+keyword1_file = keyword1_file_handle(keyword1_file)
+keyword2_file = keyword2_file_handle(keyword2_file)
 
 def blokir_nonaktif():
     global is_blokir_aktif
