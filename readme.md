@@ -10,10 +10,10 @@ payment - untuk melakukan pembayaran dengan password
 saldo - untuk melihat sisa saldo
 topup - untuk melakukan top-up
 chat - untuk melakukan chatting dengan ai
-image _prompt - yakni untuk membuat prompt yang berupa gambar
-nulis _prompt - yakni untuk membuat skrip dengan berupa prompt
-soal _prompt - yakni untuk menjawab soal dengan berupa prompt
-story _prompt - yakni untuk membuat prompt dengan berupa cerita
+image_prompt - yakni untuk membuat prompt yang berupa gambar
+nulis_prompt - yakni untuk membuat skrip dengan berupa prompt
+soal_prompt - yakni untuk menjawab soal dengan berupa prompt
+story_prompt - yakni untuk membuat prompt dengan berupa cerita
 skrip_prompt - yakni untuk membuat prompt dengan berupa skrip
 ai_image - yakni untuk membuat  dengan berupa ai
 ai_soal - yakni untuk membuat prompt dengan berupa soal
