@@ -109,9 +109,9 @@ def create_blokir_prompt(message):
 def generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input):
     try:
         # Buat prompt berdasarkan input dari pengguna
-        prompt = f"Judul Tesis: Sinergitas guru dan orangtua untuk mengembangkan karakter disiplin siswa sekolah dasar\n\n"
-        prompt += f"Kata Kunci: {keyword1}, {keyword2}\n\n"
-        prompt += f"Konteks: {additional_input}\n\n"
+        prompt = f"buatkanlah saya sebuah {skrip_file}\n\n"
+        prompt += f"dengan Kata Kunci: {keyword1}, {keyword2}\n\n"
+        prompt += f"dan dalam fitur Konteks: {additional_input}\n\n"
 
         # Jalankan permintaan ke OpenAI Chat API jika fitur blokir tidak aktif
         if not is_blokir_active(message):
@@ -132,8 +132,7 @@ def generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_inpu
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
 # Fungsi untuk membuat prompt
-def create_prompt(keyword1_file, keyword2_file, output_file, prompt_type, additional_input,
-                  command_option=None, specification_option="sebuah gambar yang sempurna mengenai", parno_options="dengan secara akurat dan sempurna"):
+def create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input):
     if command_option is None:
         command_option = "dengan penuh estetika dan fitur yang estetik"
     try:
@@ -160,35 +159,58 @@ def create_prompt(keyword1_file, keyword2_file, output_file, prompt_type, additi
                 else:
                     output_line = "Invalid prompt type\n masukkan opsi\n 1.image,\n 2.text atau\n 3.script\n 4.soal\n 5.cerita"
                 file.write(output_line)
-                bot.reply_to(text=f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan download dengan opsi yang ada.")
+                bot.reply_to(message.chat.id, f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan download dengan opsi yang ada.")
     except Exception as e:
-        bot.send_message(text=f"Terjadi kesalahan: {str(e)}")
+        bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
 
+# Fungsi untuk menjalankan perintah AI
+def generate_bikin_prompt(message, keyword1, keyword2, keyword2_file, command_option, specification_option, prompt_type, additional_input):
+    try:
+        # Buat prompt berdasarkan input dari pengguna
+        prompt = f"buatkanlah saya sebuah {prompt_type}\n\n"
+        prompt += f"dengan Kata Kunci: {keyword1}, {keyword2}\n\n"
+        prompt += f"dan dalam fitur Konteks: {additional_input}\n\n"
+
+        # Jalankan permintaan ke OpenAI Chat API jika fitur blokir tidak aktif
+        if not is_blokir_active(message):
+            response = openai.Completion.create(
+                model="gpt-3.5-turbo",  # Ganti model sesuai dengan yang Anda inginkan
+                messages=[
+                    {"role": "system", "content": "You are a researcher working on a thesis about teacher-parent synergy to DEVELOP ELEMENTARY SCHOOL STUDENTS' DISCIPLINE CHARACTER."},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+
+            # Ambil jawaban dari respons
+            ai_reply = response['choices'][0]['message']['content']
+
+            # Kirim jawaban AI sebagai balasan
+            bot.send_message(message.chat.id, ai_reply)
+    except Exception as e:
+        bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
+
+# Handler untuk perintah "/bikin_prompt"
 @bot.message_handler(commands=['bikin_prompt'])
-def handle_prompt(message, keyword_list):
-    args = message.text.split('/')[1:]
+def handle_ai_prompt(message):
+    try:
+        if is_blokir_active(message):
+            bot.send_message(message.chat.id, f"Saldo kurang, lakukan /payment atau /topup terlebih dahulu.")
+            return
+        # Mendapatkan argumen dari perintah
+        args = message.text.split('/')[1:]
 
-    if len(args) == 7:
-        keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input = args
+        if len(args) == 7:
+            keyword1, keyword2, keyword2_file, command_option, specification_option, prompt_type, additional_input = args
 
-        # Generate keyword files
-        generate_keyword_file(keyword1_file, 500)
-        generate_keyword_file(keyword2_file, 500)
+            # Membuat prompt dan menjalankan OpenAI
+            generate_bikin_prompt(message.chat.id, keyword1, keyword2, keyword2_file, command_option, specification_option, prompt_type, additional_input)
+        else:
+            bot.send_message(message.chat.id, "Format perintah tidak valid. Gunakan format\n /bikin_prompt /keyword1/keyword2/keyword2_file/command_option/specification_option/prompt_type/additional_input\n\n contoh:\n/bikin_prompt /Pendidikan/Siswa/keyword.txt/Generate_text/Buatlah_sebuah_paragraf_text/mengenai_kelas_10A")
 
-        # Create prompt
-        create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input, message)
+    except Exception as e:
+        bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
 
-        # Send the output file to the user
-        with open(output_file, 'r') as file:
-            output_text = file.read()
-
-        bot.send_message(message.chat.id, output_text)
-    else:
-        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /ai_prompt fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
-
-
-# Handler untuk perintah "/ai_prompt"
 @bot.message_handler(commands=['ai_prompt'])
 def handle_ai_prompt(message):
     try:
@@ -199,12 +221,12 @@ def handle_ai_prompt(message):
         args = message.text.split('/')[1:]
 
         if len(args) == 7:
-            keyword1, keyword2, keyword_list, command_option, specification_option, prompt_type, additional_input = args
+            keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input = args
 
             # Membuat prompt dan menjalankan OpenAI
-            generate_ai_prompt(message, keyword1, keyword2, keyword_list, command_option, specification_option, prompt_type, additional_input)
+            create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input)
         else:
-            bot.send_message(message.chat.id, "Format perintah tidak valid. Gunakan format /ai_prompt/keyword1/keyword2/command_option/specification_option/prompt_type/additional_input")
+            bot.send_message(message.chat.id, "Format perintah tidak valid. Gunakan format /ai_prompt/keyword1_file/keyword2_file/output_file/command_option/specification_option/prompt_type/additional_input")
 
     except Exception as e:
         bot.send_message(message.chat.id, f"Terjadi kesalahan: {str(e)}")
@@ -381,7 +403,7 @@ def write_document(message):
         return
     inputs = message.text[len('/chat '):].split(';')
     if len(inputs) == 3:
-        bot.reply_to(message, "Format salah, silakan ikuti format ini: /chat pesan1;pesan2;pesan3")
+        bot.reply_to(message.chat.id, "Format salah, silakan ikuti format ini: /chat pesan1;pesan2;pesan3")
         return
 
     judul = inputs[0].strip()
@@ -521,11 +543,11 @@ def handle_dork(message):
             saldo += -1
             bot.send_message(message.chat.id, " saldo berkurang 1")
             # Memberikan pesan jika tidak ada hasil yang ditemukan
-            bot.reply_to(message, "No results found.")
+            bot.reply_to(message.chat.id, "No results found.")
 
     except ValueError:
         # Menangani kesalahan jika format perintah tidak sesuai
-        bot.reply_to(message, "Invalid format. Use /dork <keywords>;<domain_extensions>")
+        bot.reply_to(message.chat.id, "Invalid format. Use /dork <keywords>;<domain_extensions>")
     except Exception as e:
         # Menangani kesalahan umum
         bot.reply_to(message, f"Error: {str(e)}")
@@ -641,7 +663,7 @@ def download_html(message):
             bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading txt output file: {e}")
-        bot.reply_to(message, "Gagal mengunduh file txt. Coba lagi nanti.")
+        bot.reply_to(message.chat.id, "Gagal mengunduh file txt. Coba lagi nanti.")
 
         saldo -= 5
         bot.send_message(message.chat.id, " saldo berkurang 5")
@@ -656,7 +678,7 @@ def download_keywords(message):
             bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading keywords: {e}")
-        bot.reply_to(message, "Gagal mengunduh file pdf. Coba lagi nanti.")
+        bot.reply_to(message.chat.id, "Gagal mengunduh file pdf. Coba lagi nanti.")
 
 # Handler untuk perintah /download-final
 @bot.message_handler(commands=['download-final'])
@@ -668,7 +690,7 @@ def download_keywords(message):
             bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading keywords: {e}")
-        bot.reply_to(message, "Gagal mengunduh file pdf. Coba lagi nanti.")
+        bot.reply_to(message.chat.id, "Gagal mengunduh file pdf. Coba lagi nanti.")
 
 # Handler untuk perintah /download-hasil
 @bot.message_handler(commands=['download-hasil'])
@@ -680,7 +702,7 @@ def download_keywords(message):
             bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading keywords: {e}")
-        bot.reply_to(message, "Gagal mengunduh file txt. Coba lagi nanti.")
+        bot.reply_to(message.chat.id, "Gagal mengunduh file txt. Coba lagi nanti.")
 
 # Handler untuk perintah /download
 @bot.message_handler(commands=['download'])
@@ -692,7 +714,7 @@ def download_keywords(message):
             bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading keywords: {e}")
-        bot.reply_to(message, "Gagal mengunduh file pdf. Coba lagi nanti.")
+        bot.reply_to(message.chat.id, "Gagal mengunduh file pdf. Coba lagi nanti.")
 
         global saldo_awal
         saldo_awal  += -1
@@ -708,7 +730,7 @@ def download_html(message):
             bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading HTML: {e}")
-        bot.reply_to(message, "Gagal mengunduh file HTML. Coba lagi nanti.")# Handler untuk perintah /download_html
+        bot.reply_to(message.chat.id, "Gagal mengunduh file HTML. Coba lagi nanti.")# Handler untuk perintah /download_html
 
 @bot.message_handler(commands=['download_cover'])
 def download_html(message):
@@ -717,7 +739,7 @@ def download_html(message):
             bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading image: {e}")
-        bot.reply_to(message, "Gagal mengunduh file png. Coba lagi nanti.")
+        bot.reply_to(message.chat.id, "Gagal mengunduh file png. Coba lagi nanti.")
 
 # Handler untuk perintah /download2
 @bot.message_handler(commands=['download2'])
@@ -727,7 +749,7 @@ def download_html(message):
             bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading txt output file: {e}")
-        bot.reply_to(message, "Gagal mengunduh file txt. Coba lagi nanti.")
+        bot.reply_to(message.chat.id, "Gagal mengunduh file txt. Coba lagi nanti.")
 
         global saldo_awal
         saldo_awal  += -2
@@ -743,7 +765,7 @@ def download_html(message):
             bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading HTML: {e}")
-        bot.reply_to(message, "Gagal mengunduh file HTML. Coba lagi nanti.")
+        bot.reply_to(message.chat.id, "Gagal mengunduh file HTML. Coba lagi nanti.")
 
 # Handler untuk perintah /download_html2
 @bot.message_handler(commands=['download_html2'])
@@ -753,7 +775,7 @@ def download_html(message):
             bot.send_document(message.chat.id, f)
     except Exception as e:
         print(f"Error downloading HTML: {e}")
-        bot.reply_to(message, "Gagal mengunduh file HTML. Coba lagi nanti.")
+        bot.reply_to(message.chat.id, "Gagal mengunduh file HTML. Coba lagi nanti.")
 
 # Handler untuk perintah /upload
 @bot.message_handler(commands=['upload'])
@@ -783,7 +805,7 @@ def handle_uploaded_file(message,  keyword_list="keyword.txt", file_skrip='keywo
     global keywords_list
 
     if message.document.file_name not in ['keyword.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'subdomains.txt', 'cover.png']:
-        bot.reply_to(message, "Mohon kirim file dengan nama 'keyword.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'cover.png', 'subdomains.txt'. ")
+        bot.reply_to(message.chat.id, "Mohon kirim file dengan nama 'keyword.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'cover.png', 'subdomains.txt'. ")
         return
 
     file_info = bot.get_file(message.document.file_id)
@@ -793,9 +815,9 @@ def handle_uploaded_file(message,  keyword_list="keyword.txt", file_skrip='keywo
         new_file.write(downloaded_file)
 
     if update_keywordt():
-        bot.reply_to(message, f"File {message.document.file_name} berhasil diunggah dan database diperbarui.")
+        bot.reply_to(message.chat.id, f"File {message.document.file_name} berhasil diunggah dan database diperbarui.")
     else:
-        bot.reply_to(message, "Gagal memperbarui database. Coba lagi nanti.")
+        bot.reply_to(message.chat.id, "Gagal memperbarui database. Coba lagi nanti.")
 
 # Handler untuk perintah /update
 @bot.message_handler(commands=['update'])
@@ -804,9 +826,9 @@ def update_scripts(message):
         if is_blokir_active(message):
             bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
         subprocess.run(['bash', 'run.sh'], check=True)
-        bot.reply_to(message, "Skrip berhasil diperbarui.")
+        bot.reply_to(message.chat.id, "Skrip berhasil diperbarui.")
     except subprocess.CalledProcessError as e:
-        bot.reply_to(message, f"Error: {e}")
+        bot.reply_to(message.chat.id, f"Error: {e}")
 
 
 # Handler untuk perintah /keyword
@@ -817,9 +839,9 @@ def update_scripts(message):
             bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
             return
         subprocess.run(['bash', 'key.sh'], check=True)
-        bot.reply_to(message, "Skrip berhasil diperbarui.")
+        bot.reply_to(message.chat.id, "Skrip berhasil diperbarui.")
     except subprocess.CalledProcessError as e:
-        bot.reply_to(message, f"Error: {e}")
+        bot.reply_to(message.chat.id, f"Error: {e}")
 
 # Fungsi untuk memperbarui database kata kunci dari file CSV
 def update_keywordt():
@@ -942,37 +964,13 @@ def generate_keyword_file(filename, num_keywords):
     with open(filename, "w") as file:
         file.write("\n".join(random_keywords))
 
-@bot.message_handler(commands=['bikin_prompt'])
-def handle_prompt(message,  keyword_list="keyword.txt", file_skrip='keyword.txt'):
-    args = message.text.split('/')[1:]
-
-    if len(args) == 7:
-        keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input = args
-
-        # Generate keyword files
-        generate_keyword_file(keyword1_file, 500)
-        generate_keyword_file(keyword2_file, 500)
-
-        # Create prompt
-        create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input, message)
-
-        # Send the output file to the user
-        with open(output_file, 'r') as file:
-            output_text = file.read()
-
-        bot.send_message(message.chat.id, output_text)
-    else:
-        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /ai_prompt fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
-
 # Fungsi untuk mengurangi saldo
 def kurangi_saldo(jumlah):
     global saldo
     saldo -= jumlah
-    if isi_saldo == 0:
+    if saldo == 0:
         bot.send_message(text=f"saldo telah mencapai atau lebih dari: 0 lakukan /payment atau /topup terlebih dahulu .")
         is_blokir_aktif
-
-
 
 # Fungsi peg_parser
 def peg_parser():
