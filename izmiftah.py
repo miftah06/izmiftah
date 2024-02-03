@@ -174,7 +174,7 @@ def generate_ai_image_prompt_command(message):
         keyword2 = skrip_file_options  # Gantilah dengan kata kunci yang sesuai
         prompt_type = "image"  # Gantilah dengan jenis prompt yang sesuai (text, image, script, soal, cerita)
         additional_input = "dengan sesempurna mungkin."  # Gantilah dengan konteks tambahan yang sesuai
-        ai_response = generate_ai_prompt(keyword1, keyword2, prompt_type, additional_input)
+        ai_response = generate_ai_prompt(message, keyword1, keyword2, prompt_type, additional_input)
 
         # Kirim jawaban AI sebagai pesan ke bot Telegram
         bot.send_message(message.chat.id, ai_response)
