@@ -607,10 +607,6 @@ def handle_subdomain_query(message):
     results = scan_subdomain(domain)
     bot.reply_to(message, text=f"Subdomain scan results: {results}")
 
-
-    global saldo
-    saldo += -1
-
 # Fungsi untuk memeriksa apakah file cover.png kosong
 def check_cover_png():
     file_path = 'cover.png'
