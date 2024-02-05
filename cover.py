@@ -3,33 +3,33 @@ from bs4 import BeautifulSoup
 from fpdf import FPDF
 
 def validate_length(judul, skripsi):
-    while len(judul) != len(skripsi[0]):
+    while len(judul.split()) != len(skripsi[0].split()):
         print("Panjang judul tulisan skripsi dan salah satu dari tulisan opsional harus sama.")
-        judul = "Masukkan judul"
+        judul = input("Masukkan judul: ")
 
     # Menerima input untuk setiap opsional
     opsional = []
     for i in range(4):
-        prompt = f"Opsional berupa keterangan misal: ex: \n 1.Diajukan untuk bla bla,\n 2. Pada program studi xxx, \n 3. untuk xxx \n 4. ujian fakultas xxx...\n dengan jumlah kata yang harus sama ya! \n  {i + 1}: "
-        input_opsional = "isi dengan opsional data"
+        prompt = f"Opsional {i + 1}: "
+        input_opsional = input(f"Masukkan opsional {i + 1}: ")
         opsional.append(input_opsional)
 
     # Menambahkan input judul_karya dan jenis_karyatulis
-    judul_karya = "Masukkan judul karya"
-    jenis_karyatulis = "Masukkan jenis karya tulis"
+    judul_karya = input("Masukkan judul karya: ")
+    jenis_karyatulis = input("Masukkan jenis karya tulis: ")
 
     return judul, opsional, judul_karya, jenis_karyatulis
 
 def bootstrap1():
     # Meminta input dari pengguna
-    judul, opsional, judul_karya, jenis_karyatulis = validate_length("", [[] for _ in range(4)])  # Menyesuaikan dengan perubahan dalam validate_length
-    logo = "cover.png"
+    judul, opsional, judul_karya, jenis_karyatulis = validate_length("", [[] for _ in range(4)])
 
-    oleh = "Masukkan nama"
-    nim = "Masukkan NIM"
-    fakultas = "Masukkan fakultas"
-    universitas = "Masukkan universitas"
-    tahun = "Masukkan tahun (contoh: 2024)"
+    logo = input("Masukkan nama file gambar logo: ")
+    oleh = input("Masukkan nama pengarang: ")
+    nim = input("Masukkan NIM: ")
+    fakultas = input("Masukkan fakultas: ")
+    universitas = input("Masukkan universitas: ")
+    tahun = input("Masukkan tahun (contoh: 2024): ")
 
     # Membuat dictionary dari input
     data_dict = {

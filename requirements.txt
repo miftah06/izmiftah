@@ -6,6 +6,7 @@ beautifulsoup4
 randomizer
 chardet
 fpdf
+xvfbwrapper
 nltk
 numpy
 beautifulsoup4
