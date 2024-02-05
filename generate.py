@@ -113,7 +113,7 @@ def beauty_pdf(data):
 def main():
     # Baca data dari file Excel
     input_file_path = 'auto.xlsx'
-    data = np.load(input_file_path, allow_pickle=True).item()
+    data = np.load(input_file_path, allow_pickle=True).items()
 
     # Panggil fungsi untuk membuat HTML
     html_content = generate_html(data)
