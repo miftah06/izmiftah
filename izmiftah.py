@@ -67,8 +67,7 @@ with open(keyword2_skrip, "r") as keyword2_skrip_file:
 global keywords_list_file
 global skrip_file_option
 with open(f'{file_skrip}', "r") as keywords_list_file:
-    skrip_file_option = keywords_list_file.readlines()
-    skrip_file = skrip_file_option
+    skrip_file = keywords_list_file.readlines()
 
 def blokir_nonaktif():
     global is_blokir_aktif
@@ -284,7 +283,7 @@ def generate_ai_prompt(keyword1, keyword2, prompt_type, key1_options, key2_optio
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are a researcher working on a thesis about teacher-parent synergy to DEVELOP ELEMENTARY SCHOOL STUDENTS' DISCIPLINE CHARACTER."},
+                {"role": "system", "content": "You are a worker with your research and development."},
                 {"role": "user", "content": prompt}
             ]
         )
@@ -840,9 +839,9 @@ def update_scripts(message):
         if is_blokir_active(message):
             bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
         subprocess.run(['bash', 'run.sh'], check=True)
-        bot.reply_to(message.chat.id, text= "Skrip berhasil diperbarui.")
+        bot.reply_to(message, text= "Skrip berhasil diperbarui.")
     except subprocess.CalledProcessError as e:
-        bot.reply_to(message.chat.id, text= f"Error: {e}")
+        bot.reply_to(message, text= f"Error: {e}")
 
 
 # Handler untuk perintah /keyword
@@ -892,7 +891,7 @@ def generate_html(dataframe):
     return generated_html
 
 # Inisialisasi identitas
-identitas = "mif , seorang anak sekolah kharismatik yang jenius dan pandai dalam berbagai hal"
+identitas = "mif , seorang kharismatik yang jenius dan pandai dalam berbagai hal"
 
 # Handler untuk perintah /ai
 @bot.message_handler(commands=['ai'])
