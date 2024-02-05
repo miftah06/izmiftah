@@ -1,13 +1,13 @@
 import os
-import pandas as pd
+import numpy as np
 
 def load_keywords():
     """Load keywords from katakunci.csv or get input from the user if the file is not present."""
     keywords_file = 'katakunci.csv'
     if os.path.exists(keywords_file):
         try:
-            keywords_df = pd.read_csv(keywords_file)
-            return keywords_df['Nama Objek Jawaban'].tolist()
+            keywords_df = np.genfromtxt(keywords_file, delimiter=',', dtype='str')
+            return keywords_df[:, 1].tolist()  # Assuming 'Nama Objek Jawaban' is in the second column
         except KeyError:
             print(f"'Nama Objek Jawaban' column not found in {keywords_file}.")
     else:

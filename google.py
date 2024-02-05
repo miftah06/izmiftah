@@ -1,8 +1,7 @@
 import time
+
 import telebot
 from googlesearch import search
-from bs4 import BeautifulSoup
-import requests
 
 token = '6864959328:AAG7H2xldKkqr9-6ppEYVYHK09ARf2QzDd0'
 bot = telebot.TeleBot(token, threaded=False)

@@ -1,4 +1,4 @@
-import pandas as pd
+import numpy as np  # Mengganti import pd dan import pandas as pd
 import random
 
 def generate_object_names(keywords_file, num_objects=100):
@@ -18,7 +18,7 @@ def generate_object_names(keywords_file, num_objects=100):
 
     # Membuat DataFrame dengan nama objek
     data = {'Nama Objek Jawaban': object_names}
-    df = pd.DataFrame(data)
+    df = np.DataFrame(data)  # Mengganti pd.DataFrame menjadi np.DataFrame
 
     return df
 
