@@ -227,7 +227,7 @@ def create_nulis_prompt_command(message, skrip_file='keyword.txt'):
         bot.send_message(message, f"Terjadi kesalahan: {str(e)}")
 
 # Command untuk membuat prompt skrip
-@bot.message_handler(commands=['skrip_prompt'])
+@bot.message_handler(commands=['isi_prompt'])
 def create_skrip_prompt_command(message, skrip_file='keyword.txt'):
     try:
         global saldo
