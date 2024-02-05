@@ -820,6 +820,12 @@ def update_keywords(message,  keyword_list="keyword.txt", file_skrip='keyword.tx
     except Exception as e:
         print(f"Error updating keywords: {e}")
         return False
+        
+    if check_cover_png():
+        bot.reply_to(message, "cover.png kosong. Silahkan upload cover.png sebagai logo atau cover karya tulis atau novel Anda.")
+    else:
+        bot.reply_to(message, "Terima kasih! File cover.png sudah diunggah.")
+
 
 # Handler untuk mengolah file yang diunggah oleh pengguna
 @bot.message_handler(content_types=['document'])
