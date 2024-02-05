@@ -1,6 +1,7 @@
 import os
 import numpy as np
 from fpdf import FPDF
+import pdfkit
 from datetime import datetime
 
 def handle_nan(value, default_value=""):
@@ -71,45 +72,58 @@ def generate_html(data):
     with open(output_html_path, 'w', encoding='utf-8') as html_file:
         html_file.write(template)
     print("\nProses selesai. File HTML yang indah tersedia di materi.html.")
-    return output_html_path
+    return template
 
 def generate_pdf_from_html(html_content, output_pdf):
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     file_name, file_extension = os.path.splitext(output_pdf)
     stamped_output_pdf = f"{file_name}_{timestamp}{file_extension}"
 
-    with open(html_content, 'w', encoding='utf-8') as html_file:
+    with open('materi.html', 'w', encoding='utf-8') as html_file:
         html_file.write(html_content)
 
+    pdfkit.from_file('materi.html', stamped_output_pdf)
+    os.remove('materi.html')
+
+    print(f"Dokumen PDF berhasil disimpan di {stamped_output_pdf}")
+
+def beauty_pdf(data):
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
     pdf.set_font("Times New Roman", size=12)
 
-    # Membaca HTML dan menambahkannya ke PDF
-    with open(html_content, 'r', encoding='utf-8') as html_file:
-        pdf.add_page()
-        pdf.set_font("Times New Roman", size=12)
-        for line in html_file:
-            pdf.multi_cell(0, 10, line)
+    bold_style = 'B'
+    newline_style = 'Ln'
 
-    # Simpan PDF
-    pdf.output(stamped_output_pdf)
+    for key, values in data.items():
+        if key.startswith("Subjudul"):
+            pdf.set_font("Times New Roman", size=12)
+            pdf.cell(0, 10, str(values[0]), ln=True, align='C')
 
-    os.remove(html_content)
+            for value in values[1:]:
+                pdf.set_font("Times New Roman", size=12)
+                pdf.multi_cell(0, 10, str(value), align='L')
 
-    print(f"Dokumen PDF berhasil disimpan di {stamped_output_pdf}")
+            pdf.ln(5)
+
+    pdf.output("final_output.pdf")
+    print("\nProses selesai. File PDF yang indah tersedia di final_output.pdf.")
 
 def main():
     # Baca data dari file Excel
     input_file_path = 'auto.xlsx'
-    data = np.load(input_file_path, allow_pickle=True).item()
+    data = np.load(input_file_path, allow_pickle=True).items()
 
     # Panggil fungsi untuk membuat HTML
     html_content = generate_html(data)
 
+    with open(f'output.html', 'w', encoding='utf-8') as html_file:
+        html_file.write(html_content)
+
     # Panggil fungsi untuk membuat PDF
-    generate_pdf_from_html(html_content, 'final_output.pdf')
+    beauty_pdf(data)
 
 if __name__ == "__main__":
     main()
+
