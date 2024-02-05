@@ -1,75 +1,90 @@
-import nltk
+import os
 import random
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import SimpleDocTemplate, Paragraph
+import numpy as np
+from fpdf import FPDF
 
-nltk.download("words")
+def handle_nan(value, default_value=""):
+    return default_value if np.isnan(value) else value
 
-def process_keywords_from_csv(input_file):
-    with open(input_file, "r", encoding="utf-8") as file:
-        keywords_csv = file.read().lower().split(',')
-    return list(set(keywords_csv))  # Remove duplicates and convert to list
+def generate_opsional_list(data, page_number, katakunci_list):
+    opsional_html = ""
+    for i in range(1, 10):
+        opsional_key = f'Opsional {i}'
+        if opsional_key in data and len(data[opsional_key]) > page_number - 1:
+            opsional_value = handle_nan(data[opsional_key][page_number - 1], f"Default Opsional {i}")
+            opsional_html += f"                <li class='indent justify left'>{opsional_value}</li>\n"
+    random.shuffle(katakunci_list)
+    opsional_html += f"<li class='indent justify left'>{', '.join(katakunci_list)}</li>\n"
+    return opsional_html
 
-def process_keywords_from_txt(input_file):
-    with open(input_file, "r", encoding="utf-8") as file:
-        keywords_txt = file.read().lower().split()
-    return list(set(keywords_txt))  # Remove duplicates and convert to list
+def generate_html(data, katakunci_list):
+    page_number = []
+    template = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+    """
+    for i, bab_key in enumerate(data['Bab']):
+        subjudul_key = f'Subjudul {i+1}'
+        Halaman_key = f'Logo {i+1}'
 
-def randomize_words(text, num_iterations):
-    words_list = text.split()
-    for _ in range(num_iterations):
-        random.shuffle(words_list)
-    return ' '.join(words_list)
+        template += """
+            <!-- Page {i+1} -->
+        """
 
-def construct_novel_pdf(title, synopsis, keywords_csv, keywords_txt):
-    pdf_filename = "output_novel.pdf"
-    doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
+    template += """
+        </div>
+    </body>
+    </html>
+    """
+    return template
 
-    # Set custom styles for better aesthetics
-    styles = getSampleStyleSheet()
-    title_style = styles['Title']
-    synopsis_style = styles['BodyText']
+def generate_pdf_from_html(html_content, output_pdf):
+    with open('pdf.html', 'w', encoding='utf-8') as html_file:
+        html_file.write(html_content)
+    pdfkit.from_file('pdf.html', output_pdf)
+    print(f"Dokumen PDF berhasil disimpan di {output_pdf}")
 
-    # List to hold the flowables (elements) of the PDF
-    flowables = []
+def beauty_pdf(data):
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+    pdf.set_font("Times", size=12)
 
-    # Add title with center alignment and larger font
-    flowables.append(Paragraph(title, title_style))
+    bold_style = 'B'
+    newline_style = 'Ln'
 
-    # Add aesthetically formatted synopsis
-    flowables.append(Paragraph(f"<i>{synopsis}</i>", synopsis_style))
+    for key, values in data.items():
+        if key.startswith("Subjudul"):
+            pdf.set_font("Times", size=12)
+            pdf.cell(0, 10, str(values[0]), ln=True, align='C')
 
-    # Adding unique keywords from CSV to the plot
-    for keyword in keywords_csv:
-        flowables.append(Paragraph(f"{keyword},", synopsis_style))
+            for value in values[1:]:
+                pdf.set_font("Times", size=12)
+                pdf.multi_cell(0, 10, str(value), align='L')
 
-    # Adding unique keywords from TXT to the plot
-    for keyword in keywords_txt:
-        flowables.append(Paragraph(f"{keyword}...", synopsis_style))
+            pdf.ln(5)
 
-    # Randomize and add content until reaching a certain length
-    while len(flowables) <= 400:
-        random_content = randomize_words("Random content for variety. ", random.randint(700, 1000))
-        flowables.append(Paragraph(random_content, synopsis_style))
+    pdf.output("final_output.pdf")
+    print("\nProses selesai. File PDF yang indah tersedia di final_output.pdf.")
 
-    # Add closing statement
-    closing_statement = "Terima kasih atas perhatiannya. Semoga Anda menikmati cerita ini."
-    flowables.append(Paragraph(closing_statement, synopsis_style))
+if __name__ == "__main__":
+    excel_file = 'auto.xlsx'
 
-    # Build the PDF document
-    doc.build(flowables)
+    if os.path.exists(excel_file):
+        data = np.genfromtxt(excel_file, dtype=None, delimiter=',', names=True)
+    else:
+        print(f"File '{excel_file}' not found.")
+        data = {}
 
-    print(f"Novel content saved to '{pdf_filename}.'")
+    with open('katakunci.csv', 'r', encoding='utf-8') as katakunci_file:
+        katakunci_list = katakunci_file.read().strip().split(',')
 
-# Example usage:
-judul_cerita = "Masukkan judul cerita"
-sinopsis = "Masukkan sinopsis cerita"
+    with open('katakunci.txt', 'r', encoding='utf-8') as katakunci_file:
+        keyword_list = katakunci_file.read().strip().split(',')
 
-# Process keywords from CSV and TXT
-keywords_csv = process_keywords_from_csv("katakunci.csv")
-keywords_txt = process_keywords_from_txt("katakunci.txt")
+    html_content = generate_html(data, katakunci_list)
+    output_pdf = "final_output.pdf"
+    generate_pdf_from_html(html_content, output_pdf)
 
-# Construct novel narrative based on keywords and save as PDF
-construct_novel_pdf(judul_cerita, sinopsis, keywords_csv, keywords_txt)
-
+    beauty_pdf(data)
