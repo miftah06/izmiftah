@@ -10,6 +10,7 @@ payment - untuk melakukan pembayaran dengan password
 saldo - untuk melihat sisa saldo
 topup - untuk melakukan top-up
 chat - untuk melakukan chatting dengan ai
+bikin_prompt - untuk membuat prompt dengan prompt_type
 image_prompt - yakni untuk membuat prompt yang berupa gambar
 nulis_prompt - yakni untuk membuat skrip dengan berupa prompt
 soal_prompt - yakni untuk menjawab soal dengan berupa prompt
