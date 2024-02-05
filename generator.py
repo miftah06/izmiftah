@@ -1,5 +1,4 @@
-import os
-import csv  # Mengganti import numpy as np
+import pandas as pd
 import random
 
 def generate_object_names(keywords_file, num_objects=100):
@@ -17,21 +16,18 @@ def generate_object_names(keywords_file, num_objects=100):
         shortened_name = ' '.join(random.sample(keywords, 100))
         object_names.append(shortened_name)
 
-    # Membuat list dari nama objek
+    # Membuat DataFrame dengan nama objek
     data = {'Nama Objek Jawaban': object_names}
+    df = pd.DataFrame(data)
 
-    # Menyimpan list ke file CSV
-    csv_file_path = 'katakunci.csv'
-    with open(csv_file_path, 'w', newline='', encoding='utf-8') as csv_file:
-        fieldnames = ['Nama Objek Jawaban']
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
-        for obj_name in object_names:
-            writer.writerow({'Nama Objek Jawaban': obj_name})
-
-    print(f"{num_objects} Nama objek telah disimpan ke dalam katakunci.csv")
+    return df
 
 # Contoh penggunaan
 keywords_file = 'katakunci.txt'  # Ganti dengan file yang berisi kata kunci
 num_objects_to_generate = 10  # Ganti dengan jumlah objek yang ingin dihasilkan
-generate_object_names(keywords_file, num_objects_to_generate)
+generated_objects = generate_object_names(keywords_file, num_objects_to_generate)
+
+# Menyimpan DataFrame ke file CSV
+generated_objects.to_csv('katakunci.csv', index=False)
+
+print(f"{num_objects_to_generate} Nama objek telah disimpan ke dalam katakunci.csv")

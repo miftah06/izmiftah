@@ -1,37 +1,38 @@
-import numpy as np
+import os
+import pandas as pd
 from bs4 import BeautifulSoup
 from fpdf import FPDF
 
 def validate_length(judul, skripsi):
-    while len(judul.split()) != len(skripsi[0].split()):
+    while len(judul) != len(skripsi[0]):
         print("Panjang judul tulisan skripsi dan salah satu dari tulisan opsional harus sama.")
-        judul = input("Masukkan judul: ")
+        judul = "Masukkan judul"
 
     # Menerima input untuk setiap opsional
     opsional = []
     for i in range(4):
-        prompt = f"Opsional {i + 1}: "
-        input_opsional = input(f"Masukkan opsional {i + 1}: ")
+        prompt = f"Opsional berupa keterangan misal: ex: \n 1.Diajukan untuk bla bla,\n 2. Pada program studi xxx, \n 3. untuk xxx \n 4. ujian fakultas xxx...\n dengan jumlah kata yang harus sama ya! \n  {i + 1}: "
+        input_opsional = "isi dengan opsional data"
         opsional.append(input_opsional)
 
     # Menambahkan input judul_karya dan jenis_karyatulis
-    judul_karya = input("Masukkan judul karya: ")
-    jenis_karyatulis = input("Masukkan jenis karya tulis: ")
+    judul_karya = "Masukkan judul karya"
+    jenis_karyatulis = "Masukkan jenis karya tulis"
 
     return judul, opsional, judul_karya, jenis_karyatulis
 
 def bootstrap1():
     # Meminta input dari pengguna
-    judul, opsional, judul_karya, jenis_karyatulis = validate_length("", [[] for _ in range(4)])
+    judul, opsional, judul_karya, jenis_karyatulis = validate_length("", [[] for _ in range(4)])  # Menyesuaikan dengan perubahan dalam validate_length
+    logo = "cover.png"
 
-    logo = input("Masukkan nama file gambar logo: ")
-    oleh = input("Masukkan nama pengarang: ")
-    nim = input("Masukkan NIM: ")
-    fakultas = input("Masukkan fakultas: ")
-    universitas = input("Masukkan universitas: ")
-    tahun = input("Masukkan tahun (contoh: 2024): ")
+    oleh = "Masukkan nama"
+    nim = "Masukkan NIM"
+    fakultas = "Masukkan fakultas"
+    universitas = "Masukkan universitas"
+    tahun = "Masukkan tahun (contoh: 2024)"
 
-    # Membuat dictionary dari input
+    # Membuat DataFrame dari input
     data_dict = {
         'Logo': [logo],
         'Opsional 1': [opsional[0]],
@@ -47,9 +48,8 @@ def bootstrap1():
         'Jenis_karyatulis': [jenis_karyatulis]
     }
 
-    # Simpan data ke dalam file Excel dengan NumPy
-    output_excel_path = 'cover.xlsx'
-    np.savez(output_excel_path, **data_dict)
+    with pd.ExcelWriter('cover.xlsx', engine='xlsxwriter') as writer:
+        pd.DataFrame(data_dict).to_excel(writer, index=False, sheet_name='Sheet1')
 
 def generate_html(data):
     # Template HTML dengan Bootstrap dan W3Schools builder
@@ -121,7 +121,7 @@ def beauty_pdf(data):
     # Convert HTML ke PDF
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Times New Roman", size=12)
+    pdf.set_font("Arial", size=12)
 
     # Membaca HTML dan menambahkannya ke PDF
     with open('cover.html', 'r', encoding='utf-8') as html_file:
@@ -139,12 +139,13 @@ def main():
 
     print("\n2. Menjalankan skrip Beauty-PDF untuk membuat PDF yang indah.")
     # Membaca data dari file Excel
-    data_dict = dict(np.load('cover.xlsx', allow_pickle=True))
+    data = pd.read_excel('cover.xlsx').to_dict(orient='list')
 
     # Memanggil fungsi beauty_pdf dengan menyediakan data yang dibutuhkan
-    beauty_pdf(data_dict)
+    beauty_pdf(data)
 
     print("\nProses selesai. File PDF yang indah tersedia di beauty-cover.pdf.")
 
 if __name__ == "__main__":
     main()
+

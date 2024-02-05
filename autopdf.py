@@ -1,30 +1,38 @@
 import os
-import numpy as np
+import pandas as pd
 from datetime import datetime
-from fpdf import FPDF
+import pandas as pd
+import pdfkit
 
 def handle_nan(value, default_value=""):
-    return default_value if np.isnan(value) else value
+    return default_value if pd.isna(value) else value
 
-def generate_html(data, keyword):
-    halaman = handle_nan(data[0]['Logo'], "")
+def generate_html(data):
+
+    halaman = handle_nan(data.iloc[0]['Logo'], "")
 
     # Generate timestamp
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    
+    try:
+        df = pd.read_csv('katakunci.csv')
+    except FileNotFoundError:
+        raise FileNotFoundError("File 'katakunci.csv' not found. Make sure the file exists.")
 
     # Filter the DataFrame based on the provided keyword
-    filtered_data = data[data['Keyword'] == keyword]
+    filtered_data = df[df['Keyword'] == keyword]
 
     # Check if any matching rows are found
-    if filtered_data.shape[0] == 0:
+    if filtered_data.empty:
         return "No matching data found for the provided keyword."
 
-    selected_row = filtered_data.iloc[0]
+    # Randomly select one row from the filtered data
+    selected_row = filtered_data.sample(n=1, random_state=42)
 
     # Extract values from the selected row
-    logo_value = handle_nan(selected_row['Logo'], "")
-    bab_value = handle_nan(selected_row['Bab'], "Default Bab")
-    subjudul_value = handle_nan(selected_row['Subjudul'], "Default Subjudul")
+    logo_value = handle_nan(selected_row.iloc[0]['Logo'], "")
+    bab_value = handle_nan(selected_row.iloc[0]['Bab'], "Default Bab")
+    subjudul_value = handle_nan(selected_row.iloc[0]['Subjudul 1'], "Default Subjudul")
 
     # Generate HTML content
     html_content = f"""
@@ -34,41 +42,41 @@ def generate_html(data, keyword):
     <p>{logo_value}</p>
     <!-- Add more HTML elements as needed -->
     """
-
     # Generate list items for optional data
     for i in range(1, 4):  # Assuming optional data is up to 3
         optional_subjudul_key = f'Subjudul {i}'
         optional_logo_key = f'Logo {i}'
         optional_opsional_key = f'Opsional {i}'
 
-        optional_subjudul_value = handle_nan(selected_row[optional_subjudul_key], "")
-        optional_logo_value = handle_nan(selected_row[optional_logo_key], "")
-        optional_opsional_value = handle_nan(selected_row[optional_opsional_key], "")
+        if optional_subjudul_key in data.columns and not pd.isna(data.iloc[0][optional_subjudul_key]):
+            optional_value = handle_nan(data.iloc[0][optional_subjudul_key], f"")
+            template += f"<li class='indent justify left'>{optional_value}</li>"
 
-        if optional_subjudul_value:
-            html_content += f"<li class='indent justify left'>{optional_subjudul_value}</li>"
+        if optional_logo_key in data.columns and not pd.isna(data.iloc[0][optional_logo_key]):
+            optional_value = handle_nan(data.iloc[0][optional_logo_key], f"")
+            template += f"<li class='indent justify left'>{optional_value}</li>"
 
-        if optional_logo_value:
-            html_content += f"<li class='indent justify left'>{optional_logo_value}</li>"
+        if optional_opsional_key in data.columns and not pd.isna(data.iloc[0][optional_opsional_key]):
+            optional_value = handle_nan(data.iloc[0][optional_opsional_key], f"")
+            template += f"<li class='indent justify left'>{optional_value}</li>"
 
-        if optional_opsional_value:
-            html_content += f"<li class='indent justify left'>{optional_opsional_value}</li>"
-
-    html_content += """
+    template += """
             </ul>
         </div>
     </body>
     </html>
     """
 
+    return html_content
+
     # Save HTML
     output_html_path = f'isi_{timestamp}.html'
     with open(output_html_path, 'w', encoding='utf-8') as html_file:
-        html_file.write(html_content)
+        html_file.write(template)
 
-    print("\nProses selesai. File HTML yang indah tersedia di isi_{timestamp}.html.")
-    return html_content, output_html_path
-
+    print("\nProses selesai. File HTML yang indah tersedia di pdf.html.")
+    return template, output_html_path
+    
 def generate_pdf_from_html(html_content, output_pdf):
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     file_name, file_extension = os.path.splitext(output_pdf)
@@ -77,21 +85,9 @@ def generate_pdf_from_html(html_content, output_pdf):
     with open('pdf.html', 'w', encoding='utf-8') as html_file:
         html_file.write(html_content)
 
-    try:
-        from xvfbwrapper import Xvfb
-        vdisplay = Xvfb()
-        vdisplay.start()
-    except ImportError:
-        pass
-
-    import pdfkit
-
     pdfkit.from_file('pdf.html', stamped_output_pdf)
 
-    if 'vdisplay' in locals():
-        vdisplay.stop()
-
-    print(f"Dokumen HTML berhasil disimpan di {output_pdf}")
+    print(f"Dokumen html berhasil disimpan di isi_{timestamp}.html")
     return stamped_output_pdf  # Mengembalikan path PDF yang dihasilkan
 
 def beauty_pdf(data):
@@ -106,19 +102,16 @@ def beauty_pdf(data):
     pdf.output("final_output.pdf")
     print("\nProses selesai. File PDF yang indah tersedia di final_output.pdf.")
 
-def get_input_file_path():
-    pass
-
 def main():
     # Meminta input file Excel dari pengguna
     input_file_path = get_input_file_path()
-
+    
     # Baca data dari file Excel
-    data = np.random.randint(0, len(input_file_path))
+    data = pd.read_excel(input_file_path)
 
+    
     # Panggil fungsi untuk membuat HTML
-    keyword = "YourKeywordHere"  # Ganti dengan kata kunci yang sesuai
-    html_content, output_html_path = generate_html(data, keyword)
+    html_content = generate_html(data, keyword)
 
     # Panggil fungsi untuk membuat PDF
     pdf_path = generate_pdf_from_html(html_content, "final_output.pdf")
