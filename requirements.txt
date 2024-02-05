@@ -19,3 +19,4 @@ openai==0.27.8
 qrcode
 openpyxl
 xlsxwriter
+google
