@@ -60,7 +60,7 @@ def construct_novel_pdf(title, synopsis, keywords_csv, keywords_txt):
     # Build the PDF document
     doc.build(flowables)
 
-    print(f"Novel content saved to '{pdf_filename}.'")
+    print(f"Konten novel tersimpan di '{pdf_filename}.'")
 
 # Example usage:
 judul_cerita = "Masukkan judul cerita"

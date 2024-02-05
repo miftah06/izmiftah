@@ -102,7 +102,7 @@ def generate_pdf_from_html(html_content, output_pdf):
 
 def main():
     # Baca data dari file Excel
-    input_file_path = 'auto.npy'
+    input_file_path = 'auto.xlsx'
     data = np.load(input_file_path, allow_pickle=True).item()
 
     # Panggil fungsi untuk membuat HTML
