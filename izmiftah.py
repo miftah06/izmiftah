@@ -110,7 +110,7 @@ def is_blokir_active(message):
 
 # Fungsi untuk membuat prompt AI
 def create_blokir_prompt(message):
-    if is_blokir_aktif(message):
+    if is_blokir_aktif:
         bot.send_message(message.chat.id, text="Saldo mencapai 0.  segera lakukan /payment atau /topup")
         return f"{identitas}\n\pelanggaran saldo terdeteksi,saldo: {saldo} \nAI:"
 
