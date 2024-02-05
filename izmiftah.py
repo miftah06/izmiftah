@@ -910,9 +910,13 @@ identitas = "mif , seorang anak sekolah kharismatik yang jenius dan pandai dalam
 
 # Handler untuk perintah /ai
 # Handler untuk perintah /ai
-@bot.message_handler(commands=['ai'])  # Command untuk chat dengan AI
+# Handler untuk perintah /ai
+@bot.message_handler(commands=['ai'])
 def handle_chat(message):
     try:
+        if is_blokir_active(message):
+            bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
+            return
 
         message_text = message.text.split(' ', 1)[1] if len(message.text.split()) > 1 else "No input provided."
         # Membuat permintaan ke OpenAI Chat API
