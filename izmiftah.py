@@ -9,7 +9,7 @@ import time
 from datetime import datetime
 
 import openai
-import pandas as pd
+import numpy as np
 import requests
 import telebot
 from googlesearch import search
@@ -667,8 +667,7 @@ def get_random_text(message):
         # Add more columns as needed
     }
 
-    # Create a DataFrame
-    your_dataframe = pd.DataFrame(data)
+    your_dataframe = np.array(data)
 
     # Ganti fungsi pencarian Google dengan generate_html
     # Assuming your_dataframe contains the data you need
@@ -801,7 +800,6 @@ def download_html(message):
         print(f"Error downloading HTML: {e}")
         bot.reply_to(message, text= "Gagal mengunduh file HTML. Coba lagi nanti.")
 
-# Handler untuk perintah /upload
 @bot.message_handler(commands=['upload'])
 def update_keywords(message,  keyword_list="keyword.txt", file_skrip='keyword.txt'):
     global keywords_list
@@ -811,12 +809,12 @@ def update_keywords(message,  keyword_list="keyword.txt", file_skrip='keyword.tx
         max_field_size = int(1e6)
         csv.field_size_limit(max_field_size)
 
-        # Read the entire CSV file with Pandas
-        df = pd.read_csv('keyword.txt', header=None)
-        df2 = pd.read_csv('skrip.txt', header=None)
+        # Read the entire CSV file with NumPy (assuming 'data' is a NumPy array)
+        df = np.loadtxt('keyword.txt', dtype=str)
+        df2 = np.loadtxt('skrip.txt', dtype=str)
 
         # Convert the first column to lowercase and extend the keywords list
-        keywords_list.extend(df.iloc[:, 0].str.lower().tolist())
+        keywords_list.extend(df[:, 0].str.lower().tolist())
 
         return True
     except Exception as e:
