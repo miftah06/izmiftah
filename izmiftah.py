@@ -909,37 +909,34 @@ def generate_html(dataframe):
 identitas = "mif , seorang anak sekolah kharismatik yang jenius dan pandai dalam berbagai hal"
 
 # Handler untuk perintah /ai
-@bot.message_handler(commands=['ai'])
+# Handler untuk perintah /ai
+@bot.message_handler(commands=['ai'])  # Command untuk chat dengan AI
 def handle_chat(message):
     try:
-        if is_blokir_active(message):
-            bot.send_message(message.chat.id, f"saldo telah melebihi atau mencukupi {credit} saldo\n lakukan /payment atau /topup terlebih dahulu .")
-            return
-        message_text = message.text.split(' ', 1)[1] if len(message.text.split()) < 1 else "No input provided."
 
+        message_text = message.text.split(' ', 1)[1] if len(message.text.split()) > 1 else "No input provided."
         # Membuat permintaan ke OpenAI Chat API
-        ai_prompt = create_ai_prompt(message_text)
-        response = openai.Completion.create(
-            model="gpt-3.5-turbo-instruct",
-            prompt=ai_prompt,
-            temperature=0.7,
-            max_tokens=100,
-            n=1
-        )
-
         isi_saldo = credit
 
         global saldo
         saldo += -4
 
+        # Membuat permintaan ke OpenAI Chat API
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # Pilih model yang sesuai
+            messages=[
+                {"role": "system", "content": "You are a researcher working on school and job"},
+                {"role": "user", "content": message_text}
+            ]
+        )
+
         # Mengambil pesan dari respons
-        ai_reply = response['choices'][0]['text']
+        ai_reply = response['choices'][0]['message']['content']
 
         # Mengirimkan balasan AI sebagai reply
         bot.send_message(message.chat.id, ai_reply)
-        # Mengurangi saldo setiap kali menggunakan AI
+
     except Exception as e:
-        print(f"Error handling AI chat: {e}")
         bot.send_message(message.chat.id, str(e))
 
 # Fungsi untuk membuat prompt AI
