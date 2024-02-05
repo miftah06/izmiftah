@@ -18,7 +18,7 @@ def generate_object_names(keywords_file, num_objects=100):
 
     # Membuat DataFrame dengan nama objek
     data = {'Nama Objek Jawaban': object_names}
-    df = np.DataFrame(data)  # Mengganti pd.DataFrame menjadi np.DataFrame
+    df = np.array(data)  # Mengganti pd.DataFrame menjadi np.DataFrame
 
     return df
 
