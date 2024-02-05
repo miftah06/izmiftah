@@ -15,7 +15,7 @@ image_prompt - yakni untuk membuat prompt yang berupa gambar
 nulis_prompt - yakni untuk membuat skrip dengan berupa prompt
 soal_prompt - yakni untuk menjawab soal dengan berupa prompt
 story_prompt - yakni untuk membuat prompt dengan berupa cerita
-skrip_prompt - yakni untuk membuat prompt dengan berupa skrip
+isi_prompt - yakni untuk mengisi prompt sebelum di ubah ke prompt
 ai_image - yakni untuk membuat  dengan berupa ai
 ai_soal - yakni untuk membuat prompt dengan berupa soal
 ai_cerita - yakni untuk membuat prompt dengan berupa cerita
