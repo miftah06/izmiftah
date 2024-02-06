@@ -7,8 +7,8 @@ def generate_object_names(keywords_file, num_objects=1000):
         keywords = file.read().splitlines()
 
     # Memastikan jumlah kata kunci cukup untuk menghasilkan objek
-    if len(keywords) < 1:
-        raise ValueError("Jumlah kata kunci harus minimal 100 untuk menghasilkan objek.")
+    if len(keywords) < 10:
+        raise ValueError("Jumlah kata kunci harus minimal 10 untuk menghasilkan objek.")
 
     # Menghasilkan nama objek secara acak dan panjangnya diperpanjang menjadi 10x
     object_names = []
