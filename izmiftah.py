@@ -2,16 +2,15 @@ import itertools
 import keyword as acak
 import logging
 import os
-import random
-import subprocess
 import time
-from datetime import datetime
 
 import openai
 import pandas as pd
 import requests
 import telebot
 from googlesearch import search
+from numpy import random
+from pip._internal.utils import subprocess
 
 from hasilkan1 import prompt
 
@@ -618,7 +617,6 @@ def get_random_text(message):
     global last_update_time, keywords_list
 
     # Periksa apakah file keyword.csv perlu diperbarui
-    current_time = datetime.now()
     #if last_update_time is None or (current_time - last_update_time).days <= 1:
     #  if update_keywordt():
     #      last_update_time = current_time
