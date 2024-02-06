@@ -35,4 +35,4 @@ generated_objects = generate_object_names(keywords_file)
 # Menyimpan DataFrame ke file CSV
 generated_objects.to_csv('katakunci.txt', index=False)
 
-print(f"{num_objects_to_generate} Nama objek telah disimpan ke dalam katakunci.csv")
+print(f"{num_objects_to_generate} Nama objek telah disimpan ke dalam katakunci.txt")
