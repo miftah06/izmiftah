@@ -1,4 +1,3 @@
-import csv
 import itertools
 import keyword as acak
 import logging
@@ -9,7 +8,7 @@ import time
 from datetime import datetime
 
 import openai
-import numpy as np
+import pandas as pd
 import requests
 import telebot
 from googlesearch import search
@@ -660,7 +659,7 @@ def get_random_text(message):
         # Add more columns as needed
     }
 
-    your_dataframe = np.array(data)
+    your_dataframe = pd.DataFrame(data)
 
     # Ganti fungsi pencarian Google dengan generate_html
     # Assuming your_dataframe contains the data you need
@@ -795,23 +794,33 @@ def download_html(message):
 
 # Handler untuk perintah /upload
 @bot.message_handler(commands=['upload'])
-def update_keywords(message,  keyword_list="keyword.txt", file_skrip='keyword.txt'):
+def update_keywords(message):
     global keywords_list
 
-try:
-    # Set a larger field size limit
-    max_field_size = int(1e6)
-    csv.field_size_limit(max_field_size)
+    try:
+        # Read the entire CSV file with Pandas
+        df = pd.read_csv('keyword.txt', header=None)
 
-    # Read the entire CSV file with NumPy (assuming 'data' is a NumPy array)
-    df = np.loadtxt('keyword.txt', dtype=str)
-    df2 = np.loadtxt('skrip.txt', dtype=str)
+        # Convert the first column to lowercase and extend the keywords list
+        keywords_list.extend(df.iloc[:, 0].str.lower().tolist())
 
-    # Convert the first column to lowercase and extend the keywords list
-    keywords_list.extend(df[:, 0].str.lower().tolist())
+        return True
+    except Exception as e:
+        print(f"Error updating keywords: {e}")
+        return False
 
-except Exception as e:
-    print(f"Error updating keywords: {e}")
+# Fungsi untuk memperbarui database kata kunci dari file CSV
+def update_keywordt():
+    global keywords_list
+
+    try:
+        # Read the entire CSV file with Pandas
+        df = pd.read_csv('keyword.txt', header=None)
+        keywords_list = df.iloc[:, 0].str.lower().tolist()
+        return True
+    except Exception as e:
+        print(f"Error updating keywords: {e}")
+        return False
 
 # Handler untuk mengolah file yang diunggah oleh pengguna
 @bot.message_handler(content_types=['document'])
@@ -857,17 +866,6 @@ def update_scripts(message):
         bot.reply_to(message.chat.id, text= f"Error: {e}")
 
 # Fungsi untuk memperbarui database kata kunci dari file CSV
-def update_keywordt():
-    global keywords_list
-
-    try:
-        with open('keyword.txt', newline='', encoding='utf-8') as csvfile:
-            reader = csv.reader(csvfile)
-            keywords_list = [row[0] for row in reader]
-        return True
-    except Exception as e:
-        print(f"Error updating keywords: {e}")
-        return False
 
 # Tambahkan logika untuk memeriksa keberadaan file auto.xlsx
 if not os.path.isfile('auto.xlsx'):
