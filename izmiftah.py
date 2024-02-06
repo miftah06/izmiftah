@@ -18,7 +18,7 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate
 
 # Ganti dengan API key OpenAI Anda
 openai.api_key = 'your-openai-api-key'
-bot = telebot.TeleBot("telegram-bot-token-kamu")  # Ganti dengan token bot Telegram Anda
+bot = telebot.TeleBot("your-telegram-bot-token")  # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
 
@@ -551,16 +551,17 @@ def generate_random_keywords(num_keywords):
 
     # Mengembalikan daftar kata kunci dalam bentuk list
     return list(keywords)
+    
+# Fungsi untuk menghasilkan daftar kata kunci secara acak
 def generate_random_keywords(num_keywords):
     # Daftar kata kunci acak
     keywords = []
 
-    # Batasi jumlah kata kunci yang dihasilkan hingga num_keywords
-    while len(keywords) < num_keywords:
-        # Ganti dengan logika Anda untuk menghasilkan kata kunci acak
-        # Di sini, kita akan menggunakan kata-kata acak sebagai contoh
-        random_keyword = "Keyword_" + str(random.randint(1, 100))
-        keywords.append(random_keyword)
+    # Jalankan file run.sh untuk memproses kata kunci
+    try:
+        subprocess.run(['sh', 'run.sh'])
+    except Exception as e:
+        print(f"Error saat menjalankan run.sh: {e}")
 
     return keywords
 
