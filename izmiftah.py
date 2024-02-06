@@ -62,7 +62,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
         key1_option = random.choice(key1_options).strip()
         key2_option = random.choice(key2_options).strip()
         paragraf = additional_input.strip()
-       
+
         try:
             subprocess.run(['bash', 'key.sh'], check=True)
             bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan /keyword lalu /download_hasil \n lalu /download2 untuk output.txt sebagai /ai /command/command/output.txt atau ai.txt untuk /download3.")
@@ -81,7 +81,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
         else:
             output_line = "Invalid prompt type\n masukkan opsi\n 1.image,\n 2.text atau\n 3.script\n"
         file.write(output_line)
-    
+
 def extract_domain(url):
     try:
         domain = url.split('//')[1].split('/')[0]
@@ -233,7 +233,7 @@ def download_keywords(message):
     except Exception as e:
         print(f"Error downloading keywords: {e}")
         bot.reply_to(message, "Gagal mengunduh file pdf. Coba lagi nanti.")
-        
+
 @bot.message_handler(commands=['download_hasil'])
 def download_keywords(message):
     global keywords_list
@@ -355,7 +355,7 @@ def handle_uploaded_file(message):
         bot.reply_to(message, f"File {message.document.file_name} berhasil diunggah dan database diperbarui.")
     else:
         bot.reply_to(message, "Gagal memperbarui database. Coba lagi nanti.")
-        
+
 @bot.message_handler(commands=['keyword'])
 def update_scripts(message):
     try:
@@ -391,8 +391,8 @@ if not os.path.isfile('subdomains.txt'):
         subprocess.run(['wget', 'https://github.com/miftah06/izmiftah/raw/main/subdomains.txt'], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error downloading subdomains.txt: {e}")
-        
-        
+
+
 def get_dns_info(hostname):
     try:
         # Scanning CNAME
@@ -444,7 +444,7 @@ def scan_subdomain(domain):
             pass
     with open("output.txt", "w") as output_file:
         for result in domain_results:
-            output_file.write(f"{result}\n")    
+            output_file.write(f"{result}\n")
     return domain_results
 
 @bot.message_handler(commands=['scan'])
@@ -455,23 +455,9 @@ def handle_subdomain_query(message):
         results = scan_subdomain(domain)
         bot.reply_to(message, f"Hasil pemindaian subdomain: {results}")
     except IndexError:
-        bot.send_message(message.chat.id, "Format perintah tidak valid. Gunakan /scan <domain>.")  
+        bot.send_message(message.chat.id, "Format perintah tidak valid. Gunakan /scan <domain>.")
 
-@bot.message_handler(commands=['update'])
-# Fungsi untuk menghasilkan kata kunci acak
-def generate_random_keywords(num_keywords):
-    keywords = set()
-    while len(keywords) < num_keywords:
-        word = openai.Completion.create(
-            engine="gpt-3.5-turbo-instruct",
-            prompt="Generate a random keyword related to your topic.",
-            max_tokens=1,
-        ).choices[0].text.strip()
-        if word not in keywords:
-            keywords.add(word)
-    return list(keywords)
-
-# Fungsi untuk menyimpan kata kunci dalam file CSV dan TXT
+    # Fungsi untuk menyimpan kata kunci dalam file CSV dan TXT
 def save_keywords_to_files(keywords, csv_filename, txt_filename):
     with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
@@ -493,7 +479,9 @@ def generate_novel_content(keywords, pdf_filename):
         # Ganti dengan logika Anda untuk menulis konten ke dalam file PDF
         pdf_file.write("Ini adalah konten PDF yang dihasilkan berdasarkan kata kunci.")
 
-if __name__ == "__main__":
+@bot.message_handler(commands=['update'])
+# Fungsi untuk menghasilkan kata kunci acak
+def generate_random_keywords(num_keywords):
     num_keywords = 10  # Jumlah kata kunci yang ingin Anda hasilkan
     csv_filename = "katakunci.csv"  # Nama file CSV
     txt_filename = "katakunci.txt"  # Nama file TXT
@@ -509,8 +497,17 @@ if __name__ == "__main__":
     generate_novel_content(keywords, pdf_filename)
 
     print(f"Kata kunci disimpan dalam {csv_filename} dan {txt_filename}.")
-    print(f"Konten novel disimpan dalam {pdf_filename}.")        
-    
+    print(f"Konten novel disimpan dalam {pdf_filename}.")
+    keywords = set()
+    while len(keywords) < num_keywords:
+        word = openai.Completion.create(
+            engine="gpt-3.5-turbo-instruct",
+            prompt="Generate a random keyword related to your topic.",
+            max_tokens=100,
+        ).choices[0].text.strip()
+        if word not in keywords:
+            keywords.add(word)
+    return list(keywords)
 
 # Handler untuk perintah /ai
 @bot.message_handler(commands=['ai'])
@@ -539,7 +536,6 @@ def handle_chat(message):
 if __name__ == '__main__':
     while True:
         try:
-            update_keywords()
             bot.polling(none_stop=True)
         except Exception:
             time.sleep(10)
