@@ -19,7 +19,6 @@ qrcode
 qrcode
 openpyxl
 xlsxwriter
-xvfbwrapper
 google
 numpy~=1.26.2
 openpyxl~=3.1.2

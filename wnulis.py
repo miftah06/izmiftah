@@ -1,7 +1,8 @@
-import random
-
 import nltk
-from weasyprint import HTML
+import random
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph
 
 nltk.download("words")
 
@@ -22,39 +23,44 @@ def randomize_words(text, num_iterations):
     return ' '.join(words_list)
 
 def construct_novel_pdf(title, synopsis, keywords_csv, keywords_txt):
-    html_content = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>{title}</title>
-    </head>
-    <body>
-        <h1>{title}</h1>
-        <p><i>{synopsis}</i></p>
-    """
-
-    for keyword in keywords_csv:
-        html_content += f"<p>{keyword},</p>"
-
-    for keyword in keywords_txt:
-        html_content += f"<p>{keyword}...</p>"
-
-    while len(html_content) <= 40000:  # Adjust the length as needed
-        random_content = randomize_words("Random content for variety. ", random.randint(700, 1000))
-        html_content += f"<p>{random_content}</p>"
-
-    closing_statement = "Terima kasih atas perhatiannya. Semoga Anda menikmati cerita ini."
-    html_content += f"<p>{closing_statement}</p>"
-
-    html_content += """
-    </body>
-    </html>
-    """
-
     pdf_filename = "output_novel.pdf"
-    HTML(string=html_content).write_pdf(pdf_filename)
+    doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
 
-    print(f"Novel content saved to '{pdf_filename}'.")
+    # Set custom styles for better aesthetics
+    styles = getSampleStyleSheet()
+    title_style = styles['Title']
+    synopsis_style = styles['BodyText']
+
+    # List to hold the flowables (elements) of the PDF
+    flowables = []
+
+    # Add title with center alignment and larger font
+    flowables.append(Paragraph(title, title_style))
+
+    # Add aesthetically formatted synopsis
+    flowables.append(Paragraph(f"<i>{synopsis}</i>", synopsis_style))
+
+    # Adding unique keywords from CSV to the plot
+    for keyword in keywords_csv:
+        flowables.append(Paragraph(f"{keyword},", synopsis_style))
+
+    # Adding unique keywords from TXT to the plot
+    for keyword in keywords_txt:
+        flowables.append(Paragraph(f"{keyword}...", synopsis_style))
+
+    # Randomize and add content until reaching a certain length
+    while len(flowables) <= 400:
+        random_content = randomize_words("Random content for variety. ", random.randint(700, 1000))
+        flowables.append(Paragraph(random_content, synopsis_style))
+
+    # Add closing statement
+    closing_statement = "Terima kasih atas perhatiannya. Semoga Anda menikmati cerita ini."
+    flowables.append(Paragraph(closing_statement, synopsis_style))
+
+    # Build the PDF document
+    doc.build(flowables)
+
+    print(f"Novel content saved to '{pdf_filename}.'")
 
 # Example usage:
 judul_cerita = "Masukkan judul cerita"
@@ -66,3 +72,4 @@ keywords_txt = process_keywords_from_txt("katakunci.txt")
 
 # Construct novel narrative based on keywords and save as PDF
 construct_novel_pdf(judul_cerita, sinopsis, keywords_csv, keywords_txt)
+

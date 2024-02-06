@@ -1,5 +1,4 @@
-import os
-import pandas as pd
+import numpy as np
 from bs4 import BeautifulSoup
 from fpdf import FPDF
 
@@ -32,7 +31,7 @@ def bootstrap1():
     universitas = "Masukkan universitas"
     tahun = "Masukkan tahun (contoh: 2024)"
 
-    # Membuat DataFrame dari input
+    # Membuat dictionary dari input
     data_dict = {
         'Logo': [logo],
         'Opsional 1': [opsional[0]],
@@ -48,8 +47,9 @@ def bootstrap1():
         'Jenis_karyatulis': [jenis_karyatulis]
     }
 
-    with pd.ExcelWriter('cover.xlsx', engine='xlsxwriter') as writer:
-        pd.DataFrame(data_dict).to_excel(writer, index=False, sheet_name='Sheet1')
+    # Simpan data ke dalam file Excel dengan NumPy
+    output_excel_path = 'cover.xlsx'
+    np.savez(output_excel_path, **data_dict)
 
 def generate_html(data):
     # Template HTML dengan Bootstrap dan W3Schools builder
@@ -121,7 +121,7 @@ def beauty_pdf(data):
     # Convert HTML ke PDF
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
+    pdf.set_font("Times New Roman", size=12)
 
     # Membaca HTML dan menambahkannya ke PDF
     with open('cover.html', 'r', encoding='utf-8') as html_file:
@@ -139,13 +139,12 @@ def main():
 
     print("\n2. Menjalankan skrip Beauty-PDF untuk membuat PDF yang indah.")
     # Membaca data dari file Excel
-    data = pd.read_excel('cover.xlsx').to_dict(orient='list')
+    data_dict = dict(np.load('cover.xlsx', allow_pickle=True))
 
     # Memanggil fungsi beauty_pdf dengan menyediakan data yang dibutuhkan
-    beauty_pdf(data)
+    beauty_pdf(data_dict)
 
     print("\nProses selesai. File PDF yang indah tersedia di beauty-cover.pdf.")
 
 if __name__ == "__main__":
     main()
-
