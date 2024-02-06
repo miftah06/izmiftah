@@ -4,16 +4,12 @@ import os
 import random
 import subprocess
 import time
-from datetime import datetime
+import urllib.error
+import urllib.request
 
-import requests
+import openai
 import telebot
 from googlesearch import search
-import urllib.request
-import urllib.error
-import openai
-import csv
-import random
 
 # Ganti dengan API key OpenAI Anda
 openai.api_key = 'api-key-openai-kamu'
@@ -480,7 +476,6 @@ def generate_novel_content(keywords, pdf_filename):
         pdf_file.write("Ini adalah konten PDF yang dihasilkan berdasarkan kata kunci.")
 
 @bot.message_handler(commands=['update'])
-# Fungsi untuk menghasilkan kata kunci acak
 def generate_random_keywords(num_keywords):
     num_keywords = 10  # Jumlah kata kunci yang ingin Anda hasilkan
     csv_filename = "katakunci.csv"  # Nama file CSV
@@ -496,8 +491,8 @@ def generate_random_keywords(num_keywords):
     # Generate novel content based on keywords and save it as PDF
     generate_novel_content(keywords, pdf_filename)
 
-    print(f"Kata kunci disimpan dalam {csv_filename} dan {txt_filename}.")
-    print(f"Konten novel disimpan dalam {pdf_filename}.")
+    bot.reply_to(text=f"Kata kunci disimpan dalam {csv_filename} dan {txt_filename}.")
+    bot.reply_to(text=f"Konten novel disimpan dalam {pdf_filename}.")
     keywords = set()
     while len(keywords) < num_keywords:
         word = openai.Completion.create(
