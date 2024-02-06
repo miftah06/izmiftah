@@ -17,6 +17,7 @@ bot = telebot.TeleBot("bot-token-telegram-kamu")  # Ganti dengan token bot Teleg
 last_update_time = None
 keywords_list = []
 
+
 def generate_keyword_file(filename, num_keywords):
     keyword_list = keyword.kwlist
     num_keywords = min(num_keywords, len(keyword_list))
@@ -25,6 +26,7 @@ def generate_keyword_file(filename, num_keywords):
 
     with open(filename, "w") as file:
         file.write("\n".join(random_keywords))
+
 
 @bot.message_handler(commands=['ai_prompt'])
 def handle_prompt(message):
@@ -38,7 +40,8 @@ def handle_prompt(message):
         generate_keyword_file(keyword2_file, 500)
 
         # Create prompt
-        create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input, message)
+        create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type,
+                      additional_input, message)
 
         # Send the output file to the user
         with open(output_file, 'r') as file:
@@ -46,9 +49,12 @@ def handle_prompt(message):
 
         bot.send_message(message.chat.id, output_text)
     else:
-        bot.send_message(message.chat.id, "Format prompt tidak valid. Gunakan format /ai_prompt fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
+        bot.send_message(message.chat.id,
+                         "Format prompt tidak valid. Gunakan format /ai_prompt fitur.txt/objek.txt/ai.txt/kata_perintah/specification_option/prompt_type/jumlah")
 
-def create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type, additional_input, message):
+
+def create_prompt(keyword1_file, keyword2_file, output_file, command_option, specification_option, prompt_type,
+                  additional_input, message):
     with open("skrip.txt", "r") as parno_file:
         parno_options = parno_file.readlines()
         prompt = random.choice(parno_options).strip()
@@ -61,7 +67,8 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
 
         try:
             subprocess.run(['bash', 'key.sh'], check=True)
-            bot.reply_to(message, f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan /keyword lalu /download_hasil \n lalu /download2 untuk output.txt sebagai /ai /command/command/output.txt atau ai.txt untuk /download3.")
+            bot.reply_to(message,
+                         f"Ai prompt sudah terkespor ke {output_file}\nSilahkan jalankan /keyword lalu /download_hasil \n lalu /download2 untuk output.txt sebagai /ai /command/command/output.txt atau ai.txt untuk /download3.")
         except subprocess.CalledProcessError as e:
             bot.reply_to(message, f"Error: {e}")
         if prompt_type == "text":
@@ -77,6 +84,7 @@ def create_prompt(keyword1_file, keyword2_file, output_file, command_option, spe
         else:
             output_line = "Invalid prompt type\n masukkan opsi\n 1.image,\n 2.text atau\n 3.script\n"
         file.write(output_line)
+
 
 def extract_domain(url):
     try:
@@ -130,15 +138,18 @@ def handle_message(message):
     else:
         bot.reply_to(message, "No results found.")
 
+
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
     bot.reply_to(message, "Hello, welcome to my Bot! Please format your message as follows: /write [Keyword]")
+
 
 def check_cover_png():
     file_path = 'cover.png'
     if os.path.exists(file_path) and os.path.getsize(file_path) == 0:
         return True
     return False
+
 
 def random_keywords(dataframe):
     num_keywords = len(dataframe)
@@ -196,7 +207,9 @@ def get_random_text(message):
 
     # Process the generated_keyword as needed
 
-    bot.reply_to(message, f"Intruksi!!: {generated_keyword} \n list file bahan: \n 1. katakunci.csv \n 2. keyword.txt \n 3. cover.xlsx \n 4. auto.xlsx \n 5. skrip.txt \n DAPATKAN DI https://github.com/miftah06/izmiftah/ \n")
+    bot.reply_to(message,
+                 f"Intruksi!!: {generated_keyword} \n list file bahan: \n 1. katakunci.csv \n 2. keyword.txt \n 3. cover.xlsx \n 4. auto.xlsx \n 5. skrip.txt \n DAPATKAN DI https://github.com/miftah06/izmiftah/ \n")
+
 
 @bot.message_handler(commands=['download3'])
 def download_html(message):
@@ -219,6 +232,7 @@ def download_keywords(message):
         print(f"Error downloading keywords: {e}")
         bot.reply_to(message, "Gagal mengunduh file pdf. Coba lagi nanti.")
 
+
 @bot.message_handler(commands=['download_final'])
 def download_keywords(message):
     global keywords_list
@@ -229,6 +243,7 @@ def download_keywords(message):
     except Exception as e:
         print(f"Error downloading keywords: {e}")
         bot.reply_to(message, "Gagal mengunduh file pdf. Coba lagi nanti.")
+
 
 @bot.message_handler(commands=['download_hasil'])
 def download_keywords(message):
@@ -241,7 +256,8 @@ def download_keywords(message):
         print(f"Error downloading keywords: {e}")
         bot.reply_to(message, "Gagal mengunduh file txt. Coba lagi nanti.")
 
-@bot.message_handler(commands=['download'])
+
+@bot.message_handler(commands=['download_novel'])
 def download_keywords(message):
     global keywords_list
 
@@ -252,6 +268,7 @@ def download_keywords(message):
         print(f"Error downloading keywords: {e}")
         bot.reply_to(message, "Gagal mengunduh file pdf. Coba lagi nanti.")
 
+
 @bot.message_handler(commands=['download_html'])
 def download_html(message):
     try:
@@ -260,6 +277,7 @@ def download_html(message):
     except Exception as e:
         print(f"Error downloading HTML: {e}")
         bot.reply_to(message, "Gagal mengunduh file HTML. Coba lagi nanti.")
+
 
 @bot.message_handler(commands=['download2'])
 def download_html(message):
@@ -270,6 +288,7 @@ def download_html(message):
         print(f"Error downloading txt output file: {e}")
         bot.reply_to(message, "Gagal mengunduh file txt. Coba lagi nanti.")
 
+
 @bot.message_handler(commands=['download_html1'])
 def download_html(message):
     try:
@@ -278,6 +297,7 @@ def download_html(message):
     except Exception as e:
         print(f"Error downloading HTML: {e}")
         bot.reply_to(message, "Gagal mengunduh file HTML. Coba lagi nanti.")
+
 
 @bot.message_handler(commands=['download_html2'])
 def download_html(message):
@@ -288,6 +308,7 @@ def download_html(message):
         print(f"Error downloading HTML: {e}")
         bot.reply_to(message, "Gagal mengunduh file HTML. Coba lagi nanti.")
 
+
 def read_keywords_file(filename):
     try:
         with open(filename, 'r', encoding='utf-8') as file:
@@ -297,9 +318,11 @@ def read_keywords_file(filename):
         print(f"Error reading keywords file '{filename}': {e}")
         return []
 
+
 def extend_keywords_list(new_keywords):
     global keywords_list
     keywords_list.extend(new_keywords)
+
 
 @bot.message_handler(commands=['upload'])
 def update_keywords(message):
@@ -314,11 +337,12 @@ def update_keywords(message):
     else:
         bot.reply_to(message, "Gagal memperbarui keywords. Pastikan file 'keyword.txt' tersedia dan berisi kata kunci.")
 
-
     if check_cover_png():
-        bot.reply_to(message, "cover.png kosong. Silahkan upload cover.png sebagai logo atau cover karya tulis atau novel Anda.")
+        bot.reply_to(message,
+                     "cover.png kosong. Silahkan upload cover.png sebagai logo atau cover karya tulis atau novel Anda.")
     else:
         bot.reply_to(message, "Terima kasih! File cover.png sudah diunggah.")
+
 
 def process_uploaded_file(file_path):
     # Implement your logic to process the uploaded file
@@ -333,12 +357,15 @@ def process_uploaded_file(file_path):
         print(f"Error processing uploaded file: {e}")
         return False
 
+
 @bot.message_handler(content_types=['document'])
 def handle_uploaded_file(message):
     global keywords_list
 
-    if message.document.file_name not in ['katakunci.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'subdomains.txt']:
-        bot.reply_to(message, "Mohon kirim file dengan nama 'katakunci.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'subdomains.txt'.")
+    if message.document.file_name not in ['katakunci.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt',
+                                          'subdomains.txt']:
+        bot.reply_to(message,
+                     "Mohon kirim file dengan nama 'katakunci.csv', 'keyword.txt', 'skrip.txt', 'auto.xlsx', 'input.txt', 'subdomains.txt'.")
         return
 
     file_info = bot.get_file(message.document.file_id)
@@ -352,6 +379,7 @@ def handle_uploaded_file(message):
     else:
         bot.reply_to(message, "Gagal memperbarui database. Coba lagi nanti.")
 
+
 @bot.message_handler(commands=['keyword'])
 def update_scripts(message):
     try:
@@ -359,6 +387,7 @@ def update_scripts(message):
         bot.reply_to(message, "Skrip berhasil diperbarui.")
     except subprocess.CalledProcessError as e:
         bot.reply_to(message, f"Error: {e}")
+
 
 def update_keywords():
     global keywords_list
@@ -371,6 +400,7 @@ def update_keywords():
     except Exception as e:
         print(f"Error updating keywords: {e}")
         return False
+
 
 # Tambahkan logika untuk memeriksa keberadaan file auto.xlsx
 if not os.path.isfile('auto.xlsx'):
@@ -393,7 +423,8 @@ def get_dns_info(hostname):
     try:
         # Scanning CNAME
         cname_result = subprocess.check_output(['nslookup', '-type=CNAME', hostname], universal_newlines=True)
-        cname_values = [line.split(':')[-1].strip() for line in cname_result.splitlines() if 'canonical name' in line.lower()]
+        cname_values = [line.split(':')[-1].strip() for line in cname_result.splitlines() if
+                        'canonical name' in line.lower()]
     except subprocess.CalledProcessError:
         cname_values = None
 
@@ -413,6 +444,7 @@ def get_dns_info(hostname):
 
     return cname_values, ipv4_addresses, ipv6_addresses
 
+
 @bot.message_handler(commands=['dnsinfo'])
 def handle_dnsinfo(message):
     try:
@@ -422,6 +454,7 @@ def handle_dnsinfo(message):
         bot.send_message(message.chat.id, f"CNAME: {cname_values}\nIPv4: {ipv4_addresses}\nIPv6: {ipv6_addresses}")
     except IndexError:
         bot.send_message(message.chat.id, "Format perintah tidak valid. Gunakan /dnsinfo <domain>.")
+
 
 def scan_subdomain(domain):
     subdomains = []
@@ -443,6 +476,7 @@ def scan_subdomain(domain):
             output_file.write(f"{result}\n")
     return domain_results
 
+
 @bot.message_handler(commands=['scan'])
 def handle_subdomain_query(message):
     try:
@@ -454,6 +488,8 @@ def handle_subdomain_query(message):
         bot.send_message(message.chat.id, "Format perintah tidak valid. Gunakan /scan <domain>.")
 
     # Fungsi untuk menyimpan kata kunci dalam file CSV dan TXT
+
+
 def save_keywords_to_files(keywords, csv_filename, txt_filename):
     with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
@@ -465,6 +501,7 @@ def save_keywords_to_files(keywords, csv_filename, txt_filename):
         for keyword in keywords:
             txtfile.write(keyword + '\n')
 
+
 # Fungsi untuk menghasilkan konten PDF berdasarkan kata kunci
 def generate_novel_content(keywords, pdf_filename):
     # Ganti dengan logika Anda untuk menghasilkan konten PDF berdasarkan kata kunci
@@ -475,7 +512,9 @@ def generate_novel_content(keywords, pdf_filename):
         # Ganti dengan logika Anda untuk menulis konten ke dalam file PDF
         pdf_file.write("Ini adalah konten PDF yang dihasilkan berdasarkan kata kunci.")
 
-@bot.message_handler(commands=['update'])
+    # Fungsi untuk menghasilkan kata kunci acak
+
+
 def generate_random_keywords(num_keywords):
     num_keywords = 10  # Jumlah kata kunci yang ingin Anda hasilkan
     csv_filename = "katakunci.csv"  # Nama file CSV
@@ -491,8 +530,7 @@ def generate_random_keywords(num_keywords):
     # Generate novel content based on keywords and save it as PDF
     generate_novel_content(keywords, pdf_filename)
 
-    bot.send_message(text=f"Kata kunci disimpan dalam {csv_filename} dan {txt_filename}.")
-    bot.send_message(text=f"Konten novel disimpan dalam {pdf_filename}.")
+    print(f"Konten novel disimpan dalam {pdf_filename}.")
     keywords = set()
     while len(keywords) < num_keywords:
         word = openai.Completion.create(
@@ -503,6 +541,53 @@ def generate_random_keywords(num_keywords):
         if word not in keywords:
             keywords.add(word)
     return list(keywords)
+
+
+# Handler untuk perintah /update
+@bot.message_handler(commands=['update'])
+def update_keywords(message):
+    try:
+        generated_keywords = generate_random_keywords(10)
+        bot.reply_to(message, f"Kata kunci acak telah dihasilkan: {generated_keywords}")
+    except Exception as e:
+        bot.reply_to(message, f"Error: {e}")
+
+
+# Handler untuk perintah /ai
+@bot.message_handler(commands=['ai'])
+def handle_ai(message):
+    try:
+        message_text = message.text.split(' ', 1)[1] if len(message.text.split()) > 1 else "No input provided."
+
+        # Membuat permintaan ke OpenAI Chat API
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # Pilih model yang sesuai
+            messages=[
+                {"role": "system", "content": "You are a worker with your research and development."},
+                {"role": "user", "content": message_text}
+            ]
+        )
+
+        # Mengambil pesan dari respons
+        ai_reply = response['choices'][0]['message']['content']
+
+        # Mengirimkan balasan AI sebagai reply
+        bot.reply_to(message, ai_reply)
+
+    except Exception as e:
+        bot.reply_to(message, str(e))
+
+
+# Handler untuk perintah /download
+@bot.message_handler(commands=['download'])
+def download_file(message):
+    try:
+        file_name = message.text.split(' ', 1)[1] if len(message.text.split()) > 1 else "output_novel.pdf"
+        with open(file_name, 'rb') as file:
+            bot.send_document(message.chat.id, file)
+    except Exception as e:
+        bot.reply_to(message, f"Error: {e}")
+
 
 # Handler untuk perintah /ai
 @bot.message_handler(commands=['ai'])
@@ -527,6 +612,7 @@ def handle_chat(message):
 
     except Exception as e:
         bot.send_message(message.chat.id, str(e))
+
 
 if __name__ == '__main__':
     while True:
