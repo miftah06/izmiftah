@@ -18,10 +18,11 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, SimpleDocTemplate
 
 # Ganti dengan API key OpenAI Anda
-openai.api_key = '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'
-bot = telebot.TeleBot("5652384822:AAFSV80Rb5P3YGg5S-hDrUXD0YJ3Zb8Jtp8")  # Ganti dengan token bot Telegram Anda
+openai.api_key = 'your-openai-api-key'
+bot = telebot.TeleBot("your-telegram-bot-token")  # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
+
 
 
 def generate_keyword_file(filename, num_keywords):
