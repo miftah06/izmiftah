@@ -1,12 +1,10 @@
 import random
-import os
-import subprocess
+
 import pdfkit
 from fpdf import FPDF
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import SimpleDocTemplate, Paragraph
-from datetime import datetime
+from reportlab.pdfgen import canvas
+
 
 # Fungsi untuk menghasilkan daftar kata kunci secara acak
 def generate_random_keywords(num_keywords):

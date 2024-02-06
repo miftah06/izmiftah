@@ -9,11 +9,12 @@ import urllib.request
 
 import openai
 import telebot
+from fpdf import FPDF
 from googlesearch import search
+from pdfkit import pdfkit
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph, SimpleDocTemplate
 
 # Ganti dengan API key OpenAI Anda
@@ -21,6 +22,7 @@ openai.api_key = 'your-openai-api-key'
 bot = telebot.TeleBot("your-telegram-bot-token")  # Ganti dengan token bot Telegram Anda
 last_update_time = None
 keywords_list = []
+
 
 def generate_keyword_file(filename, num_keywords):
     keyword_list = keyword.kwlist
@@ -529,30 +531,8 @@ def generate_novel_content(keywords, pdf_filename):
 
     # Fungsi untuk menghasilkan kata kunci acak
 # Fungsi untuk menghasilkan daftar kata kunci secara acak
-def generate_random_keywords(num_keywords):
-    # Inisialisasi set kosong untuk menyimpan kata kunci
-    keywords = set()
 
-    # Batasi jumlah kata kunci yang dihasilkan hingga num_keywords
-    while len(keywords) < num_keywords:
-        # Menggunakan OpenAI API untuk menghasilkan kata kunci acak
-        response = openai.Completion.create(
-            engine="text-davinci-002",  # Gunakan mesin GPT-3.5 Turbo
-            prompt="Generate a random keyword related to your topic.",
-            max_tokens=100,
-        )
-
-        # Mendapatkan teks dari respons dan membersihkannya
-        word = response.choices[0].text.strip()
-
-        # Pastikan kata kunci unik sebelum ditambahkan ke daftar
-        if word not in keywords:
-            keywords.add(word)
-
-    # Mengembalikan daftar kata kunci dalam bentuk list
-    return list(keywords)
-    
-# Fungsi untuk menghasilkan daftar kata kunci secara acak
+# Fungsi untuk menghasilkan kata kunci acak
 def generate_random_keywords(num_keywords):
     # Daftar kata kunci acak
     keywords = []
@@ -567,19 +547,148 @@ def generate_random_keywords(num_keywords):
 
 # Fungsi untuk menghasilkan daftar kata kunci dalam bentuk PDF menggunakan reportlab
 def generate_keywords_pdf_reportlab(keywords, pdf_filename):
-    c = canvas.Canvas(pdf_filename, pagesize=letter)
+    doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
 
-    # Set font dan ukuran teks
-    c.setFont("Helvetica", 12)
+    # Buat halaman PDF
+    story = []
 
-    # Tulis daftar kata kunci ke PDF
-    y = 700
+    # Ganti dengan logika Anda untuk menghasilkan konten PDF berdasarkan kata kunci
+    # Di sini, kita akan menambahkan setiap kata kunci sebagai paragraf dengan gaya khusus
+    styles = getSampleStyleSheet()
+    normal_style = styles['Normal']
+    keyword_style = normal_style.clone('KeywordStyle')
+    keyword_style.textColor = colors.blue  # Mengatur warna teks kata kunci menjadi biru
+
     for keyword in keywords:
-        c.drawString(50, y, keyword)
-        y -= 20
+        keyword_paragraph = Paragraph(keyword, keyword_style)
+        story.append(keyword_paragraph)
 
-    # Simpan PDF
-    c.save()
+    # Menambahkan konten ke dokumen PDF
+    doc.build(story)
+
+    print(f"Dokumen PDF berhasil disimpan di {pdf_filename}")
+
+# Fungsi untuk menghasilkan daftar kata kunci dalam bentuk PDF menggunakan pdfkit
+def generate_keywords_pdf_pdfkit(keywords, pdf_filename):
+    # Menggabungkan kata kunci menjadi satu teks
+    keywords_text = "\n".join(keywords)
+
+    # Menghasilkan dokumen PDF menggunakan pdfkit
+    pdfkit.from_string(keywords_text, pdf_filename)
+
+    print(f"Dokumen PDF berhasil disimpan di {pdf_filename}")
+
+# Fungsi untuk menghasilkan daftar kata kunci dalam bentuk PDF menggunakan FPDF
+def generate_keywords_pdf_fpdf(keywords, pdf_filename):
+    class PDF(FPDF):
+        def header(self):
+            self.set_font('Arial', 'B', 12)
+            self.cell(0, 10, 'Daftar Kata Kunci', 0, 1, 'C')
+
+        def footer(self):
+            self.set_y(-15)
+            self.set_font('Arial', 'I', 8)
+            self.cell(0, 10, f'Halaman {self.page_no()}', 0, 0, 'C')
+
+    pdf = PDF()
+    pdf.add_page()
+    pdf.set_font('Arial', '', 12)
+
+    for keyword in keywords:
+        pdf.cell(0, 10, keyword, ln=True)
+
+    pdf.output(pdf_filename)
+
+    print(f"Dokumen PDF berhasil disimpan di {pdf_filename}")
+
+# Handler untuk perintah /update
+@bot.message_handler(commands=['update'])
+def update_keywords(message):
+    try:
+        num_keywords = 5  # Ganti dengan jumlah kata kunci yang Anda inginkan
+
+        # Generate daftar kata kunci secara acak
+        random_keywords = generate_random_keywords(num_keywords)
+
+        # Nama file PDF yang akan dihasilkan
+        pdf_filename_pdfkit = "random_keywords_pdfkit.pdf"
+        pdf_filename_fpdf = "random_keywords_fpdf.pdf"
+        pdf_filename_reportlab = "random_keywords_reportlab.pdf"
+
+        # Generate daftar kata kunci dalam bentuk PDF menggunakan pdfkit
+        generate_keywords_pdf_pdfkit(random_keywords, pdf_filename_pdfkit)
+
+        # Generate daftar kata kunci dalam bentuk PDF menggunakan FPDF
+        generate_keywords_pdf_fpdf(random_keywords, pdf_filename_fpdf)
+
+        # Generate daftar kata kunci dalam bentuk PDF menggunakan reportlab
+        generate_keywords_pdf_reportlab(random_keywords, pdf_filename_reportlab)
+
+        # Menggabungkan semua file PDF ke dalam satu file 'output_novel.pdf'
+        merge_pdf_files(['output_novel.pdf', pdf_filename_pdfkit, pdf_filename_fpdf, pdf_filename_reportlab])
+
+        bot.reply_to(message.chat.id, text=f"Kata kunci acak telah dihasilkan. Semua file PDF telah digabungkan ke dalam 'output_novel.pdf'.")
+    except Exception as e:
+        bot.reply_to(message.chat.id, text=f"Error: {e}")
+
+# Fungsi untuk menggabungkan beberapa file PDF menjadi satu
+def merge_pdf_files(output_filename, input_filenames):
+    from PyPDF2 import PdfFileMerger
+
+    merger = PdfFileMerger()
+
+    for pdf_filename in input_filenames:
+        merger.append(pdf_filename)
+
+    merger.write(output_filename)
+    merger.close()
+
+# Fungsi untuk menghasilkan daftar kata kunci secara acak
+def generate_random_keywords(num_keywords):
+    # Daftar kata kunci acak
+    keywords = []
+
+    # Jalankan file run.sh untuk memproses kata kunci
+    try:
+        subprocess.run(['sh', 'run.sh'])
+    except Exception as e:
+        print(f"Error saat menjalankan run.sh: {e}")
+
+    return keywords
+
+# Fungsi untuk menghasilkan kata kunci acak
+def generate_random_keywords(num_keywords):
+    # Daftar kata kunci acak
+    keywords = []
+
+    # Jalankan file run.sh untuk memproses kata kunci
+    try:
+        subprocess.run(['sh', 'run.sh'])
+    except Exception as e:
+        print(f"Error saat menjalankan run.sh: {e}")
+
+    return keywords
+
+# Fungsi untuk menghasilkan daftar kata kunci dalam bentuk PDF menggunakan reportlab
+def generate_keywords_pdf_reportlab(keywords, pdf_filename):
+    doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
+
+    # Buat halaman PDF
+    story = []
+
+    # Ganti dengan logika Anda untuk menghasilkan konten PDF berdasarkan kata kunci
+    # Di sini, kita akan menambahkan setiap kata kunci sebagai paragraf dengan gaya khusus
+    styles = getSampleStyleSheet()
+    normal_style = styles['Normal']
+    keyword_style = normal_style.clone('KeywordStyle')
+    keyword_style.textColor = colors.blue  # Mengatur warna teks kata kunci menjadi biru
+
+    for keyword in keywords:
+        keyword_paragraph = Paragraph(keyword, keyword_style)
+        story.append(keyword_paragraph)
+
+    # Menambahkan konten ke dokumen PDF
+    doc.build(story)
 
     print(f"Dokumen PDF berhasil disimpan di {pdf_filename}")
 
@@ -598,9 +707,9 @@ def update_keywords(message):
         # Generate daftar kata kunci dalam bentuk PDF menggunakan reportlab
         generate_keywords_pdf_reportlab(random_keywords, pdf_filename_reportlab)
 
-        bot.reply_to(message, f"Kata kunci acak telah dihasilkan. PDF (reportlab): {pdf_filename_reportlab}")
+        bot.reply_to(message.chat.id, f"Kata kunci acak telah dihasilkan. PDF (reportlab): {pdf_filename_reportlab}")
     except Exception as e:
-        bot.reply_to(message, f"Error: {e}")
+        bot.reply_to(message.chat.id, f"Error: {e}")
 
 # Handler untuk perintah /ai
 @bot.message_handler(commands=['ai'])
@@ -662,7 +771,10 @@ def handle_chat(message):
     except Exception as e:
         bot.send_message(message.chat.id, str(e))
 
-
+# Contoh penggunaan
+keywords = ['Keyword 1', 'Keyword 2', 'Keyword 3']  # Ganti dengan daftar kata kunci yang sesuai
+pdf_filename_reportlab = 'final_output.pdf'  # Nama file PDF yang akan dihasilkan
+generate_keywords_pdf_reportlab(keywords, pdf_filename_reportlab)
 if __name__ == '__main__':
     while True:
         try:
