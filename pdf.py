@@ -1,10 +1,11 @@
 import os
+import random
+
 import pandas as pd
 import pdfkit
-import random
 from fpdf import FPDF
-from datetime import datetime
- 
+
+
 def handle_nan(value, default_value=""):
     return default_value if pd.isna(value) else value
 
