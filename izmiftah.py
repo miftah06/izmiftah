@@ -491,8 +491,8 @@ def generate_random_keywords(num_keywords):
     # Generate novel content based on keywords and save it as PDF
     generate_novel_content(keywords, pdf_filename)
 
-    bot.reply_to(text=f"Kata kunci disimpan dalam {csv_filename} dan {txt_filename}.")
-    bot.reply_to(text=f"Konten novel disimpan dalam {pdf_filename}.")
+    bot.send_message(text=f"Kata kunci disimpan dalam {csv_filename} dan {txt_filename}.")
+    bot.send_message(text=f"Konten novel disimpan dalam {pdf_filename}.")
     keywords = set()
     while len(keywords) < num_keywords:
         word = openai.Completion.create(
