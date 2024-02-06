@@ -1,6 +1,4 @@
-import pandas as pd
 import random
-from weasyprint import HTML
 
 def generate_object_names(keywords_file, num_objects=1000):
     # Membaca kata kunci dari file
@@ -22,30 +20,16 @@ def generate_object_names(keywords_file, num_objects=1000):
         object_name = ' '.join(extended_name)
         object_names.append(object_name)
 
-    # Membuat DataFrame dengan nama objek
-    data = {'Nama Objek Jawaban': object_names}
-    df = pd.DataFrame(data)
-
-    return df
-
-def save_as_pdf(dataframe, output_pdf):
-    # Membuat file HTML sementara dari DataFrame
-    html_filename = 'temp.html'
-    dataframe.to_html(html_filename, index=False)
-
-    # Mengonversi file HTML ke PDF menggunakan WeasyPrint
-    HTML(string=open(html_filename, 'r', encoding='utf-8').read()).write_pdf(output_pdf)
-
-    print(f"PDF telah disimpan sebagai {output_pdf}")
+    return object_names
 
 # Contoh penggunaan
 keywords_file = 'keyword.txt'  # Ganti dengan file yang berisi kata kunci
 num_objects_to_generate = 500 # Ganti dengan jumlah objek yang ingin dihasilkan
 generated_objects = generate_object_names(keywords_file)
 
-# Menyimpan DataFrame ke file CSV
-generated_objects.to_csv('katakunci.txt', index=False)
+# Menyimpan list data ke file teks
+with open('katakunci.txt', 'w', encoding='utf-8') as file:
+    for obj in generated_objects:
+        file.write(obj + '\n')
 
-# Menghasilkan PDF dari DataFrame
-output_pdf = 'final_output.pdf'  # Ganti dengan nama file PDF yang diinginkan
-save_as_pdf(generated_objects, output_pdf)
+print(f"{num_objects_to_generate} Nama objek telah disimpan ke dalam katakunci.txt")
