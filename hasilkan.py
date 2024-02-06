@@ -47,5 +47,5 @@ generated_objects = generate_object_names(keywords_file)
 generated_objects.to_csv('katakunci.txt', index=False)
 
 # Menghasilkan PDF dari DataFrame
-output_pdf = 'output.pdf'  # Ganti dengan nama file PDF yang diinginkan
+output_pdf = 'final_output.pdf'  # Ganti dengan nama file PDF yang diinginkan
 save_as_pdf(generated_objects, output_pdf)
