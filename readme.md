@@ -1,6 +1,6 @@
 ## tempel ke edit bot lalu edit commend di https://t.me/BotFather
 ## Command karena ada yang gak work karena premium jadi masih beta dulu
-
+## telah disertai perbaikan untuk pandas as pd
 
 Command:
 
@@ -11,7 +11,8 @@ dnsinfo - untuk mendapatkan info seputar hosting domain tersebut
 dork - untuk menjejahi domain dan url dengan dua katakunci misal: google/.com
 scan - untuk scanning domain dan url 
 write - yakni untuk menulis secara otomatis ke file pdf dan html misal: /write teks/teks
-download - yakni untuk mendownload file novel pdfnya
+download - yakni untuk mendownload file novel (nama_file)
+download_novel - yakni untuk mendownload file novel pdfnya
 download_final - yakni untuk mendownload file final karya tulis pdfnya
 download_hasil - gunakan ini untuk mendapatkan ai promptnya
 download2 - yakni untuk mendownload file output.txt nya berupa hasil scan bug atau bisa juga hasil ai promt
