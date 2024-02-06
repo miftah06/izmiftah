@@ -535,9 +535,11 @@ def handle_chat(message):
 
     except Exception as e:
         bot.send_message(message.chat.id, str(e))
-    
 
-# Logika untuk mengupdate kata kunci saat bot pertama kali dijalankan
-update_keywords()
-
-bot.polling()
+if __name__ == '__main__':
+    while True:
+        try:
+            update_keywords()
+            bot.polling(none_stop=True)
+        except Exception:
+            time.sleep(10)
